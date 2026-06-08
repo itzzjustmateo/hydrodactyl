@@ -510,8 +510,8 @@ const SoftwareContainer = () => {
                 selectedDockerImage && eggPreview.docker_images
                     ? eggPreview.docker_images[selectedDockerImage]
                     : eggPreview.default_docker_image && eggPreview.docker_images
-                        ? eggPreview.docker_images[eggPreview.default_docker_image]
-                        : '';
+                      ? eggPreview.docker_images[eggPreview.default_docker_image]
+                      : '';
 
             // Filter out empty environment variables to prevent validation issues
             const filteredEnvironment: Record<string, string> = {};
@@ -945,11 +945,11 @@ const SoftwareContainer = () => {
                                         </label>
                                         <p className='text-xs text-neutral-400 leading-relaxed'>
                                             {backupLimit !== 0 &&
-                                                (backupLimit === null || (backups?.backupCount || 0) < backupLimit)
+                                            (backupLimit === null || (backups?.backupCount || 0) < backupLimit)
                                                 ? 'Automatically create a backup before applying changes'
                                                 : backupLimit === 0
-                                                    ? 'Backups are disabled for this server'
-                                                    : 'Backup limit reached'}
+                                                  ? 'Backups are disabled for this server'
+                                                  : 'Backup limit reached'}
                                         </p>
                                     </div>
                                     <div className='flex-shrink-0'>
@@ -1117,13 +1117,15 @@ const SoftwareContainer = () => {
                                                 width={22}
                                                 height={22}
                                                 fill='currentColor'
-                                                className={`w-5 h-5 flex-shrink-0 mt-0.5 ${warning.severity === 'error' ? 'text-red-400' : 'text-amber-400'
-                                                    }`}
+                                                className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                                                    warning.severity === 'error' ? 'text-red-400' : 'text-amber-400'
+                                                }`}
                                             />
                                             <div>
                                                 <h4
-                                                    className={`font-semibold mb-2 ${warning.severity === 'error' ? 'text-red-400' : 'text-amber-400'
-                                                        }`}
+                                                    className={`font-semibold mb-2 ${
+                                                        warning.severity === 'error' ? 'text-red-400' : 'text-amber-400'
+                                                    }`}
                                                 >
                                                     {warning.type === 'subdomain_incompatible'
                                                         ? 'Subdomain Will Be Deleted'
