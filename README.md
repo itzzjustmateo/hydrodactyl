@@ -1,8 +1,4 @@
 <p align="center">
-    <img src="https://i.imgur.com/R10ivg9.png" alt="Banner with Pyrodactyl Logo">
-</p>
-
-<p align="center">
 <a aria-label="Join the Pyrodactyl community on Discord" href="https://discord.gg/mnTJVSSaKp?utm_source=githubreadme&utm_medium=readme&utm_campaign=OSSLAUNCH&utm_id=OSSLAUNCH"><img alt="" src=".github/banner.png"></a>
 </p>
 
