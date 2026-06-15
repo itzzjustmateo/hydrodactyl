@@ -194,7 +194,7 @@ class Route53Provider implements DnsProviderInterface
         $this->client->changeResourceRecordSets([
             'HostedZoneId' => $zoneId,
             'ChangeBatch'  => [
-                'Comment' => 'Delete subdomain record - Pyrodactyl',
+                'Comment' => 'Delete subdomain record - Hydrodactyl',
                 'Changes'  => [[
                     'Action'            => 'DELETE',
                     'ResourceRecordSet' => $rrset,

@@ -19,8 +19,8 @@ DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=panel
-DB_USERNAME=pyrodactyluser
-DB_PASSWORD=pyrodactyl
+DB_USERNAME=hydrodactyluser
+DB_PASSWORD=hydrodactyl
 
 REDIS_HOST=127.0.0.1
 REDIS_PASSWORD=null
@@ -40,11 +40,11 @@ MAIL_USERNAME=
 MAIL_PASSWORD=
 MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=no-reply@example.com
-MAIL_FROM_NAME="Pterodactyl Panel"
+MAIL_FROM_NAME="Hydrodactyl Panel"
 # You should set this to your domain to prevent it defaulting to 'localhost', causing
 # mail servers such as Gmail to reject your mail.
 #
 # @see: https://github.com/pterodactyl/panel/pull/3110
 # MAIL_EHLO_DOMAIN=panel.example.com
 
-APP_SERVICE_AUTHOR="dev@pyro.host"
+APP_SERVICE_AUTHOR="dev@hydrodactyl.dev"

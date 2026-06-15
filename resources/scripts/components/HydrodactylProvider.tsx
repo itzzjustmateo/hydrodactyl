@@ -1,11 +1,11 @@
 // Provides necessary information for components to function properly
 // million-ignore
-const PyrodactylProvider = ({ children }) => {
+const HydrodactylProvider = ({ children }) => {
     return (
         <div
-            data-pyro-pyrodactylprovider=''
-            data-pyro-pyrodactyl-version={import.meta.env.VITE_PYRODACTYL_VERSION}
-            data-pyro-pyrodactyl-build={import.meta.env.VITE_PYRODACTYL_BUILD_NUMBER}
+            data-pyro-hydrodactylprovider=''
+            data-pyro-hydrodactyl-version={import.meta.env.VITE_HYDRODACTYL_VERSION}
+            data-pyro-hydrodactyl-build={import.meta.env.VITE_HYDRODACTYL_BUILD_NUMBER}
             data-pyro-commit-hash={import.meta.env.VITE_COMMIT_HASH}
             style={{
                 display: 'contents',
@@ -16,4 +16,4 @@ const PyrodactylProvider = ({ children }) => {
     );
 };
 
-export default PyrodactylProvider;
+export default HydrodactylProvider;

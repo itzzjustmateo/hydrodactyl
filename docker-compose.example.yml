@@ -47,7 +47,7 @@ services:
         image: redis:alpine
         restart: always
     panel:
-        image: ghcr.io/pyrodactyl-oss/pyrodactyl:latest
+        image: ghcr.io/hydrodactyl-oss/hydrodactyl:latest
         restart: always
         ports:
             - '80:80'
