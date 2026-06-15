@@ -1,4 +1,4 @@
-# Reverse proxy for pyrodactyl-panel
+# Reverse proxy for hydrodactyl-panel
 panel.localhost {
   reverse_proxy 127.0.0.1:8000
   tls internal
