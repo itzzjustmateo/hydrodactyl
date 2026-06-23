@@ -1,17 +1,15 @@
 import { Person, Plus } from '@gravity-ui/icons';
-import { type Actions, useStoreActions, useStoreState } from 'easy-peasy';
-import { For } from 'million/react';
+import { type Actions, useStoreActions } from 'easy-peasy';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { httpErrorToHuman } from '@/api/http';
 import getServerSubusers from '@/api/server/users/getServerSubusers';
-import ActionButton from '@/components/elements/ActionButton';
 import Can from '@/components/elements/Can';
-import { MainPageHeader } from '@/components/elements/MainPageHeader';
-import { PageListContainer } from '@/components/elements/pages/PageList';
+import VirtualizedList from '@/components/elements/VirtualizedList';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import UserRow from '@/components/server/users/UserRow';
+import { Button } from '@/components/ui/button';
 
 import type { ApplicationStore } from '@/state';
 import { ServerContext } from '@/state/server';
@@ -25,7 +23,6 @@ const UsersContainer = () => {
     const subusers = ServerContext.useStoreState((state) => state.subusers.data);
     const setSubusers = ServerContext.useStoreActions((actions) => actions.subusers.setSubusers);
 
-    const permissions = useStoreState((state: ApplicationStore) => state.permissions.data);
     const getPermissions = useStoreActions((actions: Actions<ApplicationStore>) => actions.permissions.getPermissions);
     const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
 
@@ -49,86 +46,59 @@ const UsersContainer = () => {
         });
     }, []);
 
-    if (!subusers.length && (loading || !Object.keys(permissions).length)) {
-        return (
-            <ServerContentBlock title={'Users'}>
-                <FlashMessageRender byKey={'users'} />
-                <MainPageHeader
-                    direction='column'
-                    title={'Users'}
-                    titleChildren={
-                        <div className='flex flex-col sm:flex-row items-center justify-end gap-4'>
-                            <p className='text-sm text-zinc-300 text-center sm:text-right'>0 users</p>
-                            <Can action={'user.create'}>
-                                <ActionButton
-                                    variant='primary'
-                                    onClick={() => navigate(`/server/${serverId}/users/new`)}
-                                    className='flex items-center gap-2'
-                                >
-                                    <Plus width={22} height={22} className='w-4 h-4' fill='currentColor' />
-                                    New User
-                                </ActionButton>
-                            </Can>
-                        </div>
-                    }
-                >
-                    <p className='text-sm text-neutral-400 leading-relaxed'>
-                        Manage user access to your server. Grant specific permissions to other users to help you manage
-                        and maintain your server.
-                    </p>
-                </MainPageHeader>
+    return (
+        <ServerContentBlock title={'Users'} className='p-0!'>
+            <FlashMessageRender byKey={'users'} />
+            {loading ? (
                 <div className='flex items-center justify-center py-12'>
                     <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-brand'></div>
                 </div>
-            </ServerContentBlock>
-        );
-    }
-
-    return (
-        <ServerContentBlock title={'Users'}>
-            <FlashMessageRender byKey={'users'} />
-            <MainPageHeader
-                direction='column'
-                title={'Users'}
-                titleChildren={
-                    <div className='flex flex-col sm:flex-row items-center justify-end gap-4'>
-                        <p className='text-sm text-zinc-300 text-center sm:text-right'>{subusers.length} users</p>
-                        <Can action={'user.create'}>
-                            <ActionButton
-                                variant='primary'
-                                onClick={() => navigate(`/server/${serverId}/users/new`)}
-                                className='flex items-center gap-2'
-                            >
-                                <Plus width={22} height={22} className='w-4 h-4' fill='currentColor' />
-                                New User
-                            </ActionButton>
-                        </Can>
-                    </div>
-                }
-            >
-                <p className='text-sm text-neutral-400 leading-relaxed'>
-                    Manage user access to your server. Grant specific permissions to other users to help you manage and
-                    maintain your server.
-                </p>
-            </MainPageHeader>
-            {!subusers.length ? (
-                <div className='flex flex-col items-center justify-center min-h-[60vh] py-12 px-4'>
-                    <div className='text-center'>
-                        <div className='w-16 h-16 mx-auto mb-4 rounded-full bg-[#ffffff11] flex items-center justify-center'>
-                            <Person width={22} height={22} className='w-8 h-8 text-zinc-400' fill='currentColor' />
-                        </div>
-                        <h3 className='text-lg font-medium text-zinc-200 mb-2'>No users found</h3>
-                        <p className='text-sm text-zinc-400 max-w-sm'>
-                            Your server does not have any additional users. Add others to help you manage your server.
-                        </p>
-                    </div>
-                </div>
             ) : (
-                <PageListContainer data-pyro-users-container-users>
-                    <For each={subusers} memo>
-                        {(subuser) => <UserRow key={subuser.uuid} subuser={subuser} />}
-                    </For>
-                </PageListContainer>
+                <>
+                    <div className='px-2 pt-2 sm:px-14 sm:pt-14 flex flex-col sm:flex-row items-center gap-4'>
+                        <div className='flex gap-2'>
+                            <Can action={'user.create'}>
+                                <Button
+                                    variant='secondary'
+                                    onClick={() => navigate(`/server/${serverId}/users/new`)}
+                                    className='gap-2'
+                                >
+                                    <Plus width={22} height={22} className='w-4 h-4' fill='currentColor' />
+                                    New User
+                                </Button>
+                            </Can>
+                        </div>
+                        <p className='text-sm text-zinc-300 text-center sm:text-right'>{subusers.length} users</p>
+                    </div>
+                    <div className='px-2 sm:px-14 pt-2'>
+                        {!subusers.length ? (
+                            <div className='flex flex-col items-center justify-center min-h-[60vh] py-12 px-4'>
+                                <div className='text-center'>
+                                    <div className='w-16 h-16 mx-auto mb-4 rounded-full bg-[#ffffff11] flex items-center justify-center'>
+                                        <Person
+                                            width={22}
+                                            height={22}
+                                            className='w-8 h-8 text-zinc-400'
+                                            fill='currentColor'
+                                        />
+                                    </div>
+                                    <h3 className='text-lg font-medium text-zinc-200 mb-2'>No users found</h3>
+                                    <p className='text-sm text-zinc-400 max-w-sm'>
+                                        Your server does not have any additional users. Add others to help you manage
+                                        your server.
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
+                            <VirtualizedList
+                                items={subusers}
+                                renderItem={(subuser) => <UserRow subuser={subuser} />}
+                                estimateSize={() => 80}
+                                gap={12}
+                            />
+                        )}
+                    </div>
+                </>
             )}
         </ServerContentBlock>
     );

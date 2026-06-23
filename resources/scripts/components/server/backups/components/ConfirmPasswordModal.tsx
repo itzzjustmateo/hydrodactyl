@@ -53,7 +53,7 @@ const ConfirmPasswordModal = ({
                 {description && <p className='text-sm text-zinc-300'>{description}</p>}
 
                 {showWarning && warningItems && warningItems.length > 0 && (
-                    <div className='p-4 bg-red-500/10 border border-red-500/20 rounded-lg'>
+                    <div className='p-2 bg-red-500/10 border border-red-500/20 rounded-lg'>
                         <div className='flex items-start gap-3'>
                             <TriangleExclamation
                                 width={22}

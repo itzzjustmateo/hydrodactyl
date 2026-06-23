@@ -131,18 +131,18 @@ const AllocationRow = ({ allocation }: Props) => {
                                 />
                             </InputSpinner>
                             <div className='flex items-center gap-2'>
-                                <ActionButton variant='primary' size='sm' onClick={saveNotes} disabled={loading}>
+                                <Button variant='secondary' size='sm' onClick={saveNotes} disabled={loading}>
                                     {loading ? (
                                         <Spinner size='small' />
                                     ) : (
                                         <Check fill='currentColor' className='w-3 h-3 mr-1' />
                                     )}
                                     Save
-                                </ActionButton>
-                                <ActionButton variant='secondary' size='sm' onClick={cancelEdit} disabled={loading}>
+                                </Button>
+                                <Button variant='secondary' size='sm' onClick={cancelEdit} disabled={loading}>
                                     <Xmark width={22} height={22} fill='currentColor' className='mr-1' />
                                     Cancel
-                                </ActionButton>
+                                </Button>
                             </div>
                         </div>
                     ) : (
@@ -163,9 +163,8 @@ const AllocationRow = ({ allocation }: Props) => {
                             onClick={setPrimaryAllocation}
                             disabled={allocation.isDefault}
                             variant={'secondary'}
-                            className={`p-2  transition-colors ${
-                                allocation.isDefault ? ' text-zinc-600 cursor-not-allowed' : ' text-zinc-400'
-                            }`}
+                            className={`p-2  transition-colors ${allocation.isDefault ? ' text-zinc-600 cursor-not-allowed' : ' text-zinc-400'
+                                }`}
                             title={
                                 allocation.isDefault
                                     ? 'This is already the primary allocation'

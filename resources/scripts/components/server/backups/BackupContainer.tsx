@@ -297,7 +297,7 @@ const BackupContainer = () => {
                                     )}
                                     estimateSize={() => 120}
                                     gap={12}
-                                    className='pt-4'
+                                    className='pt-2'
                                 />
 
                                 {pagination &&

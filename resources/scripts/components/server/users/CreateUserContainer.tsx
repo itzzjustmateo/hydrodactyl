@@ -2,10 +2,9 @@ import { ChevronLeft } from '@gravity-ui/icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import ActionButton from '@/components/elements/ActionButton';
-import { MainPageHeader } from '@/components/elements/MainPageHeader';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import UserFormComponent from '@/components/server/users/UserFormComponent';
+import { Button } from '@/components/ui/button';
 
 import { ServerContext } from '@/state/server';
 
@@ -24,26 +23,31 @@ const CreateUserContainer = () => {
     };
 
     return (
-        <ServerContentBlock title={'Create User'}>
-            <MainPageHeader title={'Create New User'}>
-                <ActionButton
-                    variant='secondary'
-                    onClick={() => navigate(`/server/${serverId}/users`)}
-                    className='flex items-center gap-2'
-                    disabled={isSubmitting}
-                >
-                    <ChevronLeft width={22} height={22} fill='currentColor' />
-                    Back to Users
-                </ActionButton>
-            </MainPageHeader>
+        <ServerContentBlock title={'Create User'} className='p-0!'>
+            <div className='px-2 pt-2 sm:px-14 sm:pt-14 flex flex-col sm:flex-row items-center gap-4'>
+                <div className='flex gap-2'>
+                    <Button
+                        variant='secondary'
+                        onClick={() => navigate(`/server/${serverId}/users`)}
+                        className='gap-2'
+                        disabled={isSubmitting}
+                    >
+                        <ChevronLeft width={22} height={22} className='w-4 h-4' fill='currentColor' />
+                        Back to Users
+                    </Button>
+                </div>
+            </div>
 
-            <UserFormComponent
-                onSuccess={handleSuccess}
-                onCancel={handleCancel}
-                flashKey='user:create'
-                isSubmitting={isSubmitting}
-                setIsSubmitting={setIsSubmitting}
-            />
+            <div className='px-2 sm:px-14 pt-6'>
+                <h1 className='text-[52px] font-extrabold leading-[98%] tracking-[-0.14rem] mb-8'>Create New User</h1>
+                <UserFormComponent
+                    onSuccess={handleSuccess}
+                    onCancel={handleCancel}
+                    flashKey='user:create'
+                    isSubmitting={isSubmitting}
+                    setIsSubmitting={setIsSubmitting}
+                />
+            </div>
         </ServerContentBlock>
     );
 };

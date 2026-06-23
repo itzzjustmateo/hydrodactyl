@@ -1,11 +1,10 @@
-import { Pencil } from '@gravity-ui/icons';
+import { Pencil, Person } from '@gravity-ui/icons';
 import { useStoreState } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 
-import ActionButton from '@/components/elements/ActionButton';
 import Can from '@/components/elements/Can';
-import { PageListItem } from '@/components/elements/pages/PageList';
 import RemoveSubuserButton from '@/components/server/users/RemoveSubuserButton';
+import { Button } from '@/components/ui/button';
 
 import { ServerContext } from '@/state/server';
 import type { Subuser } from '@/state/server/subusers';
@@ -24,47 +23,55 @@ const UserRow = ({ subuser }: Props) => {
     };
 
     return (
-        <PageListItem>
-            <div className={`w-10 h-10 rounded-full bg-white border-2 border-zinc-800 overflow-hidden hidden md:block`}>
-                <img className={`w-full h-full`} src={`${subuser.image}?s=400`} />
+        <div className='flex items-center gap-3 w-full'>
+            <div className='flex-shrink-0 w-9 h-9 rounded-lg bg-[#ffffff11] flex items-center justify-center overflow-hidden'>
+                {subuser.image ? (
+                    <img className='w-full h-full object-cover' src={`${subuser.image}?s=400`} alt='' />
+                ) : (
+                    <Person width={22} height={22} fill='currentColor' className='text-zinc-400' />
+                )}
             </div>
-            <div className={`sm:ml-4 flex-1 overflow-hidden flex flex-col`}>
-                <p className={`truncate text-lg`}>{subuser.email}</p>
-                <p className={`mt-1 md:mt-0 text-xs text-zinc-400 truncate sm:text-left text-center`}>
-                    {subuser.twoFactorEnabled ? 'MFA Enabled' : 'MFA Disabled'}
+
+            <div className='flex-1 min-w-0'>
+                <div className='flex items-center gap-2 mb-1.5'>
+                    <h3 className='text-sm font-medium text-zinc-100 truncate'>{subuser.email}</h3>
+                    <span
+                        className={`text-xs font-medium px-2 py-0.5 rounded ${
+                            subuser.twoFactorEnabled
+                                ? 'text-green-300 bg-green-500/20 border border-green-500/30'
+                                : 'text-zinc-400 bg-zinc-500/20 border border-zinc-500/30'
+                        }`}
+                    >
+                        {subuser.twoFactorEnabled ? 'MFA Enabled' : 'MFA Disabled'}
+                    </span>
+                </div>
+                <p className='text-xs text-zinc-400'>
+                    {subuser.permissions.filter((permission) => permission !== 'websocket.connect').length} permissions
+                    assigned
                 </p>
             </div>
 
-            <div className='flex flex-col items-center md:gap-12 gap-4 sm:flex-row'>
-                <div>
-                    <p className={`font-medium text-center`}>
-                        {subuser.permissions.filter((permission) => permission !== 'websocket.connect').length}
-                    </p>
-                    <p className={`text-xs text-zinc-500 uppercase`}>Permissions</p>
-                </div>
+            <div className='flex-shrink-0 flex items-center gap-2 min-w-[68px] justify-end'>
                 {subuser.uuid !== uuid && (
                     <>
-                        <div className='flex align-middle items-center justify-center gap-2'>
-                            <Can action={'user.update'}>
-                                <ActionButton
-                                    variant='secondary'
-                                    size='sm'
-                                    className='flex items-center gap-2'
-                                    onClick={handleEditClick}
-                                    aria-label='Edit subuser'
-                                >
-                                    <Pencil width={22} height={22} fill='currentColor' />
-                                    Edit
-                                </ActionButton>
-                            </Can>
-                            <Can action={'user.delete'}>
-                                <RemoveSubuserButton subuser={subuser} />
-                            </Can>
-                        </div>
+                        <Can action={'user.update'}>
+                            <Button
+                                variant='secondary'
+                                size='sm'
+                                className='p-2'
+                                onClick={handleEditClick}
+                                title='Edit subuser'
+                            >
+                                <Pencil width={22} height={22} fill='currentColor' />
+                            </Button>
+                        </Can>
+                        <Can action={'user.delete'}>
+                            <RemoveSubuserButton subuser={subuser} />
+                        </Can>
                     </>
                 )}
             </div>
-        </PageListItem>
+        </div>
     );
 };
 

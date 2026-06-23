@@ -1,14 +1,14 @@
 import { AntennaSignal, Calendar, Copy, Database, FolderOpen, Gear, Person, Server, Shield } from '@gravity-ui/icons';
 import { type Actions, useStoreActions, useStoreState } from 'easy-peasy';
 import { Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { array, object, string } from 'yup';
 import createOrUpdateSubuser from '@/api/server/users/createOrUpdateSubuser';
-import ActionButton from '@/components/elements/ActionButton';
 import Can from '@/components/elements/Can';
 import Field from '@/components/elements/Field';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import PermissionRow from '@/components/server/users/PermissionRow';
+import { Button } from '@/components/ui/button';
 import { useDeepCompareMemo } from '@/plugins/useDeepCompareMemo';
 import { usePermissions } from '@/plugins/usePermissions';
 import type { ApplicationStore } from '@/state';
@@ -128,7 +128,7 @@ const UserFormComponent = ({ subuser, onSuccess, onCancel, flashKey, isSubmittin
                         {!subuser && (
                             <div className='bg-gradient-to-b from-[#ffffff08] to-[#ffffff05] border border-[#ffffff12] rounded-xl p-6'>
                                 <div className='flex items-center gap-3 mb-6'>
-                                    <div className='w-10 h-10 rounded-lg bg-brand/20 flex items-center justify-center'>
+                                    <div className='w-10 h-10 rounded-lg bg-mocha-400 flex items-center justify-center'>
                                         <Person
                                             width={22}
                                             height={22}
@@ -163,7 +163,9 @@ const UserFormComponent = ({ subuser, onSuccess, onCancel, flashKey, isSubmittin
                                     <h3 className='text-xl font-semibold text-zinc-100'>Detailed Permissions</h3>
                                 </div>
                                 {canEditUser && (
-                                    <button
+                                    <Button
+                                        variant='secondary'
+                                        size='sm'
                                         type='button'
                                         onClick={() => {
                                             const allPermissions = editablePermissions;
@@ -176,12 +178,11 @@ const UserFormComponent = ({ subuser, onSuccess, onCancel, flashKey, isSubmittin
                                                 setFieldValue('permissions', [...allPermissions]);
                                             }
                                         }}
-                                        className='text-sm px-4 py-2 rounded-lg bg-brand/10 hover:bg-brand/20 text-brand border border-brand/20 hover:border-brand/30 transition-colors font-medium'
                                     >
                                         {editablePermissions.every((p) => values.permissions.includes(p))
                                             ? 'Deselect All'
                                             : 'Select All'}
-                                    </button>
+                                    </Button>
                                 )}
                             </div>
 
@@ -228,7 +229,9 @@ const UserFormComponent = ({ subuser, onSuccess, onCancel, flashKey, isSubmittin
                                                     </div>
                                                 </div>
                                                 {canEditUser && (
-                                                    <button
+                                                    <Button
+                                                        variant='secondary'
+                                                        size='sm'
                                                         type='button'
                                                         onClick={() => {
                                                             const categoryPermissions = Object.keys(
@@ -257,14 +260,13 @@ const UserFormComponent = ({ subuser, onSuccess, onCancel, flashKey, isSubmittin
                                                                 setFieldValue('permissions', newPermissions);
                                                             }
                                                         }}
-                                                        className='text-xs px-3 py-1.5 rounded bg-zinc-700 hover:bg-zinc-600 text-zinc-300 transition-colors whitespace-nowrap flex-shrink-0'
                                                     >
                                                         {Object.keys(permissions[key]?.keys ?? {})
                                                             .map((pkey) => `${key}.${pkey}`)
                                                             .every((p) => values.permissions.includes(p))
                                                             ? 'Deselect All'
                                                             : 'Select All'}
-                                                    </button>
+                                                    </Button>
                                                 )}
                                             </div>
 
@@ -288,12 +290,12 @@ const UserFormComponent = ({ subuser, onSuccess, onCancel, flashKey, isSubmittin
                         {/* Action Buttons */}
                         <Can action={subuser ? 'user.update' : 'user.create'}>
                             <div className='flex gap-3 justify-end pt-4 border-t border-[#ffffff12]'>
-                                <ActionButton variant='secondary' type='button' onClick={onCancel}>
+                                <Button variant='secondary' type='button' onClick={onCancel}>
                                     Cancel
-                                </ActionButton>
-                                <ActionButton variant='primary' type='submit' disabled={isSubmitting}>
+                                </Button>
+                                <Button variant='attention' type='submit' disabled={isSubmitting}>
                                     {subuser ? 'Save Changes' : 'Invite User'}
-                                </ActionButton>
+                                </Button>
                             </div>
                         </Can>
                     </Form>

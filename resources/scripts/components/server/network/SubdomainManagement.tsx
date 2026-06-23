@@ -8,7 +8,7 @@ import {
     type SubdomainInfo,
     setSubdomain,
 } from '@/api/server/network/subdomain';
-import ActionButton from '@/components/elements/ActionButton';
+import { Button } from '@/components/ui/button';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import { useFlashKey } from '@/plugins/useFlash';
@@ -271,24 +271,22 @@ const SubdomainManagement = ({ onClose }: Props) => {
                         </div>
                     </div>
                     <div className='flex items-center justify-end gap-3 pt-4 border-t border-[#ffffff15]'>
-                        <ActionButton
+                        <Button
                             type='button'
-                            variant='danger'
+                            variant='attention'
                             onClick={handleDeleteSubdomain}
                             disabled={loading}
-                            size='sm'
                         >
                             {loading ? 'Deleting...' : 'Delete Subdomain'}
-                        </ActionButton>
-                        <ActionButton
+                        </Button>
+                        <Button
                             type='button'
-                            variant='primary'
+                            variant='secondary'
                             onClick={() => setIsEditing(true)}
                             disabled={loading}
-                            size='sm'
                         >
                             Edit Subdomain
-                        </ActionButton>
+                        </Button>
                     </div>
                 </div>
             ) : (
@@ -390,10 +388,9 @@ const SubdomainManagement = ({ onClose }: Props) => {
                             <div className='flex items-center justify-end gap-3 pt-6 border-t border-[#ffffff15]'>
                                 {isEditing ? (
                                     <>
-                                        <ActionButton
+                                        <Button
                                             type='button'
                                             variant='secondary'
-                                            size='sm'
                                             onClick={() => {
                                                 setIsEditing(false);
                                                 resetForm();
@@ -402,11 +399,10 @@ const SubdomainManagement = ({ onClose }: Props) => {
                                             disabled={isSubmitting || loading}
                                         >
                                             Cancel
-                                        </ActionButton>
-                                        <ActionButton
+                                        </Button>
+                                        <Button
                                             type='submit'
-                                            variant='primary'
-                                            size='sm'
+                                            variant='secondary'
                                             disabled={
                                                 isSubmitting ||
                                                 loading ||
@@ -417,13 +413,12 @@ const SubdomainManagement = ({ onClose }: Props) => {
                                             }
                                         >
                                             {isSubmitting ? 'Saving...' : 'Save Changes'}
-                                        </ActionButton>
+                                        </Button>
                                     </>
                                 ) : (
-                                    <ActionButton
+                                    <Button
                                         type='submit'
-                                        variant='primary'
-                                        size='sm'
+                                        variant='secondary'
                                         disabled={
                                             isSubmitting ||
                                             loading ||
@@ -434,7 +429,7 @@ const SubdomainManagement = ({ onClose }: Props) => {
                                         }
                                     >
                                         {isSubmitting ? 'Creating...' : 'Create Subdomain'}
-                                    </ActionButton>
+                                    </Button>
                                 )}
                             </div>
                         </Form>
