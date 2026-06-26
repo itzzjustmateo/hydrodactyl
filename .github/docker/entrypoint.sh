@@ -18,36 +18,36 @@ if [ -z "$APP_KEY" ] || [ -z "$HASHIDS_LENGTH" ] || [ -z "$HASHIDS_SALT" ]; then
     echo "You must mount the /app/var directory to the container."
     exit 1
   fi
-  
+
   # Check the .env file exists and make a blank one if needed
   if [ ! -f /app/var/.env ]; then
     echo "Creating .env file."
     touch /app/var/.env
   fi
-  
+
   # Replace .env in container with our external .env file
   rm -f /app/.env
   ln -s /app/var/.env /app/
-  
+
   # Use a subshell to avoid polluting the global environment
   (
       # Load in any existing environment variables in the .env file
       source /app/.env
-  
+
       # Check if APP_KEY is set
       if [ -z "$APP_KEY" ]; then
           echo "Generating APP_KEY"
           echo "APP_KEY=" >> /app/.env
           APP_ENVIRONMENT_ONLY=true php artisan key:generate
       fi
-  
+
       # Check if HASHIDS_LENGTH is set
       if [ -z "$HASHIDS_LENGTH" ]; then
           echo "Defaulting HASHIDS_LENGTH to 8"
           echo "HASHIDS_LENGTH=8" >> /app/.env
       fi
-  
-  
+
+
       # Check if HASHID_SALT is set
       if [ -z "$HASHIDS_SALT" ]; then
           echo "Generating HASHIDS_SALT"
@@ -123,96 +123,6 @@ if [ "$SKIP_SEED" != "True" ]; then
 else
   echo -e "Skipping database seeding (SKIP_SEED=True)"
 fi
-
-# Setup development environment if specified
-(
-  source /app/.env
-
-  if [ "$HYDRODACTYL_DOCKER_DEV" = "true" ] && [ "$DEV_SETUP" != "true" ]; then
-    echo -e "\e[42mDevelopment environment detected, setting up development resources...\e[0m"
-    export POSTGRES_PASSWORD=$(grep "POSTGRES_PASSWORD" docker-compose.develop.yml | awk '{print $2}')
-    export POSTGRES_USER=$(grep "POSTGRES_USER" docker-compose.develop.yml | awk '{print $2}')
-
-    php artisan p:user:make -n --email dev@pyro.host --username dev --name-first Developer --name-last User --password dev
-    # Create a developer user
-    if [ "$DB_CONNECTION" = "mysql" ] || [ "$DB_CONNECTION" = "mariadb" ]; then
-        mariadb -u root -h database -p"$DB_ROOT_PASSWORD" --ssl=0 -e "USE panel; UPDATE users SET root_admin = 1;"
-    fi
-    if [ "$DB_CONNECTION" = "pgsql" ]; then
-        PGPASSWORD=$POSTGRES_PASSWORD psql -U$POSTGRES_USER  -dpanel -hpostgres -c"UPDATE users SET root_admin = 1;"
-    fi
-    # Make a location and node for the panel
-    php artisan p:location:make -n --short local --long Local
-    php artisan p:node:make -n --name local --description "Development Node" --locationId 1 --fqdn localhost --internal-fqdn $WINGS_INTERNAL_IP --public 1 --scheme http --proxy 0 --maxMemory 1024 --maxDisk 10240 --overallocateMemory 0 --overallocateDisk 0 --daemonType wings
-
-    echo "Adding dummy allocations..."
-    if [ "$DB_CONNECTION" = "mysql" ] || [ "$DB_CONNECTION" = "mariadb" ]; then
-        mariadb -u root -h database -p"$DB_ROOT_PASSWORD" --ssl=0 -e "USE panel; INSERT INTO allocations (node_id, ip, port) VALUES (1, '0.0.0.0', 25565), (1, '0.0.0.0', 25566), (1, '0.0.0.0', 25567);"
-    fi
-    if [ "$DB_CONNECTION" = "pgsql" ]; then
-        PGPASSWORD=$POSTGRES_PASSWORD psql -U$POSTGRES_USER  -dpanel -hpostgres -c"INSERT INTO allocations (node_id, ip, port) VALUES (1, '0.0.0.0', 25565), (1, '0.0.0.0', 25566), (1, '0.0.0.0', 25567);"
-
-    fi
-
-    echo "Creating database user..."
-    if [ "$DB_CONNECTION" = "mysql" ] || [ "$DB_CONNECTION" = "mariadb" ]; then
-        mariadb -u root -h database -p"$DB_ROOT_PASSWORD" --ssl=0 -e "CREATE USER 'pterodactyluser'@'%' IDENTIFIED BY 'somepassword'; GRANT ALL PRIVILEGES ON *.* TO 'pterodactyluser'@'%' WITH GRANT OPTION;"
-    fi
-    if [ "$DB_CONNECTION" = "pgsql" ]; then
-        PGPASSWORD=$POSTGRES_PASSWORD psql -U$POSTGRES_USER  -dpanel -hpostgres -c"CREATE USER pterodactyluser WITH PASSWORD 'somepassword' SUPERUSER;"
-    fi
-
-    # Configure node
-    export WINGS_CONFIG=/etc/pterodactyl/config.yml
-    mkdir -p $(dirname $WINGS_CONFIG)
-    echo "Fetching and modifying Wings configuration file..."
-    CONFIG=$(php artisan p:node:configuration 1)
-
-    # Allow all origins for CORS
-    CONFIG=$(printf "%s\nallowed_origins: ['*']" "$CONFIG")
-
-    # Update Wings configuration paths if WINGS_DIR is set
-    if [ -z "$WINGS_DIR" ]; then
-      echo "WINGS_DIR is not set, using default paths."
-    else
-      echo "Updating WINGS configuration paths to '$WINGS_DIR'..."
-
-      # add system section if it doesn't exist
-      if ! echo "$CONFIG" | grep -q "^system:"; then
-        CONFIG=$(printf "%s\nsystem:" "$CONFIG")
-      fi
-
-      update_config() {
-        local key="$1"
-        local value="$2"
-
-        # update existing key or add new one
-        if echo "$CONFIG" | grep -q "^  $key:"; then
-          CONFIG=$(echo "$CONFIG" | sed "s|^  $key:.*|  $key: $value|")
-        else
-          CONFIG=$(echo "$CONFIG" | sed "/^system:/a\\  $key: $value")
-        fi
-      }
-
-      update_config "root_directory" "$WINGS_DIR/srv/wings/"
-      update_config "log_directory" "$WINGS_DIR/srv/wings/logs/"
-      update_config "data" "$WINGS_DIR/srv/wings/volumes"
-      update_config "archive_directory" "$WINGS_DIR/srv/wings/archives"
-      update_config "backup_directory" "$WINGS_DIR/srv/wings/backups"
-      update_config "tmp_directory" "$WINGS_DIR/srv/wings/tmp/"
-    fi
-
-    echo "Saving Wings configuration file to '$WINGS_CONFIG'..."
-    echo "$CONFIG" > $WINGS_CONFIG
-
-    # Mark setup as complete
-    echo "DEV_SETUP=true" >> /app/.env
-    echo "Development setup complete."
-  elif [ "$DEV_SETUP" = "true" ]; then
-    echo "Skipping development setup, already completed."
-  fi
-)
-
 ## start cronjobs for the queue
 echo -e "Starting cron jobs."
 crond -L /var/log/crond -l 5
