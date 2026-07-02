@@ -9,6 +9,7 @@ import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import ReinstallServerBox from '@/components/server/settings/ReinstallServerBox';
+import ServerHeader from '@/components/server/header/ServerHeader';
 
 import { ip } from '@/lib/formatters';
 
@@ -25,6 +26,7 @@ const SettingsContainer = () => {
 
     return (
         <ServerContentBlock title={'Settings'}>
+            <ServerHeader />
             <FlashMessageRender byKey={'settings'} />
             <MainPageHeader direction='column' title={'Settings'}>
                 <p className='text-sm text-neutral-400 leading-relaxed'>

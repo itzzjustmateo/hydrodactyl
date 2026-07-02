@@ -2,7 +2,7 @@ import { ArrowDownToLine, ClockArrowRotateLeft, Funnel, Magnifier, Xmark } from 
 import { useEffect, useMemo, useState } from 'react';
 import type { ActivityLogFilters } from '@/api/account/activity';
 import { useActivityLogs } from '@/api/server/activity';
-import ActionButton from '@/components/elements/ActionButton';
+import { Button } from '@/components/ui/button';
 import ActivityLogEntry from '@/components/elements/activity/ActivityLogEntry';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { Input } from '@/components/elements/inputs';
@@ -12,6 +12,7 @@ import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import Spinner from '@/components/elements/Spinner';
 import PaginationFooter from '@/components/elements/table/PaginationFooter';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import ServerHeader from '@/components/server/header/ServerHeader';
 
 import { useFlashKey } from '@/plugins/useFlash';
 import useLocationHash from '@/plugins/useLocationHash';
@@ -157,6 +158,7 @@ const ServerActivityLogContainer = () => {
 
     return (
         <ServerContentBlock title={'Activity Log'} showFlashKey={'activity'}>
+            <ServerHeader />
             <div className='w-full h-full min-h-full flex-1 flex flex-col px-2 sm:px-0'>
                 <FlashMessageRender byKey={'server:activity'} />
 
@@ -174,7 +176,7 @@ const ServerActivityLogContainer = () => {
                             title={'Activity Log'}
                             titleChildren={
                                 <div className='flex gap-2 items-center flex-wrap'>
-                                    <ActionButton
+                                    <Button
                                         variant='secondary'
                                         onClick={() => setShowFilters(!showFilters)}
                                         className='flex items-center gap-2'
@@ -183,8 +185,8 @@ const ServerActivityLogContainer = () => {
                                         <Funnel width={22} height={22} className='w-4 h-4' fill='currentColor' />
                                         Filters
                                         {hasActiveFilters && <span className='w-2 h-2 bg-brand rounded-full'></span>}
-                                    </ActionButton>
-                                    <ActionButton
+                                    </Button>
+                                    <Button
                                         variant='secondary'
                                         onClick={exportLogs}
                                         disabled={!filteredData?.items?.length}
@@ -198,7 +200,7 @@ const ServerActivityLogContainer = () => {
                                             fill='currentColor'
                                         />
                                         Export
-                                    </ActionButton>
+                                    </Button>
                                 </div>
                             }
                         >
@@ -315,14 +317,14 @@ const ServerActivityLogContainer = () => {
 
                                     <div className='flex items-end'>
                                         {hasActiveFilters && (
-                                            <ActionButton
+                                            <Button
                                                 variant='secondary'
                                                 onClick={clearAllFilters}
                                                 className='flex items-center gap-2 w-full'
                                             >
                                                 <Xmark width={22} height={22} className='w-4 h-4' fill='currentColor' />
                                                 Clear All Filters
-                                            </ActionButton>
+                                            </Button>
                                         )}
                                     </div>
                                 </div>
@@ -371,12 +373,12 @@ const ServerActivityLogContainer = () => {
                                     </p>
                                     {hasActiveFilters && (
                                         <div className='flex gap-2 justify-center'>
-                                            <ActionButton variant='secondary' onClick={clearAllFilters}>
+                                            <Button variant='secondary' onClick={clearAllFilters}>
                                                 Clear All Filters
-                                            </ActionButton>
-                                            <ActionButton variant='secondary' onClick={() => setShowFilters(true)}>
+                                            </Button>
+                                            <Button variant='secondary' onClick={() => setShowFilters(true)}>
                                                 Adjust Filters
-                                            </ActionButton>
+                                            </Button>
                                         </div>
                                     )}
                                 </div>
