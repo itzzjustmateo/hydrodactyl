@@ -77,10 +77,10 @@ export default memo(function Sidebar({ navItems, className, onNavClick }: Sideba
     const pathToTabMapping = useMemo(() => {
         return navItems.map((item) => ({
             pattern: (path: string) => {
-                if (item.to === '/' && item.end) {
-                    return path.endsWith('/');
+                if (item.end) {
+                    return path === item.to;
                 }
-                return path.endsWith(item.to);
+                return path === item.to || path.startsWith(item.to + '/');
             },
             tabName: item.tabName,
             ref: item.ref,

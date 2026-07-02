@@ -218,7 +218,7 @@ const UnifiedRouter = () => {
                                 text: 'Users',
                                 tabName: 'users',
                                 ref: NavigationUsers,
-                                end: true,
+                                end: false,
                                 permission: 'user.*',
                             },
                             {
