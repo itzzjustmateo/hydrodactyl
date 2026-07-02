@@ -24,15 +24,12 @@ Hydrodactyl is the Pterodactyl-based game server management panel that focuses o
 - Please read our documentation at [https://hydrodactyl.dev](https://hydrodactyl.dev/docs/hydrodactyl) before installing.
 - For Hydrodactyl-specific issues, please use the [Hydrodactyl Discord](https://discord.gg/mnTJVSSaKp?utm_source=githubreadme&utm_medium=readme&utm_campaign=OSSLAUNCH&utm_id=OSSLAUNCH) instead of Pterodactyl or Blueprint support channels.
 
-<br/>
 
 ![Dashboard Image](./.github/server_menu.jpeg)
 
 Hydrodactyl is Pterodactyl, but built using modern technologies and for everyone. Expect smaller bundle sizes, faster build times, faster loading times, better accessibility and more approachable.
 
 Built by the same maintainer behind the original Pyrodactyl project, funded by Blueprint for years to come.
-
-<br/>
 
 ## Install/development
 
@@ -43,8 +40,6 @@ For local development, see our [Local Development](https://hydrodactyl.dev/docs/
 Windows is only supported for local-development purposes.
 
 ![Dashboard Image](./.github/dashboard.jpeg)
-
-<br/>
 
 ## Support the project
 
