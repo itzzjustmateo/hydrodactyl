@@ -8,6 +8,7 @@ use Illuminate\Container\Container;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Validation\ValidationException;
@@ -63,6 +64,16 @@ class SetupController extends Controller
             'name_last' => ['nullable', 'string', 'between:0,191'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
+
+        // The cross-process lock below only serializes on an atomic cache driver
+        // (redis/memcached/database/dynamodb). Refuse to run on a non-atomic driver
+        // (e.g. array/file) rather than silently degrading the race protection.
+        if (!in_array(config('cache.default'), ['redis', 'memcached', 'database', 'dynamodb'], true)) {
+            Log::critical('Setup endpoint invoked with a non-atomic cache driver.', [
+                'driver' => config('cache.default'),
+            ]);
+            abort(500, 'The setup flow requires an atomic cache driver.');
+        }
 
         // Serialize creation across concurrent requests. Two near-simultaneous
         // POSTs while the table is empty could otherwise both pass the exists()
