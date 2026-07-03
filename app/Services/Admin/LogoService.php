@@ -26,7 +26,7 @@ class LogoService
         }
 
         if (!empty($data['rewind'])) {
-            $this->rewind($data['rewind']);
+            $this->rewind((int) $data['rewind']);
             return;
         }
 
@@ -46,7 +46,7 @@ class LogoService
 
         if ($mime === 'image/svg+xml') {
             $filename = Str::uuid() . '.svg';
-            $path = $file->storeAs(self::LOGO_DIR, $filename, 'public');
+            $file->storeAs(self::LOGO_DIR, $filename, 'public');
             $value = self::LOGO_DIR . '/' . $filename;
         } else {
             $filename = Str::uuid() . '.avif';
@@ -63,7 +63,6 @@ class LogoService
             if ($image !== null && function_exists('imageavif')) {
                 $storage = Storage::disk('public');
                 $storage->makeDirectory(self::LOGO_DIR);
-                $storage->put(self::LOGO_DIR . '/' . $filename, '');
                 $fullPath = $storage->path(self::LOGO_DIR . '/' . $filename);
                 imageavif($image, $fullPath, self::AVIF_QUALITY);
                 imagedestroy($image);
@@ -115,14 +114,49 @@ class LogoService
         }
 
         $entry = $history[$index];
+
+        if ($entry['type'] === 'upload' && !Storage::disk('public')->exists($entry['value'])) {
+            return;
+        }
+
+        $currentType = $this->settings->get('settings::app:logo:type');
+        $currentValue = $this->settings->get('settings::app:logo:value');
+
+        if ($currentType && $currentValue) {
+            $history = $this->dedupPrepend($history, $currentType, $currentValue);
+        }
+
+        $history = $this->moveToFront($history, $index);
+
         $this->settings->set('settings::app:logo:type', $entry['type']);
         $this->settings->set('settings::app:logo:value', $entry['value']);
+        $this->settings->set('settings::app:logo:history', json_encode(array_slice($history, 0, self::HISTORY_MAX)));
+    }
+
+    private function dedupPrepend(array $history, string $type, string $value): array
+    {
+        $history = array_filter($history, fn($h) => !($h['type'] === $type && $h['value'] === $value));
+        array_unshift($history, ['type' => $type, 'value' => $value]);
+        return array_values($history);
+    }
+
+    private function moveToFront(array $history, int $index): array
+    {
+        if (!isset($history[$index])) {
+            return $history;
+        }
+        $entry = $history[$index];
+        unset($history[$index]);
+        array_unshift($history, $entry);
+        return array_values($history);
     }
 
     private function addToHistory(string $type, string $value): void
     {
         $history = $this->getHistory();
-        array_unshift($history, ['type' => $type, 'value' => $value]);
+
+        $history = $this->dedupPrepend($history, $type, $value);
+
         $history = array_slice($history, 0, self::HISTORY_MAX);
         $this->settings->set('settings::app:logo:history', json_encode($history));
     }
@@ -135,7 +169,16 @@ class LogoService
         }
 
         $decoded = json_decode($raw, true);
-        return is_array($decoded) ? $decoded : [];
+        if (!is_array($decoded)) {
+            return [];
+        }
+
+        return array_values(array_filter($decoded, function ($entry) {
+            if ($entry['type'] === 'upload') {
+                return Storage::disk('public')->exists($entry['value']);
+            }
+            return true;
+        }));
     }
 
     public function getCurrentType(): ?string

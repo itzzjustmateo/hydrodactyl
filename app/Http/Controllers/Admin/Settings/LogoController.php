@@ -25,6 +25,7 @@ class LogoController extends Controller
         return $this->view->make('admin.settings.logo', [
             'logoType' => $this->logoService->getCurrentType(),
             'logoUrl' => $this->logoService->getCurrentUrl(),
+            'logoValue' => $this->logoService->getCurrentValue(),
             'history' => $this->logoService->getHistory(),
         ]);
     }
