@@ -43,12 +43,17 @@ services:
             <<: *db-environment
             MYSQL_DATABASE: 'panel'
             MYSQL_USER: 'pterodactyl'
-        ports:
-            - '3306:3306'
+        # Port 3306 is exposed internally for the panel service; no host mapping needed in development
+        expose:
+            - '3306'
     cache:
         image: redis:alpine
         restart: always
     panel:
+        build:
+            context: .
+            args:
+                DEV: "true"
         image: hydrodactyl:develop
         restart: always
         ports:

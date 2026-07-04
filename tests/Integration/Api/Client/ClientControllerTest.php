@@ -330,6 +330,172 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $response->assertJsonPath('data.0.attributes.relationships.allocations.data.0.attributes.notes', null);
     }
 
+    public function testServersAreSortedAscendingByName(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $servers = [
+            $this->createServerModel(['user_id' => $user->id, 'name' => 'Charlie']),
+            $this->createServerModel(['user_id' => $user->id, 'name' => 'Alpha']),
+            $this->createServerModel(['user_id' => $user->id, 'name' => 'Bravo']),
+        ];
+
+        $response = $this->actingAs($user)->getJson('/api/client?sort=name');
+
+        $response->assertOk();
+        $response->assertJsonCount(3, 'data');
+        $response->assertJsonPath('data.0.attributes.name', 'Alpha');
+        $response->assertJsonPath('data.1.attributes.name', 'Bravo');
+        $response->assertJsonPath('data.2.attributes.name', 'Charlie');
+    }
+
+    public function testServersAreSortedDescendingByName(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $servers = [
+            $this->createServerModel(['user_id' => $user->id, 'name' => 'Charlie']),
+            $this->createServerModel(['user_id' => $user->id, 'name' => 'Alpha']),
+            $this->createServerModel(['user_id' => $user->id, 'name' => 'Bravo']),
+        ];
+
+        $response = $this->actingAs($user)->getJson('/api/client?sort=-name');
+
+        $response->assertOk();
+        $response->assertJsonCount(3, 'data');
+        $response->assertJsonPath('data.0.attributes.name', 'Charlie');
+        $response->assertJsonPath('data.1.attributes.name', 'Bravo');
+        $response->assertJsonPath('data.2.attributes.name', 'Alpha');
+    }
+
+    public function testServersAreSortedByCreationDate(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $server1 = $this->createServerModel(['user_id' => $user->id, 'name' => 'Oldest']);
+        $server2 = $this->createServerModel(['user_id' => $user->id, 'name' => 'Middle']);
+        $server3 = $this->createServerModel(['user_id' => $user->id, 'name' => 'Newest']);
+
+        $response = $this->actingAs($user)->getJson('/api/client?sort=created_at');
+
+        $response->assertOk();
+        $response->assertJsonCount(3, 'data');
+        $response->assertJsonPath('data.0.attributes.name', 'Oldest');
+        $response->assertJsonPath('data.1.attributes.name', 'Middle');
+        $response->assertJsonPath('data.2.attributes.name', 'Newest');
+    }
+
+    public function testFilteringByOwnerId(): void
+    {
+        /** @var User[] $users */
+        $users = User::factory()->times(2)->create();
+
+        $this->createServerModel(['user_id' => $users[0]->id, 'name' => 'OwnerIsUser0']);
+        $this->createServerModel(['user_id' => $users[1]->id, 'name' => 'OwnerIsUser1']);
+
+        $response = $this->actingAs($users[0])->getJson('/api/client?filter[owner_id]=' . $users[0]->id);
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.attributes.name', 'OwnerIsUser0');
+    }
+
+    public function testFilteringByNodeId(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $server1 = $this->createServerModel(['user_id' => $user->id, 'name' => 'OnNodeA']);
+        $server2 = $this->createServerModel(['user_id' => $user->id, 'name' => 'OnNodeB']);
+
+        $response = $this->actingAs($user)->getJson(
+            '/api/client?filter[node_id]=' . $server1->node_id
+        );
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.attributes.name', 'OnNodeA');
+    }
+
+    public function testFilteringByNestAndEggId(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $server1 = $this->createServerModel(['user_id' => $user->id, 'name' => 'UsesDefaultEgg']);
+        $server2 = $this->createServerModel([
+            'user_id' => $user->id,
+            'name' => 'UsesDefaultEggToo',
+        ]);
+
+        $response = $this->actingAs($user)->getJson(
+            '/api/client?filter[nest_id]=' . $server1->nest_id
+        );
+
+        $response->assertOk();
+        $response->assertJsonCount(2, 'data');
+    }
+
+    public function testSortingCombinedWithEntityFiltering(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        // Create node and allocations manually so both servers share the same node
+        $location = \Pterodactyl\Models\Location::factory()->create();
+        $node = \Pterodactyl\Models\Node::factory()->create(['location_id' => $location->id]);
+
+        $allocation1 = \Pterodactyl\Models\Allocation::factory()->create(['node_id' => $node->id]);
+        $allocation2 = \Pterodactyl\Models\Allocation::factory()->create(['node_id' => $node->id]);
+
+        $server1 = $this->createServerModel([
+            'user_id' => $user->id,
+            'name' => 'Bravo',
+            'node_id' => $node->id,
+            'allocation_id' => $allocation1->id,
+        ]);
+
+        $server2 = $this->createServerModel([
+            'user_id' => $user->id,
+            'name' => 'Alpha',
+            'node_id' => $node->id,
+            'allocation_id' => $allocation2->id,
+        ]);
+
+        $response = $this->actingAs($user)->getJson(
+            '/api/client?filter[node_id]=' . $node->id . '&sort=name'
+        );
+
+        $response->assertOk();
+        $response->assertJsonPath('data.0.attributes.name', 'Alpha');
+        $response->assertJsonPath('data.1.attributes.name', 'Bravo');
+    }
+
+    public function testFilterOptionsEndpointReturnsStructuredData(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $this->createServerModel(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->getJson('/api/client/filter-options');
+
+        $response->assertOk();
+        $response->assertJsonStructure([
+            'object',
+            'attributes' => [
+                'owners',
+                'nests',
+                'eggs',
+                'nodes',
+            ],
+        ]);
+        $response->assertJsonPath('object', 'server_filter_options');
+    }
+
     public static function filterTypeDataProvider(): array
     {
         return [['admin'], ['admin-all']];

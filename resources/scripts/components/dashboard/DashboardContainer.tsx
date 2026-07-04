@@ -4,6 +4,8 @@ import { useStoreState } from 'easy-peasy';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
+import getFilterOptions from '@/api/getFilterOptions';
 import getServers from '@/api/getServers';
 import type { PaginatedResult } from '@/api/http';
 import type { Server } from '@/api/server/getServer';
@@ -23,8 +25,27 @@ import useFlash from '@/plugins/useFlash';
 import { usePersistedState } from '@/plugins/usePersistedState';
 
 import { Button } from '../ui/button';
+import FilterDropdown from './header/FilterDropdown';
 import HeaderCentered from './header/HeaderCentered';
 import SearchSection from './header/SearchSection';
+import SortDropdown, { type SortOption } from './header/SortDropdown';
+
+const SORT_OPTIONS: SortOption[] = [
+    { value: 'name', label: 'Server Name' },
+    { value: 'owner_name', label: 'Owner' },
+    { value: 'nest_name', label: 'Nest' },
+    { value: 'egg_name', label: 'Egg' },
+    { value: 'node_name', label: 'Node' },
+    { value: 'uuidShort', label: 'Identifier' },
+    { value: 'status', label: 'Status' },
+    { value: 'created_at', label: 'Creation Date' },
+    { value: 'updated_at', label: 'Last Updated' },
+    { value: 'memory', label: 'Memory' },
+    { value: 'disk', label: 'Disk' },
+    { value: 'cpu', label: 'CPU' },
+];
+
+type FilterCategory = 'owner_id' | 'nest_id' | 'egg_id' | 'node_id';
 
 const DashboardContainer = () => {
     const { search } = useLocation();
@@ -34,7 +55,6 @@ const DashboardContainer = () => {
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const uuid = useStoreState((state) => state.user.data!.uuid);
     const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
-    const [showOnlyAdmin, setShowOnlyAdmin] = usePersistedState(`${uuid}:show_all_servers`, false);
     const [serverViewMode, setServerViewMode] = usePersistedState<'owner' | 'admin-all' | 'all'>(
         `${uuid}:server_view_mode`,
         'owner',
@@ -47,30 +67,62 @@ const DashboardContainer = () => {
         'list',
     );
 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [sortField, setSortField] = useState('');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    const [filterField, setFilterField] = useState<FilterCategory | undefined>(undefined);
+    const [filterValue, setFilterValue] = useState<number | undefined>(undefined);
+
+    const { data: filterOptions } = useSWRImmutable('server:filter-options', () => getFilterOptions(), {
+        revalidateOnMount: true,
+    });
+
     const getApiType = (): string | undefined => {
-        if (serverViewMode === 'owner') return 'owner'; // Servers the User owns
-        if (serverViewMode === 'admin-all') return 'admin-all'; // All servers(Admin only)
-        if (serverViewMode === 'all') return 'all'; // All servers user has Access too. (Subusers and owned)
+        if (serverViewMode === 'owner') return 'owner';
+        if (serverViewMode === 'admin-all') return 'admin-all';
+        if (serverViewMode === 'all') return 'all';
         return undefined;
     };
 
     const { data: servers, error } = useSWR<PaginatedResult<Server>>(
-        ['/api/client/servers', serverViewMode, page],
-        () => getServers({ page, type: getApiType() }),
+        ['/api/client/servers', serverViewMode, page, searchQuery, sortField, sortDirection, filterField, filterValue],
+        () =>
+            getServers({
+                page,
+                type: getApiType(),
+                query: searchQuery || undefined,
+                sort: sortField || undefined,
+                sortDirection: sortField ? sortDirection : undefined,
+                filterField: filterField,
+                filterValue: filterValue,
+            }),
         { revalidateOnFocus: false },
     );
 
-    const handleFilterToggle = useCallback(() => {
-        setShowOnlyAdmin((s) => !s);
-    }, [setShowOnlyAdmin]);
+    const handleSortChange = useCallback((field: string, direction: 'asc' | 'desc') => {
+        setSortField(field);
+        setSortDirection(direction);
+        setPage(1);
+    }, []);
+
+    const handleFilterChange = useCallback((field: FilterCategory | undefined, value: number | undefined) => {
+        setFilterField(field);
+        setFilterValue(value);
+        setPage(1);
+    }, []);
+
+    const handleSearch = useCallback((value: string) => {
+        setSearchQuery(value);
+        setPage(1);
+    }, []);
 
     const searchSection = useMemo(
         () => (
             <HeaderCentered>
-                <SearchSection className='max-w-240 xl:w-[30vw] hidden md:flex ' />
+                <SearchSection className='max-w-240 xl:w-[30vw] hidden md:flex' onSearch={handleSearch} />
             </HeaderCentered>
         ),
-        [],
+        [handleSearch],
     );
 
     const viewTabs = useMemo(
@@ -88,7 +140,7 @@ const DashboardContainer = () => {
                     <TabsTrigger aria-label='View servers in a grid layout.' value='grid'>
                         <svg width='13' height='14' viewBox='0 0 16 17' fill='none' xmlns='http://www.w3.org/2000/svg'>
                             <path
-                                d='M1 3.1C1 2.54 1 2.26 1.109 2.046C1.20487 1.85785 1.35785 1.70487 1.546 1.609C1.76 1.5 2.04 1.5 2.6 1.5H5.4C5.96 1.5 6.24 1.5 6.454 1.609C6.64215 1.70487 6.79513 1.85785 6.891 2.046C7 2.26 7 2.54 7 3.1V3.9C7 4.46 7 4.74 6.891 4.954C6.79513 5.14215 6.64215 5.29513 6.454 5.391C6.24 5.5 5.96 5.5 5.4 5.5H2.6C2.04 5.5 1.76 5.5 1.546 5.391C1.35785 5.29513 1.20487 5.14215 1.109 4.954C1 4.74 1 4.46 1 3.9V3.1ZM9 3.1C9 2.54 9 2.26 9.109 2.046C9.20487 1.85785 9.35785 1.70487 9.546 1.609C9.76 1.5 10.04 1.5 10.6 1.5H13.4C13.96 1.5 14.24 1.5 14.454 1.609C14.6422 1.70487 14.7951 1.85785 14.891 2.046C15 2.26 15 2.54 15 3.1V3.9C15 4.46 15 4.74 14.891 4.954C14.7951 5.14215 14.6422 5.29513 14.454 5.391C14.24 5.5 13.96 5.5 13.4 5.5H10.6C10.04 5.5 9.76 5.5 9.546 5.391C9.35785 5.29513 9.20487 5.14215 9.109 4.954C9 4.74 9 4.46 9 3.9V3.1ZM1 8.1C1 7.54 1 7.26 1.109 7.046C1.20487 6.85785 1.35785 6.70487 1.546 6.609C1.76 6.5 2.04 6.5 2.6 6.5H5.4C5.96 6.5 6.24 6.5 6.454 6.609C6.64215 6.70487 6.79513 6.85785 6.891 7.046C7 7.26 7 7.54 7 8.1V8.9C7 9.46 7 9.74 6.891 9.954C6.79513 10.1422 6.64215 10.2951 6.454 10.391C6.24 10.5 5.96 10.5 5.4 10.5H2.6C2.04 10.5 1.76 10.5 1.546 10.391C1.35785 10.2951 1.20487 10.1422 1.109 9.954C1 9.74 1 9.46 1 8.9V8.1ZM9 8.1C9 7.54 9 7.26 9.109 7.046C9.20487 6.85785 9.35785 6.70487 9.546 6.609C9.76 6.5 10.04 6.5 10.6 6.5H13.4C13.96 6.5 14.24 6.5 14.454 6.609C14.6422 6.70487 14.7951 6.85785 14.891 7.046C15 7.26 15 7.54 15 8.1V8.9C15 9.46 15 9.74 14.891 9.954C14.7951 10.1422 14.6422 10.2951 14.454 10.391C14.24 10.5 13.96 10.5 13.4 10.5H10.6C10.04 10.5 9.76 10.5 9.546 10.391C9.35785 10.2951 9.20487 10.1422 9.109 9.954C9 9.74 9 9.46 9 8.9V8.1ZM1 13.1C1 12.54 1 12.26 1.109 12.046C1.20487 11.8578 1.35785 11.7049 1.546 11.609C1.76 11.5 2.04 11.5 2.6 11.5H5.4C5.96 11.5 6.24 11.5 6.454 11.609C6.64215 11.7049 6.79513 11.8578 6.891 12.046C7 12.26 7 12.54 7 13.1V13.9C7 14.46 7 14.74 6.891 14.954C6.79513 15.1422 6.64215 15.2951 6.454 15.391C6.24 15.5 5.96 15.5 5.4 15.5H2.6C2.04 15.5 1.76 15.5 1.546 15.391C1.35785 15.2951 1.20487 15.1422 1.109 14.954C1 14.74 1 14.46 1 13.9V13.1ZM9 13.1C9 12.54 9 12.26 9.109 12.046C9.20487 11.8578 9.35785 11.7049 9.546 11.609C9.76 11.5 10.04 11.5 10.6 11.5H13.4C13.96 11.5 14.24 11.5 14.454 11.609C14.6422 11.7049 14.7951 11.8578 14.891 12.046C15 12.26 15 12.54 15 13.1V13.9C15 14.46 15 14.74 14.891 14.954C14.7951 15.1422 14.6422 15.2951 14.454 15.391C14.24 15.5 13.96 15.5 13.4 15.5H10.6C10.04 15.5 9.76 15.5 9.546 15.391C9.35785 15.2951 1.20487 15.1422 9.109 14.954C9 14.74 9 14.46 9 13.9V13.1Z'
+                                d='M1 3.1C1 2.54 1 2.26 1.109 2.046C1.20487 1.85785 1.35785 1.70487 1.546 1.609C1.76 1.5 2.04 1.5 2.6 1.5H5.4C5.96 1.5 6.24 1.5 6.454 1.609C6.64215 1.70487 6.79513 1.85785 6.891 2.046C7 2.26 7 2.54 7 3.1V3.9C7 4.46 7 4.74 6.891 4.954C6.79513 5.14215 6.64215 5.29513 6.454 5.391C6.24 5.5 5.96 5.5 5.4 5.5H2.6C2.04 5.5 1.76 5.5 1.546 5.391C1.35785 5.29513 1.20487 5.14215 1.109 4.954C1 4.74 1 4.46 1 3.9V3.1ZM9 3.1C9 2.54 9 2.26 9.109 2.046C9.20487 1.85785 9.35785 1.70487 9.546 1.609C9.76 1.5 10.04 1.5 10.6 1.5H13.4C13.96 1.5 14.24 1.5 14.454 1.609C14.6422 1.70487 14.7951 1.85785 14.891 2.046C15 2.26 15 2.54 15 3.1V3.9C15 4.46 15 4.74 14.891 4.954C14.7951 5.14215 14.6422 5.29513 14.454 5.391C14.24 5.5 13.96 5.5 13.4 5.5H10.6C10.04 5.5 9.76 5.5 9.546 5.391C9.35785 5.29513 9.20487 5.14215 9.109 4.954C9 4.74 9 4.46 9 3.9V3.1Z'
                                 fill='currentColor'
                             />
                         </svg>
@@ -108,7 +160,7 @@ const DashboardContainer = () => {
                         variant={'secondary'}
                         className='px-1 pl-3 gap-1 rounded-full hover:cursor-pointer'
                     >
-                        <div className='flex flex-row items-center gap-1 '>
+                        <div className='flex flex-row items-center gap-1'>
                             <div className='flex flex-row items-center gap-1.5'>
                                 <HugeiconsIcon size={16} strokeWidth={2} icon={FilterIcon} className='size-4' />
                                 Filter
@@ -144,13 +196,45 @@ const DashboardContainer = () => {
                 </DropdownMenuContent>
             </DropdownMenu>
         ),
-        [rootAdmin, showOnlyAdmin],
+        [rootAdmin, serverViewMode, setServerViewMode],
+    );
+
+    const entityFilterDropdown = useMemo(
+        () => (
+            <FilterDropdown
+                filterOptions={filterOptions || { owners: [], nests: [], eggs: [], nodes: [] }}
+                activeField={filterField}
+                activeValue={filterValue}
+                onFilterChange={handleFilterChange}
+            />
+        ),
+        [filterOptions, filterField, filterValue, handleFilterChange],
+    );
+
+    const sortDropdown = useMemo(
+        () => (
+            <SortDropdown
+                options={SORT_OPTIONS}
+                value={sortField}
+                direction={sortDirection}
+                onSortChange={handleSortChange}
+            />
+        ),
+        [sortField, sortDirection, handleSortChange],
     );
 
     useEffect(() => {
-        setHeaderActions([searchSection, viewTabs, filterDropdown]);
+        setHeaderActions([searchSection, viewTabs, entityFilterDropdown, sortDropdown, filterDropdown]);
         return () => clearHeaderActions();
-    }, [setHeaderActions, clearHeaderActions, searchSection, viewTabs, filterDropdown]);
+    }, [
+        setHeaderActions,
+        clearHeaderActions,
+        searchSection,
+        viewTabs,
+        entityFilterDropdown,
+        sortDropdown,
+        filterDropdown,
+    ]);
 
     useEffect(() => {
         if (!servers) return;
@@ -160,9 +244,6 @@ const DashboardContainer = () => {
     }, [servers]);
 
     useEffect(() => {
-        // Don't use react-router to handle changing this part of the URL, otherwise it
-        // triggers a needless re-render. We just want to track this in the URL incase the
-        // user refreshes the page.
         window.history.replaceState(null, document.title, `/${page <= 1 ? '' : `?page=${page}`}`);
     }, [page]);
 

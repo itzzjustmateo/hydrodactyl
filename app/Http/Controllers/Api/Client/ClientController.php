@@ -6,20 +6,17 @@ use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Permission;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 use Pterodactyl\Models\Filters\MultiFieldServerFilter;
+use Pterodactyl\Models\Sorts\ServerOwnerNameSort;
+use Pterodactyl\Models\Sorts\ServerNestNameSort;
+use Pterodactyl\Models\Sorts\ServerEggNameSort;
+use Pterodactyl\Models\Sorts\ServerNodeNameSort;
 use Pterodactyl\Transformers\Api\Client\ServerTransformer;
 use Pterodactyl\Http\Requests\Api\Client\GetServersRequest;
 
 class ClientController extends ClientApiController
 {
-    /**
-     * ClientController constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * Return all the servers available to the client making the API
      * request, including servers the user has access to as a subuser.
@@ -38,7 +35,30 @@ class ClientController extends ClientApiController
             'description',
             'external_id',
             'daemonType',
+            'owner_id',
+            'nest_id',
+            'egg_id',
+            'node_id',
             AllowedFilter::custom('*', new MultiFieldServerFilter()),
+        ])->allowedSorts([
+            'name',
+            'uuid',
+            'uuidShort',
+            'description',
+            'status',
+            'owner_id',
+            'nest_id',
+            'egg_id',
+            'node_id',
+            'memory',
+            'disk',
+            'cpu',
+            'created_at',
+            'updated_at',
+            AllowedSort::custom('owner_name', new ServerOwnerNameSort()),
+            AllowedSort::custom('nest_name', new ServerNestNameSort()),
+            AllowedSort::custom('egg_name', new ServerEggNameSort()),
+            AllowedSort::custom('node_name', new ServerNodeNameSort()),
         ]);
 
         $type = $request->input('type');
@@ -59,7 +79,6 @@ class ClientController extends ClientApiController
         } elseif ($type === 'owner') {
             $builder = $builder->where('servers.owner_id', $user->id);
         } elseif ($type === 'all') {
-            // Yes, I'm well aware this and the one below it are the same function, shut Up, I know. it's not a bug
             $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
         } else {
             $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
@@ -68,6 +87,63 @@ class ClientController extends ClientApiController
         $servers = $builder->paginate(min($request->query('per_page', 50), 100))->appends($request->query());
 
         return $this->fractal->transformWith($transformer)->collection($servers)->toArray();
+    }
+
+    /**
+     * Returns distinct filter options (owners, nests, eggs, nodes) for servers
+     * accessible to the current user. Used to populate the category filter dropdown.
+     */
+    public function filterOptions(GetServersRequest $request): array
+    {
+        $user = $request->user();
+
+        $baseQuery = Server::query();
+        if (!$user->root_admin) {
+            $baseQuery->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
+        }
+
+        $owners = (clone $baseQuery)
+            ->leftJoin('users', 'servers.owner_id', '=', 'users.id')
+            ->select('users.id as value', \Illuminate\Support\Facades\DB::raw("CONCAT(users.name_first, ' ', users.name_last) as label"))
+            ->whereNotNull('users.id')
+            ->distinct()
+            ->orderBy('users.name_first')
+            ->orderBy('users.name_last')
+            ->get();
+
+        $nests = (clone $baseQuery)
+            ->leftJoin('nests', 'servers.nest_id', '=', 'nests.id')
+            ->select('nests.id as value', 'nests.name as label')
+            ->whereNotNull('nests.id')
+            ->distinct()
+            ->orderBy('nests.name')
+            ->get();
+
+        $eggs = (clone $baseQuery)
+            ->leftJoin('eggs', 'servers.egg_id', '=', 'eggs.id')
+            ->select('eggs.id as value', 'eggs.name as label')
+            ->whereNotNull('eggs.id')
+            ->distinct()
+            ->orderBy('eggs.name')
+            ->get();
+
+        $nodes = (clone $baseQuery)
+            ->leftJoin('nodes', 'servers.node_id', '=', 'nodes.id')
+            ->select('nodes.id as value', 'nodes.name as label')
+            ->whereNotNull('nodes.id')
+            ->distinct()
+            ->orderBy('nodes.name')
+            ->get();
+
+        return [
+            'object' => 'server_filter_options',
+            'attributes' => [
+                'owners' => $owners,
+                'nests' => $nests,
+                'eggs' => $eggs,
+                'nodes' => $nodes,
+            ],
+        ];
     }
 
     /**

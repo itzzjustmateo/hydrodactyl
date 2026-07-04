@@ -20,6 +20,8 @@ COPY . .
 RUN if [ "$DEV" = "false" ]; then \
     CI=true pnpm install --frozen-lockfile \
     && pnpm run ship; \
+    else \
+    mkdir -p public/assets public/build; \
     fi
 
 # Stage 1:
@@ -57,7 +59,11 @@ COPY --from=frontend /app/public/build public/build
 COPY composer.json composer.lock ./
 RUN curl -sS https://getcomposer.org/installer \
     | php -- --install-dir=/usr/local/bin --filename=composer \
-    && composer install --no-dev --optimize-autoloader
+    && if [ "$DEV" = "false" ]; then \
+    composer install --no-dev --optimize-autoloader; \
+    else \
+    composer install; \
+    fi
 
 # Clean up image for dev environment
 # This is because we share local files with the container
