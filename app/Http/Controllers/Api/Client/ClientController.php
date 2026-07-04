@@ -78,6 +78,10 @@ class ClientController extends ClientApiController
             }
         } elseif ($type === 'owner') {
             $builder = $builder->where('servers.owner_id', $user->id);
+        } elseif ($type === 'shared') {
+            $builder = $builder->whereIn('servers.id', function ($q) use ($user) {
+                $q->select('server_id')->from('subusers')->where('user_id', $user->id);
+            });
         } elseif ($type === 'all') {
             $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
         } else {

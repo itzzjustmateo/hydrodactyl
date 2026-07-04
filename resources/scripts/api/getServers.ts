@@ -11,7 +11,6 @@ interface QueryParams {
     page?: number;
     type?: string;
     sort?: string;
-    sortDirection?: 'asc' | 'desc';
     filterField?: string;
     filterValue?: string | number;
 }
@@ -19,14 +18,14 @@ interface QueryParams {
 export default ({
     query,
     sort,
-    sortDirection,
     filterField,
     filterValue,
     ...params
 }: QueryParams): Promise<PaginatedResult<Server>> => {
     const sorts: Record<string, 'asc' | 'desc'> = {};
     if (sort) {
-        sorts[sort] = sortDirection || 'asc';
+        const dir = sort.startsWith('-') ? 'desc' : 'asc';
+        sorts[dir === 'desc' ? sort.slice(1) : sort] = dir;
     }
 
     const filters: Record<string, string | number> = {};
