@@ -6,9 +6,11 @@
 <br/>
 <h1 align="center">Hydrodactyl</h1>
 <p align="center">
-    <a href="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml"><img src="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml/badge.svg" alt="Docker"></a>
-    <a href="https://biomejs.dev"><img alt="Formatted with Biome" src="https://img.shields.io/badge/Formatted_with-Biome-60a5fa?style=flat&logo=biome"></a>
-    <a href="https://biomejs.dev"><img alt="Linted with Biome" src="https://img.shields.io/badge/Linted_with-Biome-60a5fa?style=flat&logo=biome"></a>
+    <a href="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml">
+        <img src="https://shieldcn.dev/github/ci/BlueprintFramework/hydrodactyl.svg" alt="Build">
+    </a>
+    <img src="https://shieldcn.dev/badge/Formatted_with-Biome-60a5fa.svg?logo=biome" alt="Formatted with Biome">
+    <img src="https://shieldcn.dev/badge/Linted_with-Biome-60a5fa.svg?logo=biome" alt="Linted with Biome">
 </p>
 
 <br/>
