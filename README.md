@@ -1,14 +1,22 @@
 <p align="center">
 <a aria-label="Read the Hydrodactyl introduction blog post" href="https://blueprint.zip/blog/introducing-hydrodactyl?utm_source=githubreadme&utm_medium=readme&utm_campaign=HYDRODACTYL&utm_id=HYDRODACTYL"><img alt="" src=".github/banner_v6.jpg"></a>
 </p>
-<p align="right"><a href="https://discord.gg/sK686yHdaK">Join the Discord 🡕</a> • <a href="https://blueprint.zip/blog/introducing-hydrodactyl">Read the blog post 🡕</a></p>
-
+<p align="center">
+    <a href="https://discord.gg/sK686yHdaK">
+        <img src="https://shieldcn.dev/badge/Discord-Join%20the%20community-5865F2.svg?logo=discord" alt="Join the Discord">
+    </a>
+    <a href="https://blueprint.zip/blog/introducing-hydrodactyl">
+        <img src="https://shieldcn.dev/badge/Blog-Read%20the%20announcement-0ea5e9.svg?logo=readme" alt="Read the blog post">
+    </a>
+</p>
 <br/>
 <h1 align="center">Hydrodactyl</h1>
 <p align="center">
-    <a href="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml"><img src="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml/badge.svg" alt="Docker"></a>
-    <a href="https://biomejs.dev"><img alt="Formatted with Biome" src="https://img.shields.io/badge/Formatted_with-Biome-60a5fa?style=flat&logo=biome"></a>
-    <a href="https://biomejs.dev"><img alt="Linted with Biome" src="https://img.shields.io/badge/Linted_with-Biome-60a5fa?style=flat&logo=biome"></a>
+    <a href="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml">
+        <img src="https://shieldcn.dev/badge/Build-Passing-success.svg?logo=githubactions" alt="Build">
+    </a>
+    <img src="https://shieldcn.dev/badge/Formatter-Biome-60a5fa.svg?logo=biome" alt="Formatted with Biome">
+    <img src="https://shieldcn.dev/badge/Linter-Biome-60a5fa.svg?logo=biome" alt="Linted with Biome">
 </p>
 
 <br/>
@@ -37,26 +45,38 @@ See the [Installation Guide](https://hydrodactyl.dev/docs/hydrodactyl/installati
 
 ![Dashboard Image](./.github/dashboard.jpeg)
 
-## Support
-
-- [Donate on Ko-Fi](https://ko-fi.com/naterfute) — supports the maintainer
-- [Donate to Blueprint](https://bpfw.io/donate) — the nonprofit funding Hydrodactyl
-- [Join the Discord](https://discord.gg/sK686yHdaK)
-- Star the repo and share it with someone who might find it useful!
-
-<a href="https://star-history.com/#BlueprintFramework/hydrodactyl&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=BlueprintFramework/hydrodactyl&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=BlueprintFramework/hydrodactyl&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=BlueprintFramework/hydrodactyl&type=Date" />
-  </picture>
-</a>
-
 ## License
 
-- Pterodactyl® Copyright © 2015 - 2022 Dane Everitt and contributors.
-- Pyrodactyl™ Copyright © 2023-2025 Pyro Inc. and contributors.
-- Pyrodactyl™ Copyright © 2025-2026 Pyrodactyl-oss and contributors.
-- Hydrodactyl Copyright © 2026-present Naterfute, Blueprint Framework and contributors.
+Hydrodactyl is open-source software licensed under the **Apache License 2.0**.
 
-Apache-2.0
+You are free to use, modify, and redistribute Hydrodactyl under the terms of the license. A copy of the full license text is available in the [LICENSE](./LICENSE) file included in this repository.
+
+### Copyright & Attribution
+
+Hydrodactyl is built upon the work of previous open-source projects and their contributors:
+
+- **Pterodactyl®**: Copyright © 2015–2022 Dane Everitt and contributors.
+- **Pyrodactyl™**: Copyright © 2023–2025 Pyro Inc. and contributors.
+- **Pyrodactyl™**: Copyright © 2025–2026 Pyrodactyl-oss and contributors.
+- **Hydrodactyl**: Copyright © 2026–present Naterfute, Blueprint Framework, and contributors.
+
+All original copyright notices, license notices, and attributions must remain intact when redistributing this software.
+
+Unless explicitly stated otherwise, all source code within this repository is licensed under the **Apache License 2.0**.
+
+## Support
+
+Help Hydrodactyl grow by supporting the project:
+
+- [Donate on Ko-fi](https://ko-fi.com/naterfute): support the maintainer.
+- [Donate to Blueprint Framework](https://bpfw.io/donate): support the nonprofit funding Hydrodactyl.
+- [Join the Discord](https://discord.gg/sK686yHdaK): chat with the community and get support.
+- Star the repository and share it with others: it helps more people discover Hydrodactyl.
+
+<br>
+
+<p align="center">
+    <a href="https://github.com/BlueprintFramework/hydrodactyl/graphs/contributors">
+        <img src="https://shieldcn.dev/contributors/BlueprintFramework/hydrodactyl.svg?preset=grid&names=true&bots=true&titleAlign=center&mode=dark&watermark=true" alt="BlueprintFramework/hydrodactyl contributors">
+    </a>
+</p>
