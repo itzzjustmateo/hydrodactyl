@@ -40,7 +40,7 @@ class AllocationRepository extends EloquentRepository implements AllocationRepos
      */
     protected function getDiscardableDedicatedAllocations(array $nodes = []): array
     {
-        $query = Allocation::query()->selectRaw('CONCAT_WS("-", node_id, ip) as result');
+        $query = Allocation::query()->selectRaw("CONCAT_WS('-', node_id, ip) as result");
 
         if (!empty($nodes)) {
             $query->whereIn('node_id', $nodes);
@@ -89,7 +89,7 @@ class AllocationRepository extends EloquentRepository implements AllocationRepos
 
             if (!empty($discard)) {
                 $query->whereNotIn(
-                    $this->getBuilder()->raw('CONCAT_WS("-", node_id, ip)'),
+                    $this->getBuilder()->raw("CONCAT_WS('-', node_id, ip)"),
                     $discard
                 );
             }
