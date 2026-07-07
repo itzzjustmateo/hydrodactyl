@@ -1,4 +1,5 @@
 import {
+    ArrowDownToLine,
     Box,
     BranchesDown,
     ClockArrowRotateLeft,
@@ -20,8 +21,6 @@ import { toast } from 'sonner';
 import Can from '@/components/elements/Can';
 
 import { ServerContext } from '@/state/server';
-
-import ModrinthLogo from '../ModrinthLogo';
 
 const CommandMenu = () => {
     const [open, setOpen] = useState(false);
@@ -127,10 +126,10 @@ const CommandMenu = () => {
                             Activity
                         </Command.Item>
                     </Can>
-                    <Can action={['modrinth.*']} matchAny>
-                        <Command.Item onSelect={() => cmdkNavigate('/mods')}>
-                            <ModrinthLogo />
-                            Mods/Plugins
+                    <Can action={['mod.download']} matchAny>
+                        <Command.Item onSelect={() => cmdkNavigate('/installer')}>
+                            <ArrowDownToLine fill='currentColor' />
+                            Installer
                         </Command.Item>
                     </Can>
                     <Can action={['software.*']} matchAny>

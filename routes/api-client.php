@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckDaemonType;
 use Pterodactyl\Http\Controllers\Api\Client;
+use Pterodactyl\Http\Controllers\Api\Client\Servers\MarketplaceController;
 use Pterodactyl\Http\Middleware\Activity\ServerSubject;
 use Pterodactyl\Http\Middleware\Activity\AccountSubject;
 use Pterodactyl\Http\Controllers\Api\Client\Servers\Elytra;
@@ -82,6 +83,33 @@ Route::group([
             ->middleware('throttle:10,1');
         Route::post('/check-availability', [Elytra\SubdomainController::class, 'checkAvailability'])
             ->middleware('throttle:25,1');
+    });
+
+    // Native plugin/mod installer (Minecraft). Browse/search are cached and
+    // throttled; the actual file transfer happens via the per-daemon pull.
+    Route::group(['prefix' => '/marketplace', 'middleware' => ['throttle:30,1']], function () {
+        Route::get('/search', [MarketplaceController::class, 'search'])->name('api.client.servers.marketplace.search');
+        Route::get('/project', [MarketplaceController::class, 'project'])->name('api.client.servers.marketplace.project');
+        // Resolve yields a daemon-pulled download URL, so it gets a tighter
+        // limiter than browse (caps upstream amplification per user).
+        Route::get('/resolve', [MarketplaceController::class, 'resolve'])
+            ->middleware('throttle:10,1')
+            ->name('api.client.servers.marketplace.resolve');
+
+        // Install history. Stored in the panel database (not on the daemon) so
+        // it stays private — invisible in the file manager and out of backups.
+        Route::get('/installed', [MarketplaceController::class, 'installed'])
+            ->name('api.client.servers.marketplace.installed');
+        Route::post('/installed', [MarketplaceController::class, 'store']);
+        Route::delete('/installed', [MarketplaceController::class, 'destroy']);
+
+        // Cached Modrinth loader-tag list, so egg-feature loaders are validated
+        // against the live set instead of a hard-coded list.
+        Route::get('/loaders', [MarketplaceController::class, 'loaders'])
+            ->name('api.client.servers.marketplace.loaders');
+
+        Route::get('/game-versions', [MarketplaceController::class, 'gameVersions'])
+            ->name('api.client.servers.marketplace.game-versions');
     });
 });
 

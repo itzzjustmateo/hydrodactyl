@@ -1,0 +1,26 @@
+<?php
+
+namespace Pterodactyl\Http\Requests\Api\Client\Servers\Marketplace;
+
+use Pterodactyl\Contracts\Http\ClientPermissionsRequest;
+use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
+use Pterodactyl\Models\Permission;
+
+class GetProjectRequest extends ClientApiRequest implements ClientPermissionsRequest
+{
+    public function permission(): string
+    {
+        return Permission::ACTION_MOD_DOWNLOAD;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'type' => ['required', 'string', 'in:mod,plugin'],
+            'source' => ['required', 'string', 'alpha_dash'],
+            'project_id' => ['required', 'string', 'max:120'],
+            'loader' => ['sometimes', 'nullable', 'string', 'max:40'],
+            'game_version' => ['sometimes', 'nullable', 'string', 'max:20'],
+        ];
+    }
+}

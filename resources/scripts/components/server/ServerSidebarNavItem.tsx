@@ -25,6 +25,7 @@ const ServerSidebarNavItem = forwardRef<HTMLAnchorElement, ServerSidebarNavItemP
 
         // Feature limits from server state
         const featureLimits = ServerContext.useStoreState((state) => state.server.data?.featureLimits);
+        const eggFeatures = ServerContext.useStoreState((state) => state.server.data?.eggFeatures);
         const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
 
         // State for subdomain support check (only for network route)
@@ -66,6 +67,12 @@ const ServerSidebarNavItem = forwardRef<HTMLAnchorElement, ServerSidebarNavItemP
         // Don't render if feature limit hides this item
         if (!isVisible()) return null;
 
+        // Hide when an egg-feature gate is defined and the server's egg doesn't
+        // advertise a matching feature (e.g. the installer on a non-Minecraft server).
+        if (route.eggFeature && !(eggFeatures ?? []).some((feature) => route.eggFeature?.test(feature))) {
+            return null;
+        }
+
         // Build the navigation link
         const to = path ? `/server/${serverId}/${path}` : `/server/${serverId}`;
 
@@ -99,3 +106,5 @@ const ServerSidebarNavItem = forwardRef<HTMLAnchorElement, ServerSidebarNavItemP
 ServerSidebarNavItem.displayName = 'ServerSidebarNavItem';
 
 export default ServerSidebarNavItem;
+
+

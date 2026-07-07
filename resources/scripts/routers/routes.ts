@@ -1,4 +1,5 @@
 import {
+    ArrowDownToLine,
     Box,
     BranchesDown,
     ClockArrowRotateLeft,
@@ -22,7 +23,7 @@ import BackupContainer from '@/components/server/backups/BackupContainer';
 import ServerConsoleContainer from '@/components/server/console/ServerConsoleContainer';
 import DatabasesContainer from '@/components/server/databases/DatabasesContainer';
 import FileManagerContainer from '@/components/server/files/FileManagerContainer';
-import ModrinthContainer from '@/components/server/modrinth/ModrinthContainer';
+import InstallerContainer from '@/components/server/installer/InstallerContainer';
 import NetworkContainer from '@/components/server/network/NetworkContainer';
 import ServerActivityLogContainer from '@/components/server/ServerActivityLogContainer';
 import ScheduleContainer from '@/components/server/schedules/ScheduleContainer';
@@ -80,6 +81,13 @@ export interface ServerRouteDefinition extends RouteDefinition {
      * Whether this is a sub-route that shouldn't appear in navigation.
      */
     isSubRoute?: boolean;
+    /**
+     * Optional gate: the route only appears in navigation when this pattern
+     * matches one of the server's egg features (e.g. Minecraft mod/plugin
+     * loaders). The route itself is still mounted — this only controls
+     * navigation visibility.
+     */
+    eggFeature?: RegExp;
     /**
      * Route path patterns that should highlight this nav item.
      * Used for matching nested routes to parent nav items.
@@ -254,12 +262,16 @@ const routes: Routes = {
             end: true,
         },
         {
-            route: 'mods/*',
-            path: 'mods',
-            permission: ['modrinth.download', 'settings.modrinth'],
-            name: 'Modrinth',
-            component: ModrinthContainer,
-            isSubRoute: true, // Hidden until modrinth support is complete
+            route: 'installer/*',
+            path: 'installer',
+            permission: 'mod.download',
+            name: 'Installer',
+            component: InstallerContainer,
+            icon: ArrowDownToLine,
+            end: true,
+            // Only show for Minecraft servers whose egg advertises a mod or
+            // plugin loader (e.g. "mod/fabric", "plugin/paper").
+            eggFeature: /(?:^|\s)(?:mod|plugin)\/[a-z]+/i,
         },
     ],
 };

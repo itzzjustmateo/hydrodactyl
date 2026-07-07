@@ -6,6 +6,7 @@ import {
     ComputerTerminal01Icon,
     ConnectIcon,
     Database02Icon,
+    Download04Icon,
     FolderIcon,
     GameControllerIcon,
     NoteIcon,
@@ -85,6 +86,11 @@ const UnifiedRouter = () => {
     const getServer = ServerContext.useStoreActions((actions) => actions.server.getServer);
     const clearServerState = ServerContext.useStoreActions((actions) => actions.clearServerState);
     const egg_id = ServerContext.useStoreState((state) => state.server.data?.egg);
+    const eggFeatures = ServerContext.useStoreState((state) => state.server.data?.eggFeatures) ?? [];
+
+    // The plugin/mod installer is only relevant for Minecraft servers whose egg
+    // advertises a mod or plugin loader (e.g. "mod/fabric", "plugin/paper").
+    const showInstaller = eggFeatures.some((feature) => /^mod\//i.test(feature) || /^plugin\//i.test(feature));
 
     // console.log('Current server state:', {
     //     id,
@@ -156,6 +162,7 @@ const UnifiedRouter = () => {
     const NavigationServerSettings = useRef(null);
     const NavigationActivity = useRef(null);
     const NavigationShell = useRef(null);
+    const NavigationInstaller = useRef(null);
 
     // generate navigation items based on current route
     const navItems = isServerRoute
@@ -180,7 +187,19 @@ const UnifiedRouter = () => {
                                 end: false,
                                 permission: 'file.*',
                             },
-
+                            ...(showInstaller
+                                ? [
+                                      {
+                                          to: `/server/${id}/installer`,
+                                          icon: Download04Icon,
+                                          text: 'Installer',
+                                          tabName: 'installer',
+                                          ref: NavigationInstaller,
+                                          end: false,
+                                          permission: 'mod.download',
+                                      },
+                                  ]
+                                : []),
                             {
                                 to: `/server/${id}/databases`,
                                 icon: Database02Icon,
