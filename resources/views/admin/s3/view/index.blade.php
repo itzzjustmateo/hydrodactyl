@@ -59,7 +59,6 @@
                             </tr>
                         @endforeach
                     </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -101,7 +100,7 @@
                         </div>
                         <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
                     </div>
-                </div>
+                    </div>
             </div>
         </div>
     </div>

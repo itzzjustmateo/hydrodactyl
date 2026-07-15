@@ -163,15 +163,17 @@
             access_key: $('#access_key').val(),
             secret_key: $('#secret_key').val(),
             endpoint: $('#endpoint').val(),
+            region: $('#region').val(),
             bucket_name: $('#bucket_name').val(),
-            use_path_style_endpoint: $('input[name="use_path_style_endpoint"]').is(':checked') ? '1' : '0',
+            use_path_style_endpoint: $('#use_path_style_endpoint').is(':checked') ? '1' : '0',
         })
         .done(function (response) {
             swal({ type: 'success', title: 'Success', text: response.message });
         })
         .fail(function (xhr) {
             const response = xhr.responseJSON || {};
-            swal({ type: 'error', title: 'Connection Failed', text: response.message || 'An unexpected error occurred.' });
+            const message = response.message || xhr.responseText || `Request failed with status ${xhr.status}.`;
+            swal({ type: 'error', title: 'Connection Failed', text: message });
         })
         .always(function () {
             $button.prop('disabled', false);

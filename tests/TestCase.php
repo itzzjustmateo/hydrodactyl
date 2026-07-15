@@ -4,47 +4,89 @@ namespace Pterodactyl\Tests;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
-    /**
-     * Setup tests.
-     */
+    private array $savedErrorHandlers = [];
+    private array $savedExceptionHandlers = [];
+
     public function setUp(): void
     {
+        $this->savedErrorHandlers     = $this->captureErrorHandlers();
+        $this->savedExceptionHandlers = $this->captureExceptionHandlers();
+
         parent::setUp();
 
         Carbon::setTestNow(Carbon::now());
         CarbonImmutable::setTestNow(Carbon::now());
 
-        // Why, you ask? If we don't force this to false it is possible for certain exceptions
-        // to show their error message properly in the integration test output, but not actually
-        // be setup correctly to display their message in production.
-        //
-        // If we expect a message in a test, and it isn't showing up (rather, showing the generic
-        // "an error occurred" message), we can probably assume that the exception isn't one that
-        // is recognized as being user viewable.
-        config()->set('app.debug', false);
-
         $this->setKnownUuidFactory();
     }
 
-    /**
-     * Tear down tests.
-     */
     protected function tearDown(): void
     {
         parent::tearDown();
+
+        while (get_error_handler() !== null) {
+            restore_error_handler();
+        }
+
+        while (get_exception_handler() !== null) {
+            restore_exception_handler();
+        }
+
+        foreach ($this->savedErrorHandlers as $handler) {
+            set_error_handler($handler);
+        }
+
+        foreach ($this->savedExceptionHandlers as $handler) {
+            set_exception_handler($handler);
+        }
 
         Carbon::setTestNow();
         CarbonImmutable::setTestNow();
     }
 
-    /**
-     * Handles the known UUID handling in certain unit tests. Use the "KnownUuid" trait
-     * in order to enable this ability.
-     */
+    private function captureErrorHandlers(): array
+    {
+        $handlers = [];
+
+        while (true) {
+            $previousHandler = set_error_handler(static fn () => false);
+            restore_error_handler();
+
+            if ($previousHandler === null) {
+                break;
+            }
+
+            $handlers[] = $previousHandler;
+
+            restore_error_handler();
+        }
+
+        return array_reverse($handlers);
+    }
+
+    private function captureExceptionHandlers(): array
+    {
+        $handlers = [];
+
+        while (true) {
+            $previousHandler = set_exception_handler(static fn () => null);
+            restore_exception_handler();
+
+            if ($previousHandler === null) {
+                break;
+            }
+
+            $handlers[] = $previousHandler;
+
+            restore_exception_handler();
+        }
+
+        return array_reverse($handlers);
+    }
+
     public function setKnownUuidFactory()
     {
         // do nothing

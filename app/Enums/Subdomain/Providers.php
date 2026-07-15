@@ -2,24 +2,26 @@
 
 namespace Pterodactyl\Enums\Subdomain;
 
-use Pterodactyl\Services\Dns\Providers\CloudflareProvider;
+use Pterodactyl\Services\Dns\Providers\BunnyProvider;
 use Pterodactyl\Services\Dns\Providers\HetznerProvider;
 use Pterodactyl\Services\Dns\Providers\Route53Provider;
 use Pterodactyl\Services\Dns\Providers\DNSimpleProvider;
+use Pterodactyl\Services\Dns\Providers\CloudflareProvider;
 
 enum Providers: string
 {
-
     case CLOUDFLARE = 'cloudflare';
     case HETZNER = 'hetzner';
     case ROUTE53 = 'route53';
     case DNSIMPLE = 'dnsimple';
+    case BUNNY = 'bunny';
 
     private const CLASS_MAP = [
         self::CLOUDFLARE->value => CloudflareProvider::class,
         self::HETZNER->value => HetznerProvider::class,
         self::ROUTE53->value => Route53Provider::class,
         self::DNSIMPLE->value => DNSimpleProvider::class,
+        self::BUNNY->value => BunnyProvider::class,
     ];
 
     private const DESCRIPTION_MAP = [
@@ -27,8 +29,8 @@ enum Providers: string
         self::HETZNER->value => 'Hetzner DNS Console',
         self::ROUTE53->value => 'AWS Route53 DNS Service',
         self::DNSIMPLE->value => 'DNSimple Service',
+        self::BUNNY->value => 'Bunny.net DNS Service',
     ];
-
 
     public static function all(): array
     {
@@ -36,19 +38,20 @@ enum Providers: string
         foreach (self::cases() as $case) {
             $result[$case->value] = self::getClass($case->value);
         }
+
         return $result;
     }
 
     /**
-     * Returns providers with name and description
+     * Returns providers with name and description.
      */
     public static function allWithDescriptions(): array
     {
         $result = [];
         foreach (self::cases() as $case) {
             $result[$case->value] = [
-                "name" => $case->value,
-                "description" => self::DESCRIPTION_MAP[$case->value]
+                'name' => $case->value,
+                'description' => self::DESCRIPTION_MAP[$case->value],
             ];
         }
 

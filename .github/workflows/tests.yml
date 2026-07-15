@@ -9,9 +9,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        php: [8.4, 8.5]
         db: [mysql, mariadb, pgsql]
 
-    runs-on: ubuntu-latest
+    runs-on:  blacksmith-2vcpu-ubuntu-2404
 
     services:
       mysql:
@@ -58,7 +59,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: ${{ matrix.php }}
           extensions: bcmath, gd, pdo, ${{ matrix.db == 'pgsql' && 'pdo_pgsql' || 'pdo_mysql' }}, zip
           tools: composer
 
@@ -96,7 +97,7 @@ jobs:
   build-dev:
     if: github.event_name == 'push'
     needs: tests
-    runs-on: ubuntu-latest
+    runs-on:  blacksmith-2vcpu-ubuntu-2404
 
     steps:
       - uses: actions/checkout@v4
