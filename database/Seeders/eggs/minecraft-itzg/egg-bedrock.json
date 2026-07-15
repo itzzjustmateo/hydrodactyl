@@ -6,7 +6,7 @@
     },
     "exported_at": "2026-07-09T00:00:00+00:00",
     "name": "Minecraft Bedrock",
-    "author": "support@hydrodactyl.com",
+    "author": "support@pterodactyl.io",
     "description": "Bedrock Dedicated Server allows you to run a Minecraft Bedrock Edition server. Uses the itzg/minecraft-bedrock-server Docker image.",
     "features": [
         "eula",

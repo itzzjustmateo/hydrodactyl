@@ -41,6 +41,7 @@ class NestSeeder extends Seeder
         ])->keyBy('name')->toArray();
 
         $this->createMinecraftNest(array_get($items, 'Minecraft'));
+        $this->createMinecraftIzzgNest(array_get($items, 'Minecraft (itzg)'));
         $this->createHytaleNest(array_get($items, 'Hytale'));
         $this->createSourceEngineNest(array_get($items, 'Source Engine'));
         $this->createVoiceServersNest(array_get($items, 'Voice Servers'));
@@ -59,6 +60,21 @@ class NestSeeder extends Seeder
             $this->creationService->handle([
                 'name' => 'Minecraft',
                 'description' => 'Minecraft - the classic game from Mojang. With support for Vanilla MC, Spigot, and many others!',
+            ], 'support@pterodactyl.io');
+        }
+    }
+
+    /**
+     * Create the Minecraft (itzg) nest for itzg-powered Docker images.
+     *
+     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     */
+    private function createMinecraftIzzgNest(?array $nest = null)
+    {
+        if (is_null($nest)) {
+            $this->creationService->handle([
+                'name' => 'Minecraft (itzg)',
+                'description' => 'Minecraft servers powered by itzg Docker images, with extensive configuration options.',
             ], 'support@pterodactyl.io');
         }
     }

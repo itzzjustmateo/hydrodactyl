@@ -5,15 +5,16 @@
         "update_url": null
     },
     "exported_at": "2026-07-09T00:00:00+00:00",
-    "name": "SpongeVanilla",
-    "author": "support@hydrodactyl.com",
-    "description": "SpongeVanilla is the SpongeAPI implementation for vanilla Minecraft servers, providing plugin support without Forge. Uses the itzg/minecraft-server Docker image.",
+    "name": "Purpur",
+    "author": "support@pterodactyl.io",
+    "description": "Purpur is a fork of Paper and Tuinity with the goal of providing new and exciting configuration options for server owners. Uses the itzg/minecraft-server Docker image.",
     "features": [
         "eula",
         "java_version",
         "pid_limit",
         "mclogs",
-        "subdomain_minecraft"
+        "subdomain_minecraft",
+        "plugin/paper"
     ],
     "docker_images": {
         "itzg Minecraft Server": "itzg/docker-minecraft-server:latest"
@@ -28,7 +29,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/ash\n# SpongeVanilla installation script\n# itzg/docker-minecraft-server handles server jar download at container start\nmkdir -p /mnt/server\n",
+            "script": "#!/bin/ash\n# Purpur installation script\n# itzg/docker-minecraft-server handles server jar download at container start\nmkdir -p /mnt/server\n",
             "container": "ghcr.io/pterodactyl/installers:alpine",
             "entrypoint": "ash"
         }
@@ -38,7 +39,7 @@
             "name": "Server Type",
             "description": "The type of Minecraft server to run. Fixed for this egg.",
             "env_variable": "TYPE",
-            "default_value": "SPONGEVANILLA",
+            "default_value": "PURPUR",
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|max:20",
@@ -118,7 +119,7 @@
             "name": "Server Name",
             "description": "The internal server name used for the world folder and level-name property.",
             "env_variable": "SERVER_NAME",
-            "default_value": "SpongeVanilla Server",
+            "default_value": "Purpur Server",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:100",

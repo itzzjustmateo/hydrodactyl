@@ -5,9 +5,9 @@
         "update_url": null
     },
     "exported_at": "2026-07-09T00:00:00+00:00",
-    "name": "Forge",
-    "author": "support@hydrodactyl.com",
-    "description": "Forge is a modding API for Minecraft that allows players to install and run mods. Uses the itzg/minecraft-server Docker image.",
+    "name": "NeoForge",
+    "author": "support@pterodactyl.io",
+    "description": "NeoForge is a fork of Forge focused on separating the Minecraft modding ecosystem from the Forge name and legacy. Uses the itzg/minecraft-server Docker image.",
     "features": [
         "eula",
         "java_version",
@@ -28,7 +28,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/ash\n# Forge installation script\n# itzg/docker-minecraft-server handles server jar download at container start\nmkdir -p /mnt/server\n",
+            "script": "#!/bin/ash\n# NeoForge installation script\n# itzg/docker-minecraft-server handles server jar download at container start\nmkdir -p /mnt/server\n",
             "container": "ghcr.io/pterodactyl/installers:alpine",
             "entrypoint": "ash"
         }
@@ -38,7 +38,7 @@
             "name": "Server Type",
             "description": "The type of Minecraft server to run. Fixed for this egg.",
             "env_variable": "TYPE",
-            "default_value": "FORGE",
+            "default_value": "NEOFORGE",
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|max:20",
@@ -118,7 +118,7 @@
             "name": "Server Name",
             "description": "The internal server name used for the world folder and level-name property.",
             "env_variable": "SERVER_NAME",
-            "default_value": "Forge Server",
+            "default_value": "NeoForge Server",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:100",
