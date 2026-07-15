@@ -102,55 +102,58 @@ const CaptchaSettingsTab = () => {
 
     return (
         <div className='max-w-3xl mx-auto mt-6 space-y-6'>
-            <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden'>
-                <div className='px-5 py-4 border-b border-gray-800'>
-                    <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>Captcha Provider</h3>
+            <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
+                <div className='px-5 py-4 border-b border-mocha-400'>
+                    <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>Captcha Provider</h3>
                 </div>
                 <div className='p-5'>
                     <div className='max-w-xs'>
-                        <label className='block text-sm font-medium text-gray-400 mb-1'>Provider</label>
+                        <label className='block text-sm font-medium text-mocha-200 mb-1'>Provider</label>
                         <select
-                            className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-blue-500'
+                            className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
                             value={provider}
                             onChange={(e) => setProvider(e.target.value)}
                         >
+                            {Object.keys(providers).length === 0 && (
+                                <option value='' disabled className='bg-mocha-600 text-mocha-200'>No providers available</option>
+                            )}
                             {Object.entries(providers).map(([key, name]) => (
-                                <option key={key} value={key}>{name}</option>
+                                <option key={key} value={key} className='bg-mocha-600 text-cream-400'>{name}</option>
                             ))}
                         </select>
-                        <p className='text-xs text-gray-600 mt-1'>Select the captcha provider to use for authentication forms.</p>
+                        <p className='text-xs text-mocha-200/60 mt-1'>Select the captcha provider to use for authentication forms.</p>
                     </div>
                 </div>
             </div>
 
             {config && (
-                <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden'>
-                    <div className='px-5 py-4 border-b border-gray-800'>
-                        <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>{config.title}</h3>
+                <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
+                    <div className='px-5 py-4 border-b border-mocha-400'>
+                        <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>{config.title}</h3>
                     </div>
                     <div className='p-5'>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             {config.fields.map((field) => (
                                 <div key={field.key}>
-                                    <label className='block text-sm font-medium text-gray-400 mb-1'>{field.label}</label>
+                                    <label className='block text-sm font-medium text-mocha-200 mb-1'>{field.label}</label>
                                     <input
                                         type={field.sensitive ? 'password' : 'text'}
-                                        className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-blue-500'
+                                        className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
                                         value={form[field.key] || ''}
                                         onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
                                     />
                                 </div>
                             ))}
                         </div>
-                        <div className='mt-4 bg-gray-900 border border-gray-700 rounded-lg p-4 text-sm text-gray-400'>
-                            <strong className='text-gray-300'>Setup Instructions:</strong>
+                        <div className='mt-4 bg-mocha-600 border border-mocha-400 rounded-lg p-4 text-sm text-mocha-200'>
+                            <strong className='text-mocha-100'>Setup Instructions:</strong>
                             <ol className='list-decimal list-inside mt-2 space-y-1'>
                                 {config.instructions.map((inst, i) => (
                                     <li key={i}>
                                         {inst.url ? (
                                             <>
                                                 {inst.text.replace(inst.urlLabel, '')}
-                                                <a href={inst.url} target='_blank' rel='noopener noreferrer' className='text-blue-400 hover:text-blue-300 underline'>{inst.urlLabel}</a>
+                                                <a href={inst.url} target='_blank' rel='noopener noreferrer' className='text-cream-400 hover:text-cream-500 underline'>{inst.urlLabel}</a>
                                             </>
                                         ) : (
                                             inst.text
@@ -163,13 +166,13 @@ const CaptchaSettingsTab = () => {
                 </div>
             )}
 
-            <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 px-5 py-4 flex items-center justify-end gap-3'>
+            <div className='bg-mocha-500 rounded-lg border border-mocha-400 px-5 py-4 flex items-center justify-end gap-3'>
                 {error && <span className='text-red-400 text-sm'>{error}</span>}
                 {success && <span className='text-green-400 text-sm'>Captcha settings saved successfully.</span>}
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className='px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm rounded font-medium transition-colors flex items-center gap-1.5'
+                    className='px-5 py-2 bg-mocha-400 hover:bg-mocha-300 disabled:opacity-50 text-cream-400 text-sm rounded font-medium transition-colors flex items-center gap-1.5'
                 >
                     {saving && (
                         <svg className='w-4 h-4 animate-spin' fill='none' viewBox='0 0 24 24'>

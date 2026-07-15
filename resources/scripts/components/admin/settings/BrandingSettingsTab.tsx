@@ -106,9 +106,9 @@ const BrandingSettingsTab = () => {
                 <span><strong>Experimental:</strong> Logo customization is a new, experimental feature. Some aspects may change in future updates.</span>
             </div>
 
-            <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden'>
-                <div className='px-5 py-4 border-b border-gray-800'>
-                    <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>Current Logo</h3>
+            <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
+                <div className='px-5 py-4 border-b border-mocha-400'>
+                    <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>Current Logo</h3>
                 </div>
                 <div className='p-5'>
                     <div className='flex items-center justify-center'>
@@ -125,26 +125,26 @@ const BrandingSettingsTab = () => {
                 </div>
             </div>
 
-            <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden'>
-                <div className='px-5 py-4 border-b border-gray-800'>
-                    <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>Upload New Logo</h3>
+            <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
+                <div className='px-5 py-4 border-b border-mocha-400'>
+                    <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>Upload New Logo</h3>
                 </div>
                 <div className='p-5'>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                         <div>
-                            <label className='block text-sm font-medium text-gray-400 mb-2'>Upload Logo</label>
+                            <label className='block text-sm font-medium text-mocha-200 mb-2'>Upload Logo</label>
                             <div
-                                className='border-2 border-dashed border-gray-700 rounded-lg p-10 text-center cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-900/10'
+                                className='border-2 border-dashed border-mocha-400 rounded-lg p-10 text-center cursor-pointer transition-all hover:border-mocha-300 hover:bg-mocha-400/10'
                                 onClick={() => fileInputRef.current?.click()}
                                 onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.background = 'rgba(59,130,246,0.1)'; }}
                                 onDragLeave={(e) => { e.currentTarget.style.borderColor = '#555'; e.currentTarget.style.background = 'transparent'; }}
                                 onDrop={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#555'; e.currentTarget.style.background = 'transparent'; if (e.dataTransfer.files[0]) handleFileSelect(e.dataTransfer.files[0]); }}
                             >
-                                <svg className='w-12 h-12 text-gray-600 mx-auto mb-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                <svg className='w-12 h-12 text-mocha-200/60 mx-auto mb-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12' />
                                 </svg>
-                                <p className='text-gray-500 text-sm'><strong className='text-gray-400'>Click to choose</strong> or drag and drop</p>
-                                <p className='text-gray-600 text-xs mt-1'>PNG, JPG, GIF, WEBP or SVG (max 2MB)</p>
+                                <p className='text-mocha-200 text-sm'><strong className='text-mocha-200'>Click to choose</strong> or drag and drop</p>
+                                <p className='text-mocha-200/60 text-xs mt-1'>PNG, JPG, GIF, WEBP or SVG (max 2MB)</p>
                                 <input
                                     ref={fileInputRef}
                                     type='file'
@@ -155,17 +155,17 @@ const BrandingSettingsTab = () => {
                             </div>
                             {filePreview && (
                                 <div className='mt-3 text-center'>
-                                    <img src={filePreview} alt='Preview' className='max-w-full max-h-[150px] rounded mx-auto border border-gray-700 p-1' />
-                                    <p className='text-gray-500 text-xs mt-1'>Preview</p>
+                                    <img src={filePreview} alt='Preview' className='max-w-full max-h-[150px] rounded mx-auto border border-mocha-400 p-1' />
+                                    <p className='text-mocha-200 text-xs mt-1'>Preview</p>
                                 </div>
                             )}
                         </div>
                         <div>
-                            <label className='block text-sm font-medium text-gray-400 mb-2'>Or use a URL</label>
+                            <label className='block text-sm font-medium text-mocha-200 mb-2'>Or use a URL</label>
                             <div className='flex gap-1'>
                                 <input
                                     type='url'
-                                    className='flex-1 bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-blue-500'
+                                    className='flex-1 bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
                                     value={logoUrl}
                                     onChange={(e) => setLogoUrl(e.target.value)}
                                     placeholder='https://example.com/logo.png'
@@ -173,7 +173,7 @@ const BrandingSettingsTab = () => {
                                 <button
                                     type='button'
                                     onClick={handleUrlPreview}
-                                    className='px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded font-medium transition-colors'
+                                    className='px-3 py-2 bg-mocha-400 hover:bg-mocha-300 text-mocha-100 text-sm rounded font-medium transition-colors'
                                 >
                                     <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
@@ -181,16 +181,16 @@ const BrandingSettingsTab = () => {
                                     </svg>
                                 </button>
                             </div>
-                            <p className='text-xs text-gray-600 mt-1'>Enter a direct link to an image hosted elsewhere.</p>
+                            <p className='text-xs text-mocha-200/60 mt-1'>Enter a direct link to an image hosted elsewhere.</p>
                             {urlPreview && (
                                 <div className='mt-3 text-center'>
-                                    <img src={urlPreview} alt='URL Preview' className='max-w-full max-h-[150px] rounded mx-auto border border-gray-700 p-1' />
+                                    <img src={urlPreview} alt='URL Preview' className='max-w-full max-h-[150px] rounded mx-auto border border-mocha-400 p-1' />
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
-                <div className='px-5 py-4 border-t border-gray-800 flex items-center justify-end gap-2'>
+                <div className='px-5 py-4 border-t border-mocha-400 flex items-center justify-end gap-2'>
                     {currentLogoUrl && (
                         <button
                             onClick={() => handleSave(true)}
@@ -206,7 +206,7 @@ const BrandingSettingsTab = () => {
                     <button
                         onClick={() => handleSave()}
                         disabled={saving || (!selectedFile && !logoUrl.trim())}
-                        className='px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm rounded font-medium transition-colors flex items-center gap-1.5'
+                        className='px-5 py-2 bg-mocha-400 hover:bg-mocha-300 disabled:opacity-50 text-cream-400 text-sm rounded font-medium transition-colors flex items-center gap-1.5'
                     >
                         {saving && (
                             <svg className='w-4 h-4 animate-spin' fill='none' viewBox='0 0 24 24'>
@@ -223,9 +223,9 @@ const BrandingSettingsTab = () => {
             </div>
 
             {history.length > 0 && (
-                <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden'>
-                    <div className='px-5 py-4 border-b border-gray-800'>
-                        <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>Logo History <span className='text-gray-600 font-normal normal-case'>(Last 10 logos)</span></h3>
+                <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
+                    <div className='px-5 py-4 border-b border-mocha-400'>
+                        <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>Logo History <span className='text-mocha-200/60 font-normal normal-case'>(Last 10 logos)</span></h3>
                     </div>
                     <div className='p-5'>
                         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4'>
@@ -235,11 +235,11 @@ const BrandingSettingsTab = () => {
                                 return (
                                     <div
                                         key={index}
-                                        className={`border-2 rounded-lg p-3 cursor-pointer transition-all text-center ${isCurrent ? 'border-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.3)]' : 'border-gray-700 hover:border-gray-600'}`}
+                                        className={`border-2 rounded-lg p-3 cursor-pointer transition-all text-center ${isCurrent ? 'border-mocha-300 shadow-[0_0_8px_rgba(59,130,246,0.3)]' : 'border-mocha-400 hover:border-mocha-400'}`}
                                         onClick={() => { if (!isCurrent && confirm('Switch to this logo version?')) handleSave(false, index); }}
                                     >
                                         <img src={imgSrc} alt={`Logo ${index + 1}`} className='max-w-full max-h-[80px] mx-auto rounded' onError={(e) => { (e.target as HTMLElement).closest('[class*="border"]')?.classList.add('hidden'); }} />
-                                        <p className={`text-xs mt-1 font-medium ${isCurrent ? 'text-blue-400' : 'text-gray-500'}`}>
+                                        <p className={`text-xs mt-1 font-medium ${isCurrent ? 'text-cream-400' : 'text-mocha-200'}`}>
                                             {isCurrent ? 'Current' : `#${index + 1}`}
                                         </p>
                                     </div>

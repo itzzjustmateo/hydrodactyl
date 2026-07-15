@@ -80,12 +80,12 @@ const AdminEggScriptsContainer = ({ nestId, eggId }: Props) => {
                 </div>
             )}
 
-            <div className='bg-[#1a1a1a] border border-gray-800 rounded-lg p-6 mb-6'>
-                <h4 className='text-gray-200 font-medium mb-4'>Copy Script From</h4>
+            <div className='bg-mocha-500 border border-mocha-400 rounded-lg p-6 mb-6'>
+                <h4 className='text-cream-400 font-medium mb-4'>Copy Script From</h4>
                 <select
                     value={copyScriptFrom ?? ''}
                     onChange={(e) => setCopyScriptFrom(e.target.value ? Number(e.target.value) : null)}
-                    className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm'
+                    className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm'
                 >
                     <option value=''>None (use own script)</option>
                     {copyOptions.map((e) => (
@@ -94,14 +94,14 @@ const AdminEggScriptsContainer = ({ nestId, eggId }: Props) => {
                 </select>
             </div>
 
-            <div className='bg-[#1a1a1a] border border-gray-800 rounded-lg p-6 mb-6'>
-                <h4 className='text-gray-200 font-medium mb-4'>Install Script</h4>
+            <div className='bg-mocha-500 border border-mocha-400 rounded-lg p-6 mb-6'>
+                <h4 className='text-cream-400 font-medium mb-4'>Install Script</h4>
                 <div className='mb-4'>
-                    <label className='block text-sm text-gray-400 mb-1'>Script (Bash/Dockerfile)</label>
+                    <label className='block text-sm text-mocha-200 mb-1'>Script (Bash/Dockerfile)</label>
                     <textarea
                         value={scriptInstall}
                         onChange={(e) => setScriptInstall(e.target.value)}
-                        className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm font-mono'
+                        className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm font-mono'
                         rows={15}
                         placeholder='#!/bin/bash&#10;# Installation script...'
                         disabled={isCopying}
@@ -109,31 +109,31 @@ const AdminEggScriptsContainer = ({ nestId, eggId }: Props) => {
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div>
-                        <label className='block text-sm text-gray-400 mb-1'>Script Container</label>
+                        <label className='block text-sm text-mocha-200 mb-1'>Script Container</label>
                         <input
                             value={scriptContainer}
                             onChange={(e) => setScriptContainer(e.target.value)}
-                            className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm'
+                            className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm'
                             disabled={isCopying}
                         />
                     </div>
                     <div>
-                        <label className='block text-sm text-gray-400 mb-1'>Script Entrypoint Command</label>
+                        <label className='block text-sm text-mocha-200 mb-1'>Script Entrypoint Command</label>
                         <input
                             value={scriptEntry}
                             onChange={(e) => setScriptEntry(e.target.value)}
-                            className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm'
+                            className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm'
                             disabled={isCopying}
                         />
                     </div>
                 </div>
                 <div className='mt-4'>
-                    <label className='flex items-center gap-2 text-sm text-gray-400'>
+                    <label className='flex items-center gap-2 text-sm text-mocha-200'>
                         <input
                             type='checkbox'
                             checked={scriptIsPrivileged}
                             onChange={(e) => setScriptIsPrivileged(e.target.checked)}
-                            className='rounded border-gray-700 bg-transparent'
+                            className='rounded border-mocha-400 bg-transparent'
                             disabled={isCopying}
                         />
                         Privileged Install (run as root)

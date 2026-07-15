@@ -11,58 +11,14 @@ import {
 } from '@/api/admin/locations';
 import { httpErrorToHuman } from '@/api/http';
 import ButtonV2 from '@/components/elements/ButtonV2';
+import { Dialog } from '@/components/elements/dialog';
 import { MainPageHeader } from '@/components/elements/MainPageHeader';
 import Pagination from '@/components/elements/Pagination';
 import Spinner from '@/components/elements/Spinner';
 
-const AdminLocationCreate = () => {
-    const navigate = useNavigate();
-    const [short, setShort] = useState('');
-    const [long, setLong] = useState('');
-    const [saving, setSaving] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const handleCreate = () => {
-        setError(null);
-        setSaving(true);
-        createLocation({ short, long })
-            .then(() => navigate('..'))
-            .catch((e) => {
-                setError(httpErrorToHuman(e));
-                setSaving(false);
-            });
-    };
-
-    const inputClass =
-        'w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:outline-none focus:border-gray-500';
-
-    return (
-        <div>
-            <MainPageHeader
-                title='Create Location'
-                headChildren={
-                    <Link to='/admin/locations' className='text-sm text-gray-500 hover:text-gray-300'>
-                        &larr; Back to Locations
-                    </Link>
-                }
-            />
-            {error && <div className='text-red-400 mb-4 text-sm'>{error}</div>}
-            <div className='bg-[#1a1a1a] border border-gray-800 rounded-lg p-6 max-w-2xl'>
-                <div className='mb-4'>
-                    <label className='block text-sm text-gray-400 mb-1'>Short Code</label>
-                    <input value={short} onChange={(e) => setShort(e.target.value)} className={inputClass} />
-                </div>
-                <div className='mb-4'>
-                    <label className='block text-sm text-gray-400 mb-1'>Description</label>
-                    <input value={long} onChange={(e) => setLong(e.target.value)} className={inputClass} />
-                </div>
-                <ButtonV2 onClick={handleCreate} disabled={saving || !short || !long}>
-                    {saving ? 'Creating...' : 'Create Location'}
-                </ButtonV2>
-            </div>
-        </div>
-    );
-};
+const inputClass =
+    'w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300 transition-colors';
+const labelClass = 'block text-sm text-mocha-200 mb-1';
 
 const AdminLocationView = () => {
     const { id } = useParams<{ id: string }>();
@@ -80,7 +36,7 @@ const AdminLocationView = () => {
     const [long, setLong] = useState('');
     const [formInit, setFormInit] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [deleting, setDeleting] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
@@ -104,31 +60,27 @@ const AdminLocationView = () => {
             .finally(() => setSaving(false));
     };
 
-    const handleDelete = () => {
-        if (!confirm('Delete this location? This action cannot be undone.')) return;
-        setDeleting(true);
-        deleteLocation(locationId)
-            .then(() => navigate('/admin/locations'))
-            .catch((e) => {
-                setError(httpErrorToHuman(e));
-                setDeleting(false);
-            });
+    const handleDelete = async () => {
+        setShowDeleteConfirm(false);
+        try {
+            await deleteLocation(locationId);
+            navigate('/admin/locations');
+        } catch (e: any) {
+            setError(httpErrorToHuman(e));
+        }
     };
-
-    const inputClass =
-        'w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:outline-none focus:border-gray-500';
 
     return (
         <div>
             <MainPageHeader
                 title={location?.short || 'Location'}
                 headChildren={
-                    <Link to='/admin/locations' className='text-sm text-gray-500 hover:text-gray-300'>
+                    <Link to='/admin/locations' className='text-sm text-mocha-200 hover:text-mocha-100'>
                         &larr; Back to Locations
                     </Link>
                 }
             >
-                <ButtonV2 onClick={handleSave} disabled={saving || deleting}>
+                <ButtonV2 onClick={handleSave} disabled={saving}>
                     {saving ? 'Saving...' : 'Save'}
                 </ButtonV2>
             </MainPageHeader>
@@ -146,7 +98,7 @@ const AdminLocationView = () => {
                         <button
                             onClick={() => setTab('details')}
                             className={`px-4 py-2 text-sm rounded transition-colors ${
-                                tab === 'details' ? 'bg-white/10 text-gray-200' : 'text-gray-500 hover:text-gray-300'
+                                tab === 'details' ? 'bg-mocha-400/30 text-cream-400' : 'text-mocha-200 hover:text-mocha-100'
                             }`}
                         >
                             Details
@@ -154,7 +106,7 @@ const AdminLocationView = () => {
                         <button
                             onClick={() => setTab('danger')}
                             className={`px-4 py-2 text-sm rounded transition-colors ${
-                                tab === 'danger' ? 'bg-red-500/10 text-red-400' : 'text-gray-500 hover:text-gray-300'
+                                tab === 'danger' ? 'bg-red-500/10 text-red-400' : 'text-mocha-200 hover:text-mocha-100'
                             }`}
                         >
                             Danger Zone
@@ -162,9 +114,9 @@ const AdminLocationView = () => {
                     </div>
 
                     {tab === 'details' && (
-                        <div className='bg-[#1a1a1a] border border-gray-800 rounded-lg p-6 max-w-2xl'>
+                        <div className='bg-mocha-500 border border-mocha-400 rounded-lg p-6 max-w-2xl'>
                             <div className='mb-4'>
-                                <label className='block text-sm text-gray-400 mb-1'>Short Code</label>
+                                <label className={labelClass}>Short Code</label>
                                 <input
                                     value={short}
                                     onChange={(e) => setShort(e.target.value)}
@@ -172,49 +124,67 @@ const AdminLocationView = () => {
                                 />
                             </div>
                             <div className='mb-4'>
-                                <label className='block text-sm text-gray-400 mb-1'>Description</label>
-                                <input value={long} onChange={(e) => setLong(e.target.value)} className={inputClass} />
+                                <label className={labelClass}>Description</label>
+                                <input
+                                    value={long}
+                                    onChange={(e) => setLong(e.target.value)}
+                                    className={inputClass}
+                                />
                             </div>
-                            <div className='grid grid-cols-2 gap-4 pt-4 border-t border-gray-800 mt-4'>
+                            <div className='grid grid-cols-2 gap-4 pt-4 border-t border-mocha-400 mt-4'>
                                 <div>
-                                    <label className='block text-sm text-gray-400 mb-1'>Nodes</label>
-                                    <p className='text-gray-200'>{location.nodesCount}</p>
+                                    <label className={labelClass}>Nodes</label>
+                                    <p className='text-cream-400'>{location.nodesCount}</p>
                                 </div>
                                 <div>
-                                    <label className='block text-sm text-gray-400 mb-1'>Servers</label>
-                                    <p className='text-gray-200'>{location.serversCount}</p>
+                                    <label className={labelClass}>Servers</label>
+                                    <p className='text-cream-400'>{location.serversCount}</p>
                                 </div>
                             </div>
                         </div>
                     )}
 
                     {tab === 'danger' && (
-                        <div className='bg-[#1a1a1a] border border-red-900/50 rounded-lg p-6 max-w-2xl'>
+                        <div className='bg-mocha-500 border border-red-900/50 rounded-lg p-6 max-w-2xl'>
                             <h4 className='text-red-400 font-medium mb-2'>Delete Location</h4>
-                            <p className='text-gray-500 text-sm mb-4'>
+                            <p className='text-mocha-200 text-sm mb-4'>
                                 Permanently remove this location. This action cannot be undone.
                             </p>
                             <ButtonV2
-                                onClick={handleDelete}
-                                disabled={deleting}
+                                onClick={() => setShowDeleteConfirm(true)}
                                 className='!bg-red-600 hover:!bg-red-500'
                             >
-                                {deleting ? 'Deleting...' : 'Delete Location'}
+                                Delete Location
                             </ButtonV2>
                         </div>
                     )}
                 </>
             )}
+
+            <Dialog.Confirm
+                open={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirmed={handleDelete}
+                title='Delete Location'
+                confirm='Delete'
+                type='danger'
+            >
+                Permanently remove this location? This action cannot be undone.
+            </Dialog.Confirm>
         </div>
     );
 };
 
 const AdminLocationsContainer = () => {
     const [page, setPage] = useState(1);
+    const [showCreate, setShowCreate] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
     const { data, error, mutate } = useSWR(['admin:locations', page], () => getLocations({ page }));
 
-    const handleDelete = async (id: number) => {
-        if (!confirm('Delete this location?')) return;
+    const handleDelete = async () => {
+        if (confirmDelete === null) return;
+        const id = confirmDelete;
+        setConfirmDelete(null);
         try {
             await deleteLocation(id);
             mutate();
@@ -230,12 +200,12 @@ const AdminLocationsContainer = () => {
                 element={
                     <div>
                         <MainPageHeader title='Locations'>
-                            <Link
-                                to='new'
-                                className='px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors'
+                            <button
+                                onClick={() => setShowCreate(true)}
+                                className='px-4 py-2 bg-mocha-400 hover:bg-mocha-300 border border-mocha-300 text-cream-400 text-sm font-medium rounded-xl transition-colors cursor-pointer'
                             >
                                 Create Location
-                            </Link>
+                            </button>
                         </MainPageHeader>
 
                         {error && <div className='text-red-400 mb-4'>Error: {httpErrorToHuman(error)}</div>}
@@ -245,23 +215,23 @@ const AdminLocationsContainer = () => {
                         ) : (
                             <Pagination data={data} onPageSelect={setPage}>
                                 {({ items }) => (
-                                    <div className='bg-[#1a1a1a] border border-gray-800 rounded-lg overflow-hidden'>
+                                    <div className='bg-mocha-500 border border-mocha-400 rounded-lg overflow-hidden'>
                                         <table className='w-full text-sm'>
                                             <thead>
-                                                <tr className='border-b border-gray-800'>
-                                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>
+                                                <tr className='border-b border-mocha-400'>
+                                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>
                                                         ID
                                                     </th>
-                                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>
+                                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>
                                                         Short Code
                                                     </th>
-                                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>
+                                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>
                                                         Description
                                                     </th>
-                                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>
+                                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>
                                                         Nodes
                                                     </th>
-                                                    <th className='text-right px-4 py-3 text-gray-500 font-medium'>
+                                                    <th className='text-right px-4 py-3 text-mocha-200 font-medium'>
                                                         Actions
                                                     </th>
                                                 </tr>
@@ -269,7 +239,7 @@ const AdminLocationsContainer = () => {
                                             <tbody>
                                                 {items.length === 0 ? (
                                                     <tr>
-                                                        <td colSpan={5} className='text-center py-8 text-gray-500'>
+                                                        <td colSpan={5} className='text-center py-8 text-mocha-200'>
                                                             No locations found.
                                                         </td>
                                                     </tr>
@@ -277,26 +247,26 @@ const AdminLocationsContainer = () => {
                                                     items.map((location: AdminLocation) => (
                                                         <tr
                                                             key={location.id}
-                                                            className='border-b border-gray-800 last:border-0 hover:bg-white/[0.02]'
+                                                            className='border-b border-mocha-400 last:border-0 hover:bg-mocha-400/20'
                                                         >
-                                                            <td className='px-4 py-3 text-gray-400'>{location.id}</td>
+                                                            <td className='px-4 py-3 text-mocha-200'>{location.id}</td>
                                                             <td className='px-4 py-3'>
                                                                 <Link
                                                                     to={String(location.id)}
-                                                                    className='text-blue-400 hover:text-blue-300'
+                                                                    className='text-cream-400 hover:text-cream-500'
                                                                 >
                                                                     <code>{location.short}</code>
                                                                 </Link>
                                                             </td>
-                                                            <td className='px-4 py-3 text-gray-300'>{location.long}</td>
-                                                            <td className='px-4 py-3 text-gray-300'>
+                                                            <td className='px-4 py-3 text-mocha-100'>{location.long}</td>
+                                                            <td className='px-4 py-3 text-mocha-100'>
                                                                 {location.nodesCount}
                                                             </td>
                                                             <td className='px-4 py-3 text-right'>
                                                                 <div className='flex items-center justify-end gap-2'>
                                                                     <button
-                                                                        onClick={() => handleDelete(location.id)}
-                                                                        className='text-xs text-red-400 hover:text-red-300'
+                                                                        onClick={() => setConfirmDelete(location.id)}
+                                                                        className='text-xs text-red-400 hover:text-red-300 cursor-pointer'
                                                                     >
                                                                         Delete
                                                                     </button>
@@ -311,12 +281,90 @@ const AdminLocationsContainer = () => {
                                 )}
                             </Pagination>
                         )}
+
+                        <CreateLocationModal open={showCreate} onClose={() => setShowCreate(false)} onCreated={() => mutate()} />
+
+                        <Dialog.Confirm
+                            open={confirmDelete !== null}
+                            onClose={() => setConfirmDelete(null)}
+                            onConfirmed={handleDelete}
+                            title='Delete Location'
+                            confirm='Delete'
+                            type='danger'
+                        >
+                            Are you sure you want to delete this location?
+                        </Dialog.Confirm>
                     </div>
                 }
             />
-            <Route path='new' element={<AdminLocationCreate />} />
             <Route path=':id/*' element={<AdminLocationView />} />
         </Routes>
+    );
+};
+
+const CreateLocationModal = ({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: () => void }) => {
+    const [short, setShort] = useState('');
+    const [long, setLong] = useState('');
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleCreate = async () => {
+        setError('');
+        setSaving(true);
+        try {
+            await createLocation({ short, long });
+            onCreated();
+            setShort('');
+            setLong('');
+            onClose();
+        } catch (e: any) {
+            setError(httpErrorToHuman(e));
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onClose={onClose} title='Create Location'>
+            {error && <div className='text-red-400 mb-4 text-sm'>Error: {error}</div>}
+            <div className='space-y-4'>
+                <div>
+                    <label className={labelClass}>Short Code *</label>
+                    <input
+                        value={short}
+                        onChange={(e) => setShort(e.target.value)}
+                        className={inputClass}
+                        placeholder='us-east-1'
+                    />
+                </div>
+                <div>
+                    <label className={labelClass}>Description *</label>
+                    <input
+                        value={long}
+                        onChange={(e) => setLong(e.target.value)}
+                        className={inputClass}
+                        placeholder='US East'
+                    />
+                </div>
+            </div>
+            <Dialog.Footer>
+                <div className='flex items-center gap-3 p-6'>
+                    <button
+                        onClick={handleCreate}
+                        disabled={saving || !short || !long}
+                        className='px-4 py-2 bg-mocha-400 hover:bg-mocha-300 border border-mocha-300 disabled:opacity-50 disabled:cursor-not-allowed text-cream-400 text-sm font-medium rounded-xl transition-colors'
+                    >
+                        {saving ? 'Creating...' : 'Create Location'}
+                    </button>
+                    <button
+                        onClick={onClose}
+                        className='px-4 py-2 bg-mocha-500 hover:bg-mocha-400 border border-mocha-400 text-cream-400 text-sm font-medium rounded-xl transition-colors'
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </Dialog.Footer>
+        </Dialog>
     );
 };
 

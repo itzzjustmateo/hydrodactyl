@@ -97,67 +97,67 @@ const AdminMountViewContainer = () => {
             )}
             {success && <div className='text-green-400 mb-4 text-sm'>Mount updated successfully.</div>}
 
-            <div className='bg-[#1a1a1a] border border-gray-800 rounded-lg p-6 max-w-lg mb-8'>
-                <h4 className='text-gray-200 font-medium mb-4'>Mount Details</h4>
+            <div className='bg-mocha-500 border border-mocha-400 rounded-lg p-6 max-w-lg mb-8'>
+                <h4 className='text-cream-400 font-medium mb-4'>Mount Details</h4>
                 <div className='mb-4'>
-                    <label className='block text-sm text-gray-400 mb-1'>Name</label>
+                    <label className='block text-sm text-mocha-200 mb-1'>Name</label>
                     <input
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200'
+                        className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400'
                     />
                 </div>
                 <div className='mb-4'>
-                    <label className='block text-sm text-gray-400 mb-1'>Description</label>
+                    <label className='block text-sm text-mocha-200 mb-1'>Description</label>
                     <input
                         value={form.description}
                         onChange={(e) => setForm({ ...form, description: e.target.value })}
-                        className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200'
+                        className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400'
                     />
                 </div>
                 <div className='mb-4'>
-                    <label className='block text-sm text-gray-400 mb-1'>Source</label>
+                    <label className='block text-sm text-mocha-200 mb-1'>Source</label>
                     <input
                         value={form.source}
                         onChange={(e) => setForm({ ...form, source: e.target.value })}
-                        className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200'
+                        className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400'
                         placeholder='/container/data'
                     />
                 </div>
                 <div className='mb-4'>
-                    <label className='block text-sm text-gray-400 mb-1'>Target</label>
+                    <label className='block text-sm text-mocha-200 mb-1'>Target</label>
                     <input
                         value={form.target}
                         onChange={(e) => setForm({ ...form, target: e.target.value })}
-                        className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200'
+                        className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400'
                         placeholder='/mnt/server/data'
                     />
                 </div>
                 <div className='flex gap-4 mb-4'>
-                    <label className='flex items-center gap-2 text-sm text-gray-400'>
+                    <label className='flex items-center gap-2 text-sm text-mocha-200'>
                         <input
                             type='checkbox'
                             checked={form.read_only}
                             onChange={(e) => setForm({ ...form, read_only: e.target.checked })}
-                            className='rounded border-gray-700'
+                            className='rounded border-mocha-400'
                         />
                         Read Only
                     </label>
-                    <label className='flex items-center gap-2 text-sm text-gray-400'>
+                    <label className='flex items-center gap-2 text-sm text-mocha-200'>
                         <input
                             type='checkbox'
                             checked={form.user_mountable}
                             onChange={(e) => setForm({ ...form, user_mountable: e.target.checked })}
-                            className='rounded border-gray-700'
+                            className='rounded border-mocha-400'
                         />
                         User Mountable
                     </label>
                 </div>
             </div>
 
-            <div className='bg-[#1a1a1a] border border-red-800 rounded-lg p-6 max-w-lg'>
+            <div className='bg-mocha-500 border border-red-800 rounded-lg p-6 max-w-lg'>
                 <h4 className='text-red-400 font-medium mb-2'>Danger Zone</h4>
-                <p className='text-sm text-gray-500 mb-4'>Permanently delete this mount. This cannot be undone.</p>
+                <p className='text-sm text-mocha-200 mb-4'>Permanently delete this mount. This cannot be undone.</p>
                 <ButtonV2
                     onClick={handleDelete}
                     disabled={saving || deleting}

@@ -13,6 +13,7 @@ export interface AdminDatabaseHost {
     port: number;
     username: string;
     node: number | null;
+    containerImage?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -26,6 +27,7 @@ const rawToDatabaseHost = (data: FractalResponseData): AdminDatabaseHost => {
         port: attrs.port as number,
         username: attrs.username as string,
         node: attrs.node as number | null,
+        containerImage: attrs.container_image as string | undefined,
         createdAt: attrs.created_at as string,
         updatedAt: attrs.updated_at as string,
     };
@@ -58,6 +60,7 @@ export interface CreateDatabaseHostData {
     port: number;
     username: string;
     password: string;
+    container_image?: string;
     node_id?: number | null;
 }
 

@@ -1,8 +1,9 @@
 import { LayoutSideContent } from '@gravity-ui/icons';
 import type { IconSvgElement } from '@hugeicons/react';
 import { memo, type RefObject, useCallback, useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
+import Logo from '@/components/elements/HydroLogo';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/contexts/SidebarContext';
 import { cn } from '@/lib/utils';
@@ -130,12 +131,32 @@ export default memo(function Sidebar({ navItems, className, onNavClick }: Sideba
                 })}
             </ul>
             {isMinimized && (
-                <div className='mt-auto flex justify-center py-4'>
+                <div className='mt-auto flex flex-col items-center gap-2 py-4'>
+                    <NavLink
+                        to='/'
+                        className='flex items-center justify-center shrink-0 h-8 w-fit hydrodactyl-logo opacity-60 hover:opacity-100 transition-opacity'
+                        aria-label='Home'
+                    >
+                        <Logo />
+                    </NavLink>
                     <Button
                         variant='secondary'
                         size='sm'
                         className='p-1 gap-1 rounded-full size-8'
                         aria-label='Expand sidebar'
+                        onClick={toggleMinimized}
+                    >
+                        <LayoutSideContent width={16} height={16} />
+                    </Button>
+                </div>
+            )}
+            {!isMinimized && (
+                <div className='mt-auto flex justify-center py-4'>
+                    <Button
+                        variant='secondary'
+                        size='sm'
+                        className='p-1 gap-1 rounded-full size-8'
+                        aria-label='Collapse sidebar'
                         onClick={toggleMinimized}
                     >
                         <LayoutSideContent width={16} height={16} />

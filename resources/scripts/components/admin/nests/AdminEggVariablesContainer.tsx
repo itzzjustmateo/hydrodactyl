@@ -113,45 +113,45 @@ const AdminEggVariablesContainer = ({ nestId, eggId }: Props) => {
             {success && <div className='text-green-400 mb-4 text-sm'>Variable saved.</div>}
 
             {showCreate && (
-                <div className='bg-[#1a1a1a] border border-gray-800 rounded-lg p-6 mb-6'>
-                    <h4 className='text-gray-200 font-medium mb-4'>{editingId ? 'Edit' : 'Create'} Variable</h4>
+                <div className='bg-mocha-500 border border-mocha-400 rounded-lg p-6 mb-6'>
+                    <h4 className='text-cream-400 font-medium mb-4'>{editingId ? 'Edit' : 'Create'} Variable</h4>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         <div>
-                            <label className='block text-sm text-gray-400 mb-1'>Name</label>
+                            <label className='block text-sm text-mocha-200 mb-1'>Name</label>
                             <input value={form.name} onChange={(e) => set('name', e.target.value)}
-                                className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm' />
+                                className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm' />
                         </div>
                         <div>
-                            <label className='block text-sm text-gray-400 mb-1'>Environment Variable</label>
+                            <label className='block text-sm text-mocha-200 mb-1'>Environment Variable</label>
                             <input value={form.env_variable} onChange={(e) => set('env_variable', e.target.value)}
-                                className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm font-mono' />
+                                className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm font-mono' />
                         </div>
                         <div className='md:col-span-2'>
-                            <label className='block text-sm text-gray-400 mb-1'>Description</label>
+                            <label className='block text-sm text-mocha-200 mb-1'>Description</label>
                             <textarea value={form.description} onChange={(e) => set('description', e.target.value)}
-                                className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm' rows={2} />
+                                className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm' rows={2} />
                         </div>
                         <div>
-                            <label className='block text-sm text-gray-400 mb-1'>Default Value</label>
+                            <label className='block text-sm text-mocha-200 mb-1'>Default Value</label>
                             <input value={form.default_value} onChange={(e) => set('default_value', e.target.value)}
-                                className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm' />
+                                className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm' />
                         </div>
                         <div>
-                            <label className='block text-sm text-gray-400 mb-1'>Validation Rules</label>
+                            <label className='block text-sm text-mocha-200 mb-1'>Validation Rules</label>
                             <input value={form.rules} onChange={(e) => set('rules', e.target.value)}
-                                className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200 text-sm font-mono' />
+                                className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400 text-sm font-mono' />
                         </div>
                         <div className='flex items-center gap-6'>
-                            <label className='flex items-center gap-2 text-sm text-gray-400'>
+                            <label className='flex items-center gap-2 text-sm text-mocha-200'>
                                 <input type='checkbox' checked={form.user_viewable}
                                     onChange={(e) => set('user_viewable', e.target.checked)}
-                                    className='rounded border-gray-700 bg-transparent' />
+                                    className='rounded border-mocha-400 bg-transparent' />
                                 User Viewable
                             </label>
-                            <label className='flex items-center gap-2 text-sm text-gray-400'>
+                            <label className='flex items-center gap-2 text-sm text-mocha-200'>
                                 <input type='checkbox' checked={form.user_editable}
                                     onChange={(e) => set('user_editable', e.target.checked)}
-                                    className='rounded border-gray-700 bg-transparent' />
+                                    className='rounded border-mocha-400 bg-transparent' />
                                 User Editable
                             </label>
                         </div>
@@ -166,32 +166,32 @@ const AdminEggVariablesContainer = ({ nestId, eggId }: Props) => {
             )}
 
             <div className='flex items-center justify-between mb-4'>
-                <h4 className='text-gray-200 font-medium'>Variables ({variables.length})</h4>
+                <h4 className='text-cream-400 font-medium'>Variables ({variables.length})</h4>
                 {!showCreate && <ButtonV2 onClick={() => setShowCreate(true)}>Create Variable</ButtonV2>}
             </div>
 
             {variables.length === 0 ? (
-                <p className='text-gray-500 text-sm'>No variables defined for this egg.</p>
+                <p className='text-mocha-200 text-sm'>No variables defined for this egg.</p>
             ) : (
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     {variables.map((v) => (
-                        <div key={v.id} className='bg-[#1a1a1a] border border-gray-800 rounded-lg p-4'>
+                        <div key={v.id} className='bg-mocha-500 border border-mocha-400 rounded-lg p-4'>
                             <div className='flex items-start justify-between mb-2'>
                                 <div>
-                                    <span className='text-gray-200 font-medium text-sm'>{v.name}</span>
-                                    <span className='text-gray-500 text-xs ml-2 font-mono'>{v.envVariable}</span>
+                                    <span className='text-cream-400 font-medium text-sm'>{v.name}</span>
+                                    <span className='text-mocha-200 text-xs ml-2 font-mono'>{v.envVariable}</span>
                                 </div>
                                 <div className='flex gap-2'>
-                                    <button onClick={() => handleEdit(v)} className='text-xs text-gray-500 hover:text-gray-300'>Edit</button>
+                                    <button onClick={() => handleEdit(v)} className='text-xs text-mocha-200 hover:text-mocha-100'>Edit</button>
                                     <button onClick={() => handleDelete(v)} className='text-xs text-red-400 hover:text-red-300'>Delete</button>
                                 </div>
                             </div>
-                            {v.description && <p className='text-gray-500 text-xs mb-2'>{v.description}</p>}
+                            {v.description && <p className='text-mocha-200 text-xs mb-2'>{v.description}</p>}
                             <div className='flex flex-wrap gap-2 text-xs'>
-                                <span className='text-gray-600'>Default: <span className='text-gray-400 font-mono'>{v.defaultValue || '-'}</span></span>
-                                {v.rules && <span className='text-gray-600'>Rules: <span className='text-gray-400 font-mono'>{v.rules}</span></span>}
-                                <span className={v.userViewable ? 'text-green-500' : 'text-gray-600'}>{v.userViewable ? 'Viewable' : 'Hidden'}</span>
-                                <span className={v.userEditable ? 'text-green-500' : 'text-gray-600'}>{v.userEditable ? 'Editable' : 'Read-only'}</span>
+                                <span className='text-mocha-200/60'>Default: <span className='text-mocha-200 font-mono'>{v.defaultValue || '-'}</span></span>
+                                {v.rules && <span className='text-mocha-200/60'>Rules: <span className='text-mocha-200 font-mono'>{v.rules}</span></span>}
+                                <span className={v.userViewable ? 'text-green-500' : 'text-mocha-200/60'}>{v.userViewable ? 'Viewable' : 'Hidden'}</span>
+                                <span className={v.userEditable ? 'text-green-500' : 'text-mocha-200/60'}>{v.userEditable ? 'Editable' : 'Read-only'}</span>
                             </div>
                         </div>
                     ))}

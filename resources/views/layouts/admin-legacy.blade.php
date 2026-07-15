@@ -94,10 +94,10 @@
     .form-control { background-color: #1f2937 !important; border-color: #374151 !important; color: #d1d5db !important; }
     .form-control:focus { border-color: #3b82f6 !important; box-shadow: none !important; }
     .pagination > li > a, .pagination > li > span { background-color: #1f2937 !important; border-color: #374151 !important; color: #d1d5db !important; }
-    .nav-tabs-custom { background-color: transparent !important; box-shadow: none !important; }
-    .nav-tabs { border-bottom: 1px solid #2d2d2d !important; }
-    .nav-tabs > li > a { color: #6b7280 !important; background-color: transparent !important; border: none !important; }
-    .nav-tabs > li.active > a { color: #60a5fa !important; border-bottom: 2px solid #3b82f6 !important; }
+     .nav-tabs-custom { background-color: transparent !important; box-shadow: none !important; }
+     .nav-tabs { border-bottom: 1px solid #2d2d2d !important; }
+     .nav-tabs > li > a { color: #6b7280 !important; background-color: transparent !important; border: none !important; }
+     .nav-tabs > li.active > a { color: #d1d5db !important; border-bottom: 2px solid #d1d5db !important; }
     .skin-blue .main-header .logo { background-color: #1a1a1a !important; }
     .skin-blue .main-header .navbar { background-color: #1a1a1a !important; }
     .skin-blue .sidebar a { color: #d1d5db !important; }

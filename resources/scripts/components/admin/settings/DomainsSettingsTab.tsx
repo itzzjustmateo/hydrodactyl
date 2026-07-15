@@ -48,12 +48,12 @@ const DomainsList = () => {
 
     return (
         <div className='mt-6'>
-            <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden'>
-                <div className='px-5 py-4 border-b border-gray-800 flex items-center justify-between'>
-                    <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>Configured Domains</h3>
+            <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
+                <div className='px-5 py-4 border-b border-mocha-400 flex items-center justify-between'>
+                    <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>Configured Domains</h3>
                     <Link
                         to='/admin/settings/domains/create'
-                        className='px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded font-medium transition-colors'
+                        className='px-3 py-1.5 bg-mocha-400 hover:bg-mocha-300 text-cream-400 text-xs rounded font-medium transition-colors'
                     >
                         Create New Domain
                     </Link>
@@ -61,11 +61,11 @@ const DomainsList = () => {
 
                 {domains.length === 0 ? (
                     <div className='text-center py-12'>
-                        <h4 className='text-gray-500 text-sm font-medium'>No domains configured</h4>
-                        <p className='text-gray-600 text-xs mt-1'>Configure DNS domains to enable subdomain management for servers.</p>
+                        <h4 className='text-mocha-200 text-sm font-medium'>No domains configured</h4>
+                        <p className='text-mocha-200/60 text-xs mt-1'>Configure DNS domains to enable subdomain management for servers.</p>
                         <Link
                             to='/admin/settings/domains/create'
-                            className='inline-block mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded font-medium transition-colors'
+                            className='inline-block mt-4 px-4 py-2 bg-mocha-400 hover:bg-mocha-300 text-cream-400 text-sm rounded font-medium transition-colors'
                         >
                             Create Your First Domain
                         </Link>
@@ -74,24 +74,24 @@ const DomainsList = () => {
                     <div className='overflow-x-auto'>
                         <table className='w-full text-sm'>
                             <thead>
-                                <tr className='border-b border-gray-800'>
-                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>Domain Name</th>
-                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>DNS Provider</th>
-                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>Status</th>
-                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>Default</th>
-                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>Subdomains</th>
-                                    <th className='text-left px-4 py-3 text-gray-500 font-medium'>Created</th>
-                                    <th className='text-right px-4 py-3 text-gray-500 font-medium'></th>
+                                <tr className='border-b border-mocha-400'>
+                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>Domain Name</th>
+                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>DNS Provider</th>
+                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>Status</th>
+                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>Default</th>
+                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>Subdomains</th>
+                                    <th className='text-left px-4 py-3 text-mocha-200 font-medium'>Created</th>
+                                    <th className='text-right px-4 py-3 text-mocha-200 font-medium'></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {domains.map((domain) => (
-                                    <tr key={domain.id} className='border-b border-gray-800 hover:bg-gray-900/50'>
+                                    <tr key={domain.id} className='border-b border-mocha-400 hover:bg-mocha-600/50'>
                                         <td className='px-4 py-3'>
-                                            <code className='text-gray-200 text-xs'>{domain.name}</code>
+                                            <code className='text-cream-400 text-xs'>{domain.name}</code>
                                         </td>
                                         <td className='px-4 py-3'>
-                                            <span className='inline-block px-2 py-0.5 bg-blue-900/30 text-blue-400 text-xs rounded'>
+                                            <span className='inline-block px-2 py-0.5 bg-mocha-400/20 text-cream-400 text-xs rounded'>
                                                 {domain.dns_provider.charAt(0).toUpperCase() + domain.dns_provider.slice(1)}
                                             </span>
                                         </td>
@@ -104,22 +104,22 @@ const DomainsList = () => {
                                         </td>
                                         <td className='px-4 py-3'>
                                             {domain.is_default && (
-                                                <span className='inline-block px-2 py-0.5 bg-blue-900/30 text-blue-400 text-xs rounded'>Default</span>
+                                                <span className='inline-block px-2 py-0.5 bg-mocha-400/20 text-cream-400 text-xs rounded'>Default</span>
                                             )}
                                         </td>
                                         <td className='px-4 py-3'>
-                                            <span className='inline-block px-2 py-0.5 bg-gray-800 text-gray-400 text-xs rounded'>
+                                            <span className='inline-block px-2 py-0.5 bg-mocha-400 text-mocha-200 text-xs rounded'>
                                                 {domain.server_subdomains_count || 0}
                                             </span>
                                         </td>
-                                        <td className='px-4 py-3 text-gray-500 text-xs'>
+                                        <td className='px-4 py-3 text-mocha-200 text-xs'>
                                             {new Date(domain.created_at).toLocaleDateString()}
                                         </td>
                                         <td className='px-4 py-3 text-right'>
                                             <div className='flex items-center justify-end gap-2'>
                                                 <button
                                                     onClick={() => navigate(`/admin/settings/domains/${domain.id}/edit`)}
-                                                    className='px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs rounded transition-colors'
+                                                    className='px-2 py-1 bg-mocha-400 hover:bg-mocha-300 text-mocha-100 text-xs rounded transition-colors'
                                                 >
                                                     Edit
                                                 </button>
@@ -217,28 +217,28 @@ const DomainForm = ({ domain }: { domain?: DomainData }) => {
     return (
         <div className='mt-6'>
             <form onSubmit={handleSubmit}>
-                <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden mb-6'>
-                    <div className='px-5 py-4 border-b border-gray-800'>
-                        <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>Domain Information</h3>
+                <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden mb-6'>
+                    <div className='px-5 py-4 border-b border-mocha-400'>
+                        <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>Domain Information</h3>
                     </div>
                     <div className='p-5'>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             <div>
-                                <label className='block text-sm font-medium text-gray-400 mb-1'>Domain Name</label>
+                                <label className='block text-sm font-medium text-mocha-200 mb-1'>Domain Name</label>
                                 <input
                                     type='text'
-                                    className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-blue-500'
+                                    className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
                                     value={form.name}
                                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                                     placeholder='example.com'
                                     required
                                 />
-                                <p className='text-xs text-gray-600 mt-1'>The domain name used for subdomains (e.g., example.com).</p>
+                                <p className='text-xs text-mocha-200/60 mt-1'>The domain name used for subdomains (e.g., example.com).</p>
                             </div>
                             <div>
-                                <label className='block text-sm font-medium text-gray-400 mb-1'>DNS Provider</label>
+                                <label className='block text-sm font-medium text-mocha-200 mb-1'>DNS Provider</label>
                                 <select
-                                    className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-blue-500'
+                                    className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
                                     value={form.dns_provider}
                                     onChange={(e) => setForm({ ...form, dns_provider: e.target.value })}
                                     required
@@ -248,28 +248,28 @@ const DomainForm = ({ domain }: { domain?: DomainData }) => {
                                         <option key={key} value={key}>{label}</option>
                                     ))}
                                 </select>
-                                <p className='text-xs text-gray-600 mt-1'>The DNS service provider that manages this domain.</p>
+                                <p className='text-xs text-mocha-200/60 mt-1'>The DNS service provider that manages this domain.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {configSchema && (
-                    <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden mb-6'>
-                        <div className='px-5 py-4 border-b border-gray-800'>
-                            <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>DNS Provider Configuration</h3>
+                    <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden mb-6'>
+                        <div className='px-5 py-4 border-b border-mocha-400'>
+                            <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>DNS Provider Configuration</h3>
                         </div>
                         <div className='p-5'>
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                                 {Object.entries(configSchema).map(([key, field]) => (
                                     <div key={key}>
-                                        <label className='block text-sm font-medium text-gray-400 mb-1'>
+                                        <label className='block text-sm font-medium text-mocha-200 mb-1'>
                                             {field.description || key}
                                             {field.required && <span className='text-red-400 ml-1'>*</span>}
                                         </label>
                                         <input
                                             type={field.sensitive ? 'password' : 'text'}
-                                            className='w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-blue-500'
+                                            className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
                                             value={dnsConfig[key] || ''}
                                             onChange={(e) => handleDnsConfigChange(key, e.target.value)}
                                             required={field.required}
@@ -281,14 +281,14 @@ const DomainForm = ({ domain }: { domain?: DomainData }) => {
                     </div>
                 )}
 
-                <div className='bg-[#1a1a1a] rounded-lg border border-gray-800 overflow-hidden mb-6'>
-                    <div className='px-5 py-4 border-b border-gray-800'>
-                        <h3 className='text-sm font-semibold text-gray-300 uppercase tracking-wider'>Additional Settings</h3>
+                <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden mb-6'>
+                    <div className='px-5 py-4 border-b border-mocha-400'>
+                        <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>Additional Settings</h3>
                     </div>
                     <div className='p-5'>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                             <div>
-                                <label className='block text-sm font-medium text-gray-400 mb-2'>Status</label>
+                                <label className='block text-sm font-medium text-mocha-200 mb-2'>Status</label>
                                 <div className='flex gap-2'>
                                     {[{ value: true, label: 'Active' }, { value: false, label: 'Inactive' }].map((opt) => (
                                         <label key={String(opt.value)} className='flex-1 cursor-pointer'>
@@ -299,18 +299,18 @@ const DomainForm = ({ domain }: { domain?: DomainData }) => {
                                                 onChange={() => setForm({ ...form, is_active: opt.value })}
                                                 className='hidden peer'
                                             />
-                                            <div className='px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-center text-sm peer-checked:border-blue-500 peer-checked:bg-blue-900/20 transition-colors'>
-                                                <span className={`font-medium ${form.is_active === opt.value ? 'text-blue-400' : 'text-gray-300'}`}>
+                                            <div className='px-4 py-2 bg-mocha-600 border border-mocha-400 rounded-lg text-center text-sm peer-checked:border-mocha-300 peer-checked:bg-mocha-500/20 transition-colors'>
+                                                <span className={`font-medium ${form.is_active === opt.value ? 'text-cream-400' : 'text-mocha-100'}`}>
                                                     {opt.label}
                                                 </span>
                                             </div>
                                         </label>
                                     ))}
                                 </div>
-                                <p className='text-xs text-gray-600 mt-2'>Whether this domain should be available for subdomain creation.</p>
+                                <p className='text-xs text-mocha-200/60 mt-2'>Whether this domain should be available for subdomain creation.</p>
                             </div>
                             <div>
-                                <label className='block text-sm font-medium text-gray-400 mb-2'>Default Domain</label>
+                                <label className='block text-sm font-medium text-mocha-200 mb-2'>Default Domain</label>
                                 <div className='flex gap-2'>
                                     {[{ value: true, label: 'Yes' }, { value: false, label: 'No' }].map((opt) => (
                                         <label key={String(opt.value)} className='flex-1 cursor-pointer'>
@@ -321,15 +321,15 @@ const DomainForm = ({ domain }: { domain?: DomainData }) => {
                                                 onChange={() => setForm({ ...form, is_default: opt.value })}
                                                 className='hidden peer'
                                             />
-                                            <div className='px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-center text-sm peer-checked:border-blue-500 peer-checked:bg-blue-900/20 transition-colors'>
-                                                <span className={`font-medium ${form.is_default === opt.value ? 'text-blue-400' : 'text-gray-300'}`}>
+                                            <div className='px-4 py-2 bg-mocha-600 border border-mocha-400 rounded-lg text-center text-sm peer-checked:border-mocha-300 peer-checked:bg-mocha-500/20 transition-colors'>
+                                                <span className={`font-medium ${form.is_default === opt.value ? 'text-cream-400' : 'text-mocha-100'}`}>
                                                     {opt.label}
                                                 </span>
                                             </div>
                                         </label>
                                     ))}
                                 </div>
-                                <p className='text-xs text-gray-600 mt-2'>Use as default for automatic subdomain generation.</p>
+                                <p className='text-xs text-mocha-200/60 mt-2'>Use as default for automatic subdomain generation.</p>
                             </div>
                         </div>
                     </div>
@@ -354,7 +354,7 @@ const DomainForm = ({ domain }: { domain?: DomainData }) => {
                                 type='button'
                                 onClick={handleTestConnection}
                                 disabled={testing}
-                                className='px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-gray-300 text-sm rounded font-medium transition-colors flex items-center gap-1.5'
+                                className='px-4 py-2 bg-mocha-400 hover:bg-mocha-300 disabled:opacity-50 text-mocha-100 text-sm rounded font-medium transition-colors flex items-center gap-1.5'
                             >
                                 {testing ? (
                                     <svg className='w-4 h-4 animate-spin' fill='none' viewBox='0 0 24 24'>
@@ -373,14 +373,14 @@ const DomainForm = ({ domain }: { domain?: DomainData }) => {
                     <div className='flex items-center gap-2'>
                         <Link
                             to='/admin/settings/domains'
-                            className='px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded font-medium transition-colors'
+                            className='px-4 py-2 bg-mocha-400 hover:bg-mocha-300 text-mocha-100 text-sm rounded font-medium transition-colors'
                         >
                             Cancel
                         </Link>
                         <button
                             type='submit'
                             disabled={saving}
-                            className='px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm rounded font-medium transition-colors flex items-center gap-1.5'
+                            className='px-5 py-2 bg-mocha-400 hover:bg-mocha-300 disabled:opacity-50 text-cream-400 text-sm rounded font-medium transition-colors flex items-center gap-1.5'
                         >
                             {saving && (
                                 <svg className='w-4 h-4 animate-spin' fill='none' viewBox='0 0 24 24'>

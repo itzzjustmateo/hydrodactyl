@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import useSWR from 'swr';
 import { CubeIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { MainPageHeader } from '@/components/elements/MainPageHeader';
 import Spinner from '@/components/elements/Spinner';
 import Pagination from '@/components/elements/Pagination';
@@ -12,6 +13,7 @@ import AdminNestViewContainer from '@/components/admin/nests/AdminNestViewContai
 
 const AdminNestsContainer = () => {
     const [page, setPage] = useState(1);
+    const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
     const { data, error, mutate } = useSWR(['admin:nests', page], () => getNests({ page }));
 
     const [showCreate, setShowCreate] = useState(false);
@@ -41,21 +43,21 @@ const AdminNestsContainer = () => {
                     <ButtonV2 onClick={() => setShowCreate(false)}>Back</ButtonV2>
                 </MainPageHeader>
                 {createError && <div className='text-red-400 mb-4 text-sm'>{createError}</div>}
-                <div className='bg-[#1a1a1a] border border-gray-800 rounded-lg p-6 max-w-lg'>
+                <div className='bg-mocha-500 border border-mocha-400 rounded-lg p-6 max-w-lg'>
                     <div className='mb-4'>
-                        <label className='block text-sm text-gray-400 mb-1'>Name</label>
+                        <label className='block text-sm text-mocha-200 mb-1'>Name</label>
                         <input
                             value={createName}
                             onChange={(e) => setCreateName(e.target.value)}
-                            className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200'
+                            className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400'
                         />
                     </div>
                     <div className='mb-4'>
-                        <label className='block text-sm text-gray-400 mb-1'>Description</label>
+                        <label className='block text-sm text-mocha-200 mb-1'>Description</label>
                         <input
                             value={createDesc}
                             onChange={(e) => setCreateDesc(e.target.value)}
-                            className='w-full bg-transparent border border-gray-700 rounded px-3 py-2 text-gray-200'
+                            className='w-full bg-transparent border border-mocha-400 rounded px-3 py-2 text-cream-400'
                         />
                     </div>
                     <ButtonV2 onClick={handleCreate} disabled={saving || !createName}>
@@ -73,7 +75,33 @@ const AdminNestsContainer = () => {
                 element={
                     <div>
                         <MainPageHeader title='Nests'>
-                            <ButtonV2 onClick={() => setShowCreate(true)}>New Nest</ButtonV2>
+                            <div className='flex items-center gap-2'>
+                                <div className='flex items-center bg-mocha-600 rounded-lg p-1'>
+                                    <button
+                                        onClick={() => setViewMode('cards')}
+                                        className={`p-1.5 rounded transition-colors text-xs font-bold ${
+                                            viewMode === 'cards'
+                                                ? 'bg-mocha-400 text-cream-400'
+                                                : 'text-mocha-200 hover:text-mocha-100'
+                                        }`}
+                                        title='Card view'
+                                    >
+                                        ▦
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('table')}
+                                        className={`p-1.5 rounded transition-colors text-xs font-bold ${
+                                            viewMode === 'table'
+                                                ? 'bg-mocha-400 text-cream-400'
+                                                : 'text-mocha-200 hover:text-mocha-100'
+                                        }`}
+                                        title='Table view'
+                                    >
+                                        ☰
+                                    </button>
+                                </div>
+                                <ButtonV2 onClick={() => setShowCreate(true)}>New Nest</ButtonV2>
+                            </div>
                         </MainPageHeader>
 
                         {error && <div className='text-red-400 mb-4'>Error: {httpErrorToHuman(error)}</div>}
@@ -83,44 +111,79 @@ const AdminNestsContainer = () => {
                         ) : (
                             <Pagination data={data} onPageSelect={setPage}>
                                 {({ items }) => (
-                                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                                    <>
                                         {items.length === 0 ? (
-                                            <div className='col-span-full text-center py-8 text-gray-500'>
+                                            <div className='text-center py-8 text-mocha-200'>
                                                 No nests found.
                                             </div>
+                                        ) : viewMode === 'cards' ? (
+                                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                                                {items.map((nest: AdminNest) => (
+                                                    <Link
+                                                        key={nest.id}
+                                                        to={String(nest.id)}
+                                                        className='block bg-mocha-500 border border-mocha-400 rounded-lg p-5 hover:border-mocha-400 transition-colors cursor-pointer group'
+                                                    >
+                                                        <div className='flex items-start justify-between mb-4'>
+                                                            <div className='flex items-center gap-3'>
+                                                                <div className='w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center shrink-0'>
+                                                                    <HugeiconsIcon icon={CubeIcon} className='w-5 h-5 text-cream-400' />
+                                                                </div>
+                                                                <div>
+                                                                    <h3 className='text-cream-400 font-semibold group-hover:text-cream-500 transition-colors'>{nest.name}</h3>
+                                                                    <p className='text-xs text-mocha-200/60 mt-0.5'>{nest.description || 'No description'}</p>
+                                                                </div>
+                                                            </div>
+                                                            <span className='text-xs text-mocha-200/60 font-mono'>#{nest.id}</span>
+                                                        </div>
+                                                        <div className='grid grid-cols-2 gap-3'>
+                                                            <div className='bg-mocha-400/20 rounded-lg p-3 border border-mocha-400/50'>
+                                                                <div className='text-lg font-bold text-cream-200'>{nest.eggsCount}</div>
+                                                                <div className='text-xs text-mocha-200'>eggs</div>
+                                                            </div>
+                                                            <div className='bg-mocha-400/20 rounded-lg p-3 border border-mocha-400/50'>
+                                                                <div className='text-lg font-bold text-cream-200'>{nest.serversCount}</div>
+                                                                <div className='text-xs text-mocha-200'>servers</div>
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+                                                ))}
+                                            </div>
                                         ) : (
-                                            items.map((nest: AdminNest) => (
-                                                <Link
-                                                    key={nest.id}
-                                                    to={String(nest.id)}
-                                                    className='block bg-[#1a1a1a] border border-gray-800 rounded-lg p-5 hover:border-gray-600 transition-colors cursor-pointer group'
-                                                >
-                                                    <div className='flex items-start justify-between mb-4'>
-                                                        <div className='flex items-center gap-3'>
-                                                            <div className='w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0'>
-                                                                <CubeIcon className='w-5 h-5 text-blue-400' />
-                                                            </div>
-                                                            <div>
-                                                                <h3 className='text-gray-200 font-semibold group-hover:text-white transition-colors'>{nest.name}</h3>
-                                                                <p className='text-xs text-gray-600 mt-0.5'>{nest.description || 'No description'}</p>
-                                                            </div>
-                                                        </div>
-                                                        <span className='text-xs text-gray-600 font-mono'>#{nest.id}</span>
-                                                    </div>
-                                                    <div className='grid grid-cols-2 gap-3'>
-                                                        <div className='bg-white/[0.03] rounded-lg p-3 border border-gray-800/50'>
-                                                            <div className='text-lg font-bold text-gray-100'>{nest.eggsCount}</div>
-                                                            <div className='text-xs text-gray-500'>eggs</div>
-                                                        </div>
-                                                        <div className='bg-white/[0.03] rounded-lg p-3 border border-gray-800/50'>
-                                                            <div className='text-lg font-bold text-gray-100'>{nest.serversCount}</div>
-                                                            <div className='text-xs text-gray-500'>servers</div>
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            ))
+                                            <div className='bg-mocha-500 border border-mocha-400 rounded-lg overflow-hidden'>
+                                                <table className='w-full text-sm'>
+                                                    <thead>
+                                                        <tr className='border-b border-mocha-400'>
+                                                            <th className='text-left px-4 py-3 text-mocha-200 font-medium'>Name</th>
+                                                            <th className='text-left px-4 py-3 text-mocha-200 font-medium'>Description</th>
+                                                            <th className='text-center px-4 py-3 text-mocha-200 font-medium'>Eggs</th>
+                                                            <th className='text-center px-4 py-3 text-mocha-200 font-medium'>Servers</th>
+                                                            <th className='text-right px-4 py-3 text-mocha-200 font-medium'>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {items.map((nest: AdminNest) => (
+                                                            <tr key={nest.id} className='border-b border-mocha-400 last:border-0 hover:bg-mocha-400/20'>
+                                                                <td className='px-4 py-3'>
+                                                                    <Link to={String(nest.id)} className='text-cream-400 font-medium hover:text-cream-200'>
+                                                                        {nest.name}
+                                                                    </Link>
+                                                                </td>
+                                                                <td className='px-4 py-3 text-mocha-100'>{nest.description || '-'}</td>
+                                                                <td className='px-4 py-3 text-center text-mocha-100'>{nest.eggsCount}</td>
+                                                                <td className='px-4 py-3 text-center text-mocha-100'>{nest.serversCount}</td>
+                                                                <td className='px-4 py-3 text-right'>
+                                                                    <Link to={String(nest.id)} className='text-xs text-cream-400 hover:text-cream-500'>
+                                                                        View
+                                                                    </Link>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         )}
-                                    </div>
+                                    </>
                                 )}
                             </Pagination>
                         )}

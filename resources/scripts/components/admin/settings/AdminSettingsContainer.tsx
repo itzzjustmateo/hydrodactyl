@@ -23,13 +23,13 @@ const AdminSettingsContainer = () => {
         <div>
             <MainPageHeader title='Settings' />
 
-            <div className='flex items-center space-x-1 border-b border-gray-800 overflow-x-auto'>
+            <div className='flex items-center space-x-1 border-b border-mocha-400 overflow-x-auto'>
                 {tabs.map((tab) => (
                     <NavLink
                         key={tab.to}
                         to={tab.to}
                         end={tab.end}
-                        className='whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px border-transparent text-gray-500 hover:text-gray-300 hover:border-gray-600'
+                        className='whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px border-transparent text-mocha-200 hover:text-mocha-100 hover:border-mocha-400'
                         style={({ isActive }) =>
                             isActive
                                 ? { borderColor: '#3b82f6', color: '#60a5fa' }

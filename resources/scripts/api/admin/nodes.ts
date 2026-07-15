@@ -105,6 +105,7 @@ export const createNode = (data: CreateNodeData): Promise<AdminNode> =>
 
 export interface UpdateNodeData extends Partial<CreateNodeData> {
     maintenance_mode?: boolean;
+    location_id?: number;
 }
 
 export const updateNode = (id: number, data: UpdateNodeData): Promise<AdminNode> =>
