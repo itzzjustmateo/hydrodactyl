@@ -10,15 +10,14 @@ import {
     Settings02Icon,
     UserMultiple02Icon,
 } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
 import { Fragment, Suspense, useMemo } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import Spinner from '@/components/elements/Spinner';
 import AppHeader from '@/components/layout/header/AppHeader';
 import MobileSidebar from '@/components/layout/sidebar/MobileSidebar';
-import MainSidebar from '@/components/elements/MainSidebar';
+import Sidebar from '@/components/layout/sidebar/Sidebar';
 import { HeaderProvider } from '@/contexts/HeaderContext';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 
@@ -137,31 +136,7 @@ const AdminRouter = () => {
                         <AppHeader />
 
                         <div className='flex flex-col lg:flex-row h-full w-full overflow-hidden relative'>
-                            <MainSidebar className='hidden lg:flex lg:relative lg:shrink-0 w-[300px] bg-[#1a1a1a] flex flex-col h-full'>
-                                <div className='flex flex-row items-center justify-between h-8 mb-4'>
-                                    <span className='text-cream-400 font-semibold text-sm'>Admin Panel</span>
-                                </div>
-                                <div aria-hidden className='mb-4 bg-[#ffffff33] min-h-[1px] w-6'></div>
-                                <nav className='flex-grow overflow-y-auto'>
-                                    {navItems.map((item) => (
-                                        <NavLink
-                                            key={item.tabName}
-                                            to={item.to}
-                                            end={item.end}
-                                            className={({ isActive }) =>
-                                                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                                                    isActive
-                                                        ? 'bg-mocha-400/20 text-cream-400'
-                                                        : 'text-mocha-200 hover:text-mocha-100 hover:bg-mocha-400/10'
-                                                }`
-                                            }
-                                        >
-                                            <HugeiconsIcon icon={item.icon} className='w-5 h-5 shrink-0' />
-                                            <span>{item.text}</span>
-                                        </NavLink>
-                                    ))}
-                                </nav>
-                            </MainSidebar>
+                            <Sidebar navItems={navItems} className='hidden lg:flex' />
                             <MobileSidebar navItems={navItems} />
 
                             <PageContentBlock title={'Admin'} className='!bg-[#11100E] !border-0 !rounded-none'>
