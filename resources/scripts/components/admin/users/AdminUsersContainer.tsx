@@ -307,11 +307,12 @@ const AdminUserView = () => {
         }
     };
 
+    const [activeTab, setActiveTab] = useState<'details' | 'manage'>('details');
+
     if (error) return <div className='text-red-400'>Error: {httpErrorToHuman(error)}</div>;
     if (!user) return <Spinner />;
 
     const tabs = ['details', 'manage'] as const;
-    const [activeTab, setActiveTab] = useState<'details' | 'manage'>('details');
 
     return (
         <div>
