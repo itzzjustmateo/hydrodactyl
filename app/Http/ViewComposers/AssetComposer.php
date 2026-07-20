@@ -4,6 +4,7 @@ namespace Pterodactyl\Http\ViewComposers;
 
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Pterodactyl\Services\Helpers\AssetHashService;
 use Pterodactyl\Services\Captcha\CaptchaManager;
 use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
@@ -27,7 +28,7 @@ class AssetComposer
     $logoType = config('app.logo.type');
     $logoValue = config('app.logo.value');
     $logoUrl = match ($logoType) {
-      'upload' => $logoValue ? url('storage/' . $logoValue) : null,
+      'upload' => ($logoValue && Storage::disk('public')->exists($logoValue)) ? url('storage/' . $logoValue) : null,
       'link' => $logoValue,
       default => null,
     };

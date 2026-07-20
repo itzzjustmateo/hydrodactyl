@@ -6,10 +6,13 @@ mkdir -p /var/log/panel/logs/ /var/log/supervisord/ /var/log/nginx/ /var/log/php
   && ln -s /app/storage/logs/ /var/log/panel/
 # Ensure proper permissions for Laravel storage directories
 mkdir -p /app/storage/logs /app/storage/framework/cache /app/storage/framework/sessions /app/storage/framework/views \
+  && mkdir -p /app/storage/app/public \
   && chmod -R 777 /app/storage/ \
 
 chmod g+s /app/storage/logs/
 chown nginx:nginx /app/storage/logs/
+
+ln -sfn /app/storage/app/public /app/public/storage
 
 # Check if any variables are unset and must be generated
 if [ -z "$APP_KEY" ] || [ -z "$HASHIDS_LENGTH" ] || [ -z "$HASHIDS_SALT" ]; then

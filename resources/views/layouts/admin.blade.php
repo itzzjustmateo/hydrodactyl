@@ -11,7 +11,7 @@
   @php
     $_favType = config('app.logo.type');
     $_favVal = config('app.logo.value');
-    if ($_favType === 'upload' && $_favVal) {
+    if ($_favType === 'upload' && $_favVal && Storage::disk('public')->exists($_favVal)) {
       $_favUrl = url('storage/' . $_favVal);
     } elseif ($_favType === 'link' && $_favVal) {
       $_favUrl = $_favVal;
@@ -66,7 +66,7 @@
           $logoValue = config('app.logo.value');
         @endphp
         <span class="logo-mini">
-          @if($logoType === 'upload' && $logoValue)
+          @if($logoType === 'upload' && $logoValue && Storage::disk('public')->exists($logoValue))
             <img src="{{ url('storage/' . $logoValue) }}" alt="{{ config('app.name', 'Panel') }}" style="max-height:30px;vertical-align:middle;">
           @elseif($logoType === 'link' && $logoValue)
             <img src="{{ $logoValue }}" alt="{{ config('app.name', 'Panel') }}" style="max-height:30px;vertical-align:middle;">
@@ -77,7 +77,7 @@
           @endif
         </span>
         <span class="logo-lg">
-          @if($logoType === 'upload' && $logoValue)
+          @if($logoType === 'upload' && $logoValue && Storage::disk('public')->exists($logoValue))
             <img src="{{ url('storage/' . $logoValue) }}" alt="" style="max-height:30px;vertical-align:middle;margin-right:6px;">
           @elseif($logoType === 'link' && $logoValue)
             <img src="{{ $logoValue }}" alt="" style="max-height:30px;vertical-align:middle;margin-right:6px;">
