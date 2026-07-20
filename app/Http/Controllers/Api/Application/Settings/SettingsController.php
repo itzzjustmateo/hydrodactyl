@@ -119,7 +119,15 @@ class SettingsController extends Controller
             Notification::route('mail', $request->user()->email)
                 ->notify(new MailTested($request->user()));
         } catch (\Exception $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], 500);
+            $message = $exception->getMessage();
+
+            if (str_contains($message, 'stream_socket_client') || str_contains($message, 'getaddrinfo')) {
+                return new JsonResponse([
+                    'error' => 'Could not connect to the mail server. Please verify your SMTP host and port settings are correct and that the server is reachable.',
+                ], 500);
+            }
+
+            return new JsonResponse(['error' => 'Failed to send test email: ' . $message], 500);
         }
 
         return new JsonResponse(['success' => true]);

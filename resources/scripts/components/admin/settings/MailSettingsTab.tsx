@@ -1,15 +1,23 @@
 import { useState } from 'react';
 import useSWR from 'swr';
+import { toast } from 'sonner';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Mail02Icon, Mail01Icon, Edit02Icon } from '@hugeicons/core-free-icons';
 
 import Spinner from '@/components/elements/Spinner';
 import { getMailSettings, updateMailSettings, testMailSettings } from '@/api/admin/settings';
 import { httpErrorToHuman } from '@/api/http';
 import { Button } from '@/components/ui/button';
 
+const inputClass =
+    'w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300 transition-colors';
+const labelClass = 'block text-sm text-mocha-200 mb-1';
+
 const MailSettingsTab = () => {
     const { data: settings, isLoading, error: fetchError, mutate } = useSWR('admin:settings:mail', getMailSettings);
     const [saving, setSaving] = useState(false);
     const [testing, setTesting] = useState(false);
+    const [editing, setEditing] = useState(false);
     const [form, setForm] = useState({
         'mail:mailers:smtp:host': '',
         'mail:mailers:smtp:port': 587,
@@ -20,8 +28,6 @@ const MailSettingsTab = () => {
         'mail:from:name': '',
     });
     const [formInit, setFormInit] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
 
     if (settings && !formInit) {
         setFormInit(true);
@@ -39,29 +45,38 @@ const MailSettingsTab = () => {
     }
 
     const handleSave = () => {
-        setError(null);
-        setSuccess(false);
         setSaving(true);
         updateMailSettings(form)
             .then(() => {
-                setSuccess(true);
+                toast.success('Mail settings updated successfully');
                 mutate();
-                setTimeout(() => setSuccess(false), 3000);
+                setEditing(false);
             })
-            .catch((e) => setError(httpErrorToHuman(e)))
+            .catch((e) => toast.error(httpErrorToHuman(e)))
             .finally(() => setSaving(false));
     };
 
     const handleTest = () => {
-        setError(null);
         setTesting(true);
         testMailSettings()
-            .then(() => {
-                setSuccess(true);
-                setTimeout(() => setSuccess(false), 3000);
-            })
-            .catch((e) => setError(httpErrorToHuman(e)))
+            .then(() => toast.success('Test email sent successfully'))
+            .catch((e) => toast.error(httpErrorToHuman(e)))
             .finally(() => setTesting(false));
+    };
+
+    const handleCancel = () => {
+        if (settings && !settings.disabled) {
+            setForm({
+                'mail:mailers:smtp:host': settings['mail:mailers:smtp:host'] || '',
+                'mail:mailers:smtp:port': settings['mail:mailers:smtp:port'] || 587,
+                'mail:mailers:smtp:encryption': settings['mail:mailers:smtp:encryption'] || 'tls',
+                'mail:mailers:smtp:username': settings['mail:mailers:smtp:username'] || '',
+                'mail:mailers:smtp:password': '',
+                'mail:from:address': settings['mail:from:address'] || '',
+                'mail:from:name': settings['mail:from:name'] || '',
+            });
+        }
+        setEditing(false);
     };
 
     if (isLoading || !settings) {
@@ -73,22 +88,31 @@ const MailSettingsTab = () => {
     }
 
     if (fetchError) {
-        return <div className='text-red-400 py-8 text-center'>{httpErrorToHuman(fetchError)}</div>;
+        return <div className='text-red-400 p-4'>Error: {httpErrorToHuman(fetchError)}</div>;
     }
 
     if (settings.disabled) {
         return (
-            <div className='max-w-3xl mx-auto mt-6'>
-                <div className='bg-mocha-500 rounded-lg border border-mocha-400 p-6'>
+            <div className='space-y-6 mt-4'>
+                <div className='bg-mocha-500 border border-mocha-400 rounded-xl p-6'>
+                    <div className='flex flex-col sm:flex-row items-start sm:items-center gap-5'>
+                        <div className='w-16 h-16 rounded-xl bg-amber-900/30 flex items-center justify-center shrink-0 border border-mocha-400'>
+                            <HugeiconsIcon icon={Mail02Icon} className='w-8 h-8 text-amber-400' />
+                        </div>
+                        <div className='flex-1'>
+                            <h2 className='text-xl font-bold text-cream-400'>Mail Not Configured</h2>
+                            <p className='text-mocha-200 text-sm mt-1'>SMTP mail driver is not enabled</p>
+                        </div>
+                    </div>
+                </div>
+                <div className='bg-mocha-500 border border-mocha-400 rounded-xl p-6'>
                     <div className='flex items-start gap-3 text-cream-400'>
-                        <svg className='w-5 h-5 mt-0.5 shrink-0' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
-                        </svg>
+                        <HugeiconsIcon icon={Mail02Icon} className='w-5 h-5 mt-0.5 shrink-0 text-amber-400' />
                         <div>
                             <p className='text-sm'>
-                                This interface requires the <code className='text-cream-400'>smtp</code> mail driver. Use
-                                {' '}<code className='text-cream-400'>php artisan p:environment:mail</code> or set{' '}
-                                <code className='text-cream-400'>MAIL_DRIVER=smtp</code> in your environment file.
+                                This interface requires the <code className='text-cream-400 bg-mocha-600/50 px-1.5 py-0.5 rounded'>smtp</code> mail driver. Use
+                                {' '}<code className='text-cream-400 bg-mocha-600/50 px-1.5 py-0.5 rounded'>php artisan p:environment:mail</code> or set{' '}
+                                <code className='text-cream-400 bg-mocha-600/50 px-1.5 py-0.5 rounded'>MAIL_DRIVER=smtp</code> in your environment file.
                             </p>
                         </div>
                     </div>
@@ -104,121 +128,184 @@ const MailSettingsTab = () => {
     ];
 
     return (
-        <div className='max-w-3xl mx-auto mt-6'>
-            <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
-                <div className='px-5 py-4 border-b border-mocha-400 flex items-center space-x-2'>
-                    <svg className='w-5 h-5 text-mocha-200' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' />
-                    </svg>
-                    <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>SMTP Settings</h3>
-                </div>
-
-                <div className='p-5 space-y-5'>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div>
-                            <label className='block text-sm font-medium text-mocha-200 mb-1'>SMTP Host</label>
-                            <input
-                                type='text'
-                                className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                                value={form['mail:mailers:smtp:host']}
-                                onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:host': e.target.value })}
-                                required
-                            />
-                            <p className='text-xs text-mocha-200/60 mt-1'>SMTP server address.</p>
+        <div className='space-y-6 mt-4'>
+            {/* Profile Card */}
+            <div className='bg-mocha-500 border border-mocha-400 rounded-xl p-6'>
+                <div className='flex flex-col sm:flex-row items-start sm:items-center gap-5'>
+                    <div className='w-16 h-16 rounded-xl bg-brand/10 flex items-center justify-center shrink-0 border border-mocha-400'>
+                        <HugeiconsIcon icon={Mail02Icon} className='w-8 h-8 text-brand' />
+                    </div>
+                    <div className='flex-1'>
+                        <h2 className='text-xl font-bold text-cream-400'>Mail Configuration</h2>
+                        <p className='text-mocha-200 text-sm mt-1'>SMTP server settings and outgoing mail configuration</p>
+                    </div>
+                    <div className='flex items-center gap-3'>
+                        <div className='text-center bg-mocha-600/50 rounded-lg px-4 py-3'>
+                            <p className='text-2xl font-bold text-cream-400'>{settings['mail:mailers:smtp:host'] || '—'}</p>
+                            <p className='text-xs text-mocha-200'>SMTP Host</p>
                         </div>
-                        <div className='grid grid-cols-2 gap-4'>
-                            <div>
-                                <label className='block text-sm font-medium text-mocha-200 mb-1'>Port</label>
-                                <input
-                                    type='number'
-                                    className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                                    value={form['mail:mailers:smtp:port']}
-                                    onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:port': parseInt(e.target.value) || 0 })}
-                                    required
-                                />
-                                <p className='text-xs text-mocha-200/60 mt-1'>SMTP server port.</p>
-                            </div>
-                            <div>
-                                <label className='block text-sm font-medium text-mocha-200 mb-1'>Encryption</label>
-                                <select
-                                    className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                                    value={form['mail:mailers:smtp:encryption']}
-                                    onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:encryption': e.target.value })}
-                                >
-                                    {encryptionOptions.map((opt) => (
-                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                    ))}
-                                </select>
-                                <p className='text-xs text-mocha-200/60 mt-1'>Encryption protocol.</p>
-                            </div>
+                        <div className='text-center bg-mocha-600/50 rounded-lg px-4 py-3'>
+                            <p className='text-2xl font-bold text-cream-400'>{settings['mail:from:address'] || '—'}</p>
+                            <p className='text-xs text-mocha-200'>From Address</p>
                         </div>
                     </div>
-
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div>
-                            <label className='block text-sm font-medium text-mocha-200 mb-1'>Username</label>
-                            <input
-                                type='text'
-                                className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                                value={form['mail:mailers:smtp:username']}
-                                onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:username': e.target.value })}
-                            />
-                            <p className='text-xs text-mocha-200/60 mt-1'>SMTP authentication username.</p>
-                        </div>
-                        <div>
-                            <label className='block text-sm font-medium text-mocha-200 mb-1'>Password</label>
-                            <input
-                                type='password'
-                                className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                                value={form['mail:mailers:smtp:password']}
-                                onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:password': e.target.value })}
-                                placeholder='Leave blank to keep existing'
-                            />
-                            <p className='text-xs text-mocha-200/60 mt-1'>Leave blank to keep the existing password.</p>
-                        </div>
-                    </div>
-
-                    <hr className='border-mocha-400' />
-
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div>
-                            <label className='block text-sm font-medium text-mocha-200 mb-1'>Mail From Address</label>
-                            <input
-                                type='email'
-                                className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                                value={form['mail:from:address']}
-                                onChange={(e) => setForm({ ...form, 'mail:from:address': e.target.value })}
-                                required
-                            />
-                            <p className='text-xs text-mocha-200/60 mt-1'>All outgoing emails will use this address.</p>
-                        </div>
-                        <div>
-                            <label className='block text-sm font-medium text-mocha-200 mb-1'>Mail From Name</label>
-                            <input
-                                type='text'
-                                className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                                value={form['mail:from:name']}
-                                onChange={(e) => setForm({ ...form, 'mail:from:name': e.target.value })}
-                            />
-                            <p className='text-xs text-mocha-200/60 mt-1'>Display name for outgoing emails.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='px-5 py-4 border-t border-mocha-400 flex items-center justify-end gap-3'>
-                    {error && <span className='text-red-400 text-sm'>{error}</span>}
-                    {success && <span className='text-green-400 text-sm'>Operation completed successfully.</span>}
-                    <Button
-                        onClick={() => { handleSave(); handleTest(); }}
-                        disabled={saving || testing}
-                    >
-                        <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M12 19l9 2-9-18-9 18 9-2zm0 0v-8' />
-                        </svg>
-                        Save & Test
-                    </Button>
                 </div>
             </div>
+
+            {/* SMTP Settings Card */}
+            <div className='bg-mocha-500 border border-mocha-400 rounded-xl p-6'>
+                <div className='flex items-center justify-between mb-6'>
+                    <div className='flex items-center gap-3'>
+                        <div className='w-10 h-10 bg-mocha-400 rounded-lg flex items-center justify-center'>
+                            <HugeiconsIcon icon={Mail02Icon} className='w-5 h-5 text-cream-400' />
+                        </div>
+                        <div>
+                            <h3 className='text-cream-400 font-semibold text-lg'>SMTP Settings</h3>
+                            <p className='text-mocha-200 text-sm'>Server connection and authentication details</p>
+                        </div>
+                    </div>
+                    {!editing && (
+                        <Button variant='secondary' onClick={() => setEditing(true)}>
+                            <HugeiconsIcon icon={Edit02Icon} className='w-4 h-4' />
+                            Edit Settings
+                        </Button>
+                    )}
+                </div>
+
+                {editing ? (
+                    <div className='space-y-5'>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+                            <div>
+                                <label className={labelClass}>SMTP Host</label>
+                                <input
+                                    type='text'
+                                    className={inputClass}
+                                    value={form['mail:mailers:smtp:host']}
+                                    onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:host': e.target.value })}
+                                    required
+                                />
+                                <p className='text-xs text-mocha-200/60 mt-1'>SMTP server address.</p>
+                            </div>
+                            <div className='grid grid-cols-2 gap-4'>
+                                <div>
+                                    <label className={labelClass}>Port</label>
+                                    <input
+                                        type='number'
+                                        className={inputClass}
+                                        value={form['mail:mailers:smtp:port']}
+                                        onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:port': parseInt(e.target.value) || 0 })}
+                                        required
+                                    />
+                                    <p className='text-xs text-mocha-200/60 mt-1'>SMTP server port.</p>
+                                </div>
+                                <div>
+                                    <label className={labelClass}>Encryption</label>
+                                    <select
+                                        className={inputClass}
+                                        value={form['mail:mailers:smtp:encryption']}
+                                        onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:encryption': e.target.value })}
+                                    >
+                                        {encryptionOptions.map((opt) => (
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                        ))}
+                                    </select>
+                                    <p className='text-xs text-mocha-200/60 mt-1'>Encryption protocol.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+                            <div>
+                                <label className={labelClass}>Username</label>
+                                <input
+                                    type='text'
+                                    className={inputClass}
+                                    value={form['mail:mailers:smtp:username']}
+                                    onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:username': e.target.value })}
+                                />
+                                <p className='text-xs text-mocha-200/60 mt-1'>SMTP authentication username.</p>
+                            </div>
+                            <div>
+                                <label className={labelClass}>Password</label>
+                                <input
+                                    type='password'
+                                    className={inputClass}
+                                    value={form['mail:mailers:smtp:password']}
+                                    onChange={(e) => setForm({ ...form, 'mail:mailers:smtp:password': e.target.value })}
+                                    placeholder='Leave blank to keep existing'
+                                />
+                                <p className='text-xs text-mocha-200/60 mt-1'>Leave blank to keep the existing password.</p>
+                            </div>
+                        </div>
+
+                        <div className='flex items-center gap-3 pt-2'>
+                            <Button variant='default' onClick={handleSave} disabled={saving}>
+                                {saving ? 'Saving...' : 'Save Changes'}
+                            </Button>
+                            <Button variant='secondary' onClick={handleCancel}>Cancel</Button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                        <div className='bg-mocha-600/50 rounded-lg p-4'>
+                            <p className='text-mocha-200 text-xs uppercase tracking-wider'>SMTP Host</p>
+                            <p className='text-cream-400 font-medium mt-1 font-mono text-sm'>{settings['mail:mailers:smtp:host'] || '—'}</p>
+                        </div>
+                        <div className='bg-mocha-600/50 rounded-lg p-4'>
+                            <p className='text-mocha-200 text-xs uppercase tracking-wider'>Port</p>
+                            <p className='text-cream-400 font-medium mt-1'>{settings['mail:mailers:smtp:port'] || '—'}</p>
+                        </div>
+                        <div className='bg-mocha-600/50 rounded-lg p-4'>
+                            <p className='text-mocha-200 text-xs uppercase tracking-wider'>Encryption</p>
+                            <p className='text-cream-400 font-medium mt-1'>{settings['mail:mailers:smtp:encryption'] || 'None'}</p>
+                        </div>
+                        <div className='bg-mocha-600/50 rounded-lg p-4'>
+                            <p className='text-mocha-200 text-xs uppercase tracking-wider'>Username</p>
+                            <p className='text-cream-400 font-medium mt-1 font-mono text-sm truncate'>{settings['mail:mailers:smtp:username'] || '—'}</p>
+                        </div>
+                        <div className='bg-mocha-600/50 rounded-lg p-4'>
+                            <p className='text-mocha-200 text-xs uppercase tracking-wider'>From Address</p>
+                            <p className='text-cream-400 font-medium mt-1 font-mono text-sm'>{settings['mail:from:address'] || '—'}</p>
+                        </div>
+                        <div className='bg-mocha-600/50 rounded-lg p-4'>
+                            <p className='text-mocha-200 text-xs uppercase tracking-wider'>From Name</p>
+                            <p className='text-cream-400 font-medium mt-1'>{settings['mail:from:name'] || '—'}</p>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Mail From Card */}
+            {!editing && (
+                <div className='bg-mocha-500 border border-mocha-400 rounded-xl p-6'>
+                    <div className='flex items-center justify-between mb-6'>
+                        <div className='flex items-center gap-3'>
+                            <div className='w-10 h-10 bg-mocha-400 rounded-lg flex items-center justify-center'>
+                                <HugeiconsIcon icon={Mail01Icon} className='w-5 h-5 text-cream-400' />
+                            </div>
+                            <div>
+                                <h3 className='text-cream-400 font-semibold text-lg'>Mail From</h3>
+                                <p className='text-mocha-200 text-sm'>Outgoing email sender details</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <div className='bg-mocha-600/50 rounded-lg p-4'>
+                            <p className='text-mocha-200 text-xs uppercase tracking-wider'>From Address</p>
+                            <p className='text-cream-400 font-medium mt-1 font-mono text-sm'>{settings['mail:from:address'] || '—'}</p>
+                        </div>
+                        <div className='bg-mocha-600/50 rounded-lg p-4'>
+                            <p className='text-mocha-200 text-xs uppercase tracking-wider'>From Name</p>
+                            <p className='text-cream-400 font-medium mt-1'>{settings['mail:from:name'] || '—'}</p>
+                        </div>
+                    </div>
+                    <div className='flex items-center gap-3 pt-4'>
+                        <Button variant='secondary' onClick={handleTest} disabled={testing}>
+                            {testing ? 'Sending...' : 'Send Test Email'}
+                        </Button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

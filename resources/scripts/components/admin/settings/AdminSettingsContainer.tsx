@@ -1,4 +1,6 @@
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { Route, Routes, NavLink, useLocation } from 'react-router-dom';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { InformationCircleIcon, Mail02Icon, Shield01Icon, Globe02Icon, PaintBrush02Icon, Settings02Icon } from '@hugeicons/core-free-icons';
 
 import { MainPageHeader } from '@/components/elements/MainPageHeader';
 
@@ -10,45 +12,54 @@ import BrandingSettingsTab from '@/components/admin/settings/BrandingSettingsTab
 import AdvancedSettingsTab from '@/components/admin/settings/AdvancedSettingsTab';
 
 const tabs = [
-    { to: '/admin/settings', label: 'General', end: true },
-    { to: '/admin/settings/mail', label: 'Mail', end: false },
-    { to: '/admin/settings/captcha', label: 'Captcha', end: false },
-    { to: '/admin/settings/domains', label: 'Domains', end: false },
-    { to: '/admin/settings/branding', label: 'Branding', end: false },
-    { to: '/admin/settings/advanced', label: 'Advanced', end: false },
+    { to: '/admin/settings', label: 'General', end: true, icon: InformationCircleIcon },
+    { to: '/admin/settings/mail', label: 'Mail', end: false, icon: Mail02Icon },
+    { to: '/admin/settings/captcha', label: 'Captcha', end: false, icon: Shield01Icon },
+    { to: '/admin/settings/domains', label: 'Domains', end: false, icon: Globe02Icon },
+    { to: '/admin/settings/branding', label: 'Branding', end: false, icon: PaintBrush02Icon },
+    { to: '/admin/settings/advanced', label: 'Advanced', end: false, icon: Settings02Icon },
 ];
 
 const AdminSettingsContainer = () => {
+    const location = useLocation();
+
+    const isActive = (tab: typeof tabs[0]) => {
+        if (tab.end) return location.pathname === tab.to;
+        return location.pathname.startsWith(tab.to);
+    };
+
     return (
-        <div >
+        <div>
             <MainPageHeader title='Settings' />
 
-            <div className='flex items-center space-x-1 border-b border-mocha-400 overflow-x-auto overflow-y-hidden'>
+            <div className='flex items-center gap-2 p-1 bg-mocha-500/50 border border-mocha-400/50 rounded-xl w-fit mt-4'>
                 {tabs.map((tab) => (
                     <NavLink
                         key={tab.to}
                         to={tab.to}
                         end={tab.end}
-                        className='whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px border-transparent text-mocha-200 hover:text-mocha-100 hover:border-mocha-400'
-                        style={({ isActive }) =>
-                            isActive
-                                ? { borderColor: '#3b82f6', color: '#60a5fa' }
-                                : undefined
-                        }
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                            isActive(tab)
+                                ? 'bg-mocha-400 text-cream-400 shadow-sm'
+                                : 'text-mocha-200 hover:text-cream-400 hover:bg-mocha-400/30'
+                        }`}
                     >
+                        <HugeiconsIcon icon={tab.icon} className='w-4 h-4' />
                         {tab.label}
                     </NavLink>
                 ))}
             </div>
 
-            <Routes>
-                <Route path='' element={<GeneralSettingsTab />} />
-                <Route path='mail' element={<MailSettingsTab />} />
-                <Route path='captcha' element={<CaptchaSettingsTab />} />
-                <Route path='domains/*' element={<DomainsSettingsTab />} />
-                <Route path='branding' element={<BrandingSettingsTab />} />
-                <Route path='advanced' element={<AdvancedSettingsTab />} />
-            </Routes>
+            <div className='mt-4'>
+                <Routes>
+                    <Route path='' element={<GeneralSettingsTab />} />
+                    <Route path='mail' element={<MailSettingsTab />} />
+                    <Route path='captcha' element={<CaptchaSettingsTab />} />
+                    <Route path='domains/*' element={<DomainsSettingsTab />} />
+                    <Route path='branding' element={<BrandingSettingsTab />} />
+                    <Route path='advanced' element={<AdvancedSettingsTab />} />
+                </Routes>
+            </div>
         </div>
     );
 };

@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Shield01Icon, Edit02Icon, CheckmarkBadge01Icon } from '@hugeicons/core-free-icons';
 
 import Spinner from '@/components/elements/Spinner';
 import { getCaptchaSettings, type CaptchaSettings, updateCaptchaSettings } from '@/api/admin/settings';
 import { httpErrorToHuman } from '@/api/http';
 import { Button } from '@/components/ui/button';
+
+const inputClass =
+    'w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300 transition-colors';
+const labelClass = 'block text-sm text-mocha-200 mb-1';
 
 const providerConfigs: Record<string, { title: string; fields: { key: string; label: string; sensitive: boolean }[]; instructions: { text: string; url: string; urlLabel: string }[] }> = {
     turnstile: {
@@ -55,8 +62,7 @@ const CaptchaSettingsTab = () => {
     const [settings, setSettings] = useState<CaptchaSettings | null>(null);
     const [provider, setProvider] = useState('none');
     const [form, setForm] = useState<Record<string, string>>({});
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
+    const [editing, setEditing] = useState(false);
 
     useEffect(() => {
         getCaptchaSettings()
@@ -72,22 +78,35 @@ const CaptchaSettingsTab = () => {
                     'pterodactyl:captcha:recaptcha:secret_key': '',
                 });
             })
-            .catch((e) => setError(httpErrorToHuman(e)))
+            .catch((e) => toast.error(httpErrorToHuman(e)))
             .finally(() => setLoading(false));
     }, []);
 
     const handleSave = () => {
-        setError(null);
-        setSuccess(false);
         setSaving(true);
         const payload: Record<string, unknown> = { 'pterodactyl:captcha:provider': provider, ...form };
         updateCaptchaSettings(payload)
             .then(() => {
-                setSuccess(true);
-                setTimeout(() => setSuccess(false), 3000);
+                toast.success('Captcha settings updated successfully');
+                setEditing(false);
             })
-            .catch((e) => setError(httpErrorToHuman(e)))
+            .catch((e) => toast.error(httpErrorToHuman(e)))
             .finally(() => setSaving(false));
+    };
+
+    const handleCancel = () => {
+        if (settings) {
+            setProvider(settings['pterodactyl:captcha:provider']);
+            setForm({
+                'pterodactyl:captcha:turnstile:site_key': settings['pterodactyl:captcha:turnstile:site_key'] || '',
+                'pterodactyl:captcha:turnstile:secret_key': '',
+                'pterodactyl:captcha:hcaptcha:site_key': settings['pterodactyl:captcha:hcaptcha:site_key'] || '',
+                'pterodactyl:captcha:hcaptcha:secret_key': '',
+                'pterodactyl:captcha:recaptcha:site_key': settings['pterodactyl:captcha:recaptcha:site_key'] || '',
+                'pterodactyl:captcha:recaptcha:secret_key': '',
+            });
+        }
+        setEditing(false);
     };
 
     if (loading) {
@@ -100,95 +119,156 @@ const CaptchaSettingsTab = () => {
 
     const providers = settings?.providers || {};
     const config = providerConfigs[provider];
+    const providerName = settings?.providers?.[provider] || provider;
+    const isActive = provider !== 'none';
 
     return (
-        <div className='max-w-3xl mx-auto mt-6 space-y-6'>
-            <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
-                <div className='px-5 py-4 border-b border-mocha-400'>
-                    <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>Captcha Provider</h3>
-                </div>
-                <div className='p-5'>
-                    <div className='max-w-xs'>
-                        <label className='block text-sm font-medium text-mocha-200 mb-1'>Provider</label>
-                        <select
-                            className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                            value={provider}
-                            onChange={(e) => setProvider(e.target.value)}
-                        >
-                            {Object.keys(providers).length === 0 && (
-                                <option value='' disabled className='bg-mocha-600 text-mocha-200'>No providers available</option>
-                            )}
-                            {Object.entries(providers).map(([key, name]) => (
-                                <option key={key} value={key} className='bg-mocha-600 text-cream-400'>{name}</option>
-                            ))}
-                        </select>
-                        <p className='text-xs text-mocha-200/60 mt-1'>Select the captcha provider to use for authentication forms.</p>
+        <div className='space-y-6 mt-4'>
+            {/* Profile Card */}
+            <div className='bg-mocha-500 border border-mocha-400 rounded-xl p-6'>
+                <div className='flex flex-col sm:flex-row items-start sm:items-center gap-5'>
+                    <div className='w-16 h-16 rounded-xl bg-brand/10 flex items-center justify-center shrink-0 border border-mocha-400'>
+                        <HugeiconsIcon icon={Shield01Icon} className='w-8 h-8 text-brand' />
+                    </div>
+                    <div className='flex-1'>
+                        <h2 className='text-xl font-bold text-cream-400'>Captcha Configuration</h2>
+                        <p className='text-mocha-200 text-sm mt-1'>Bot protection for authentication forms</p>
+                    </div>
+                    <div className='flex items-center gap-3'>
+                        <div className='text-center bg-mocha-600/50 rounded-lg px-4 py-3'>
+                            <p className='text-2xl font-bold text-cream-400'>{providerName}</p>
+                            <p className='text-xs text-mocha-200'>Provider</p>
+                        </div>
+                        <div className='text-center bg-mocha-600/50 rounded-lg px-4 py-3'>
+                            <p className={`text-2xl font-bold ${isActive ? 'text-green-400' : 'text-mocha-200'}`}>
+                                {isActive ? 'ON' : 'OFF'}
+                            </p>
+                            <p className='text-xs text-mocha-200'>Status</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {config && (
-                <div className='bg-mocha-500 rounded-lg border border-mocha-400 overflow-hidden'>
-                    <div className='px-5 py-4 border-b border-mocha-400'>
-                        <h3 className='text-sm font-semibold text-mocha-100 uppercase tracking-wider'>{config.title}</h3>
-                    </div>
-                    <div className='p-5'>
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                            {config.fields.map((field) => (
-                                <div key={field.key}>
-                                    <label className='block text-sm font-medium text-mocha-200 mb-1'>{field.label}</label>
-                                    <input
-                                        type={field.sensitive ? 'password' : 'text'}
-                                        className='w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300'
-                                        value={form[field.key] || ''}
-                                        onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                                    />
-                                </div>
-                            ))}
+            {/* Provider Selection Card */}
+            <div className='bg-mocha-500 border border-mocha-400 rounded-xl p-6'>
+                <div className='flex items-center justify-between mb-6'>
+                    <div className='flex items-center gap-3'>
+                        <div className='w-10 h-10 bg-mocha-400 rounded-lg flex items-center justify-center'>
+                            <HugeiconsIcon icon={Shield01Icon} className='w-5 h-5 text-cream-400' />
                         </div>
-                        <div className='mt-4 bg-mocha-600 border border-mocha-400 rounded-lg p-4 text-sm text-mocha-200'>
-                            <strong className='text-mocha-100'>Setup Instructions:</strong>
-                            <ol className='list-decimal list-inside mt-2 space-y-1'>
-                                {config.instructions.map((inst, i) => (
-                                    <li key={i}>
-                                        {inst.url ? (
-                                            <>
-                                                {inst.text.replace(inst.urlLabel, '')}
-                                                <a href={inst.url} target='_blank' rel='noopener noreferrer' className='text-cream-400 hover:text-cream-500 underline'>{inst.urlLabel}</a>
-                                            </>
-                                        ) : (
-                                            inst.text
-                                        )}
-                                    </li>
-                                ))}
-                            </ol>
+                        <div>
+                            <h3 className='text-cream-400 font-semibold text-lg'>Captcha Provider</h3>
+                            <p className='text-mocha-200 text-sm'>Select and configure your captcha service</p>
                         </div>
                     </div>
-                </div>
-            )}
-            <div className='bg-mocha-500 rounded-lg border border-mocha-400 px-5 py-4 flex items-center justify-end gap-3'>
-
-                {error && <span className='text-red-400 text-sm'>{error}</span>}
-                {success && <span className='text-green-400 text-sm'>Captcha settings saved successfully.</span>}
-                <Button
-                    variant="default"
-                    onClick={handleSave}
-                    disabled={saving}
-                >
-                    {saving && (
-                        <svg className='w-4 h-4 animate-spin' fill='none' viewBox='0 0 24 24'>
-                            <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4' />
-                            <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z' />
-                        </svg>
+                    {!editing && (
+                        <Button variant='secondary' onClick={() => setEditing(true)}>
+                            <HugeiconsIcon icon={Edit02Icon} className='w-4 h-4' />
+                            Edit Settings
+                        </Button>
                     )}
-                    <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4' />
-                    </svg>
-                    Save
-                </Button>
+                </div>
+
+                {editing ? (
+                    <div className='space-y-5'>
+                        <div>
+                            <label className={labelClass}>Provider</label>
+                            <div className='max-w-xs'>
+                                <select
+                                    className={inputClass}
+                                    value={provider}
+                                    onChange={(e) => setProvider(e.target.value)}
+                                >
+                                    {Object.keys(providers).length === 0 && (
+                                        <option value='' disabled className='bg-mocha-600 text-mocha-200'>No providers available</option>
+                                    )}
+                                    {Object.entries(providers).map(([key, name]) => (
+                                        <option key={key} value={key} className='bg-mocha-600 text-cream-400'>{name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <p className='text-xs text-mocha-200/60 mt-1'>Select the captcha provider to use for authentication forms.</p>
+                        </div>
+
+                        {config && (
+                            <div className='bg-mocha-600/50 rounded-xl p-5 space-y-4'>
+                                <h4 className='text-cream-400 font-semibold'>{config.title}</h4>
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                    {config.fields.map((field) => (
+                                        <div key={field.key}>
+                                            <label className={labelClass}>{field.label}</label>
+                                            <input
+                                                type={field.sensitive ? 'password' : 'text'}
+                                                className={inputClass}
+                                                value={form[field.key] || ''}
+                                                onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className='bg-mocha-600 border border-mocha-400 rounded-lg p-4 text-sm text-mocha-200'>
+                                    <strong className='text-mocha-100'>Setup Instructions:</strong>
+                                    <ol className='list-decimal list-inside mt-2 space-y-1'>
+                                        {config.instructions.map((inst, i) => (
+                                            <li key={i}>
+                                                {inst.url ? (
+                                                    <>
+                                                        {inst.text.replace(inst.urlLabel, '')}
+                                                        <a href={inst.url} target='_blank' rel='noopener noreferrer' className='text-cream-400 hover:text-cream-500 underline'>{inst.urlLabel}</a>
+                                                    </>
+                                                ) : (
+                                                    inst.text
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className='flex items-center gap-3 pt-2'>
+                            <Button variant='default' onClick={handleSave} disabled={saving}>
+                                {saving ? 'Saving...' : 'Save Changes'}
+                            </Button>
+                            <Button variant='secondary' onClick={handleCancel}>Cancel</Button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className='space-y-4'>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                            <div className='bg-mocha-600/50 rounded-lg p-4'>
+                                <p className='text-mocha-200 text-xs uppercase tracking-wider'>Active Provider</p>
+                                <p className='text-cream-400 font-medium mt-1'>{providerName}</p>
+                            </div>
+                            <div className='bg-mocha-600/50 rounded-lg p-4'>
+                                <p className='text-mocha-200 text-xs uppercase tracking-wider'>Status</p>
+                                <div className='flex items-center gap-2 mt-1'>
+                                    {isActive ? (
+                                        <HugeiconsIcon icon={CheckmarkBadge01Icon} className='w-5 h-5 text-green-400' />
+                                    ) : null}
+                                    <p className={`font-medium ${isActive ? 'text-green-400' : 'text-mocha-200'}`}>
+                                        {isActive ? 'Enabled' : 'Disabled'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {config && (
+                            <div className='bg-mocha-600/50 rounded-lg p-4'>
+                                <p className='text-mocha-200 text-xs uppercase tracking-wider mb-2'>Configured Fields</p>
+                                <div className='flex flex-wrap gap-2'>
+                                    {config.fields.map((field) => (
+                                        <span key={field.key} className='inline-flex items-center px-2 py-0.5 rounded text-xs bg-mocha-400/50 text-mocha-200 border border-mocha-400/50'>
+                                            {field.label}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
 };
-// TODO:  the button placement is fucked
+
 export default CaptchaSettingsTab;
