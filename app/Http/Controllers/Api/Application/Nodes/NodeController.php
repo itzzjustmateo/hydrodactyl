@@ -29,9 +29,9 @@ class NodeController extends ApplicationApiController
     parent::__construct();
   }
 
-  /**
-   * Return all the nodes currently available on the Panel.
-   */
+    /**
+     * List all nodes
+     */
   public function index(GetNodesRequest $request): array
   {
     $nodes = QueryBuilder::for(Node::query())
@@ -44,9 +44,9 @@ class NodeController extends ApplicationApiController
       ->toArray();
   }
 
-  /**
-   * Return data for a single instance of a node.
-   */
+    /**
+     * View a single node
+     */
   public function view(GetNodeRequest $request, Node $node): array
   {
     return $this->fractal->item($node)
@@ -54,12 +54,11 @@ class NodeController extends ApplicationApiController
       ->toArray();
   }
 
-  /**
-   * Create a new node on the Panel. Returns the created node and an HTTP/201
-   * status response on success.
-   *
-   * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-   */
+    /**
+     * Create a new node
+     *
+     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     */
   public function store(StoreNodeRequest $request): JsonResponse
   {
     $node = $this->creationService->handle($request->validated());
@@ -74,11 +73,11 @@ class NodeController extends ApplicationApiController
       ->respond(201);
   }
 
-  /**
-   * Update an existing node on the Panel.
-   *
-   * @throws \Throwable
-   */
+    /**
+     * Update a node
+     *
+     * @throws \Throwable
+     */
   public function update(UpdateNodeRequest $request, Node $node): array
   {
     $node = $this->updateService->handle(
@@ -92,12 +91,11 @@ class NodeController extends ApplicationApiController
       ->toArray();
   }
 
-  /**
-   * Deletes a given node from the Panel as long as there are no servers
-   * currently attached to it.
-   *
-   * @throws \Pterodactyl\Exceptions\Service\HasActiveServersException
-   */
+    /**
+     * Delete a node
+     *
+     * @throws \Pterodactyl\Exceptions\Service\HasActiveServersException
+     */
   public function delete(DeleteNodeRequest $request, Node $node): JsonResponse
   {
     $this->deletionService->handle($node);

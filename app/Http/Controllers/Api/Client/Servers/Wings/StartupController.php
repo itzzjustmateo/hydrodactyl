@@ -28,7 +28,7 @@ class StartupController extends ClientApiController
     }
 
     /**
-     * Returns the startup information for the server including all the variables.
+     * Get server startup config
      */
     public function index(GetStartupRequest $request, Server $server): array
     {
@@ -47,7 +47,7 @@ class StartupController extends ClientApiController
     }
 
     /**
-     * Updates a single variable for a server.
+     * Update startup variable
      *
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
@@ -101,7 +101,7 @@ class StartupController extends ClientApiController
     }
 
     /**
-     * Updates the startup command for a server.
+     * Update startup command
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      * @throws \Throwable
@@ -125,7 +125,7 @@ class StartupController extends ClientApiController
     }
 
     /**
-     * Returns the default startup command for the server's egg.
+     * Get default startup command
      */
     public function getDefaultCommand(GetStartupRequest $request, Server $server): array
     {
@@ -135,7 +135,7 @@ class StartupController extends ClientApiController
     }
 
     /**
-     * Process a startup command with variables for live preview.
+     * Preview startup command
      */
     public function processCommand(GetStartupRequest $request, Server $server): array
     {

@@ -34,7 +34,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Renames a server.
+     * Rename server
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
@@ -64,7 +64,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Reinstalls the server on the daemon.
+     * Reinstall server
      *
      * @throws \Throwable
      */
@@ -78,7 +78,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Changes the Docker image in use by the server.
+     * Change Docker image
      *
      * @throws \Throwable
      */
@@ -112,7 +112,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Changes the egg for a server.
+     * Change server egg
      *
      * @throws \Throwable
      */
@@ -142,6 +142,9 @@ class SettingsController extends ClientApiController
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Preview egg change
+     */
     public function previewEggChange(PreviewEggRequest $request, Server $server): JsonResponse
     {
         try {
@@ -173,8 +176,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Apply egg configuration changes asynchronously.
-     * This dispatches a background job to handle the complete egg change process.
+     * Apply egg change
      *
      * @throws \Throwable
      */

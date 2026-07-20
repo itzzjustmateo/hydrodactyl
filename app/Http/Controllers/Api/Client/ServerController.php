@@ -21,8 +21,7 @@ class ServerController extends ClientApiController
     }
 
     /**
-     * Transform an individual server into a response that can be consumed by a
-     * client using the API.
+     * Get a single server
      */
     public function index(GetServerRequest $request, Server $server): array
     {
@@ -39,6 +38,9 @@ class ServerController extends ClientApiController
             ->toArray();
     }
 
+    /**
+     * Get server resources
+     */
     public function resources(GetServerRequest $request, Server $server): array
     {
         $server->loadMissing('node');

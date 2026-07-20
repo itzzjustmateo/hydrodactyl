@@ -21,7 +21,7 @@ class SubdomainController extends ClientApiController
     }
 
     /**
-     * Get subdomain information for a server.
+     * Get server subdomain
      *
      * @return JsonResponse
      */
@@ -66,7 +66,7 @@ class SubdomainController extends ClientApiController
     }
 
     /**
-     * Create a new subdomain for the server, or replace an existing one.
+     * Create or replace subdomain
      *
      * @return JsonResponse
      */
@@ -143,7 +143,7 @@ class SubdomainController extends ClientApiController
     }
 
     /**
-     * Delete the server's subdomain.
+     * Delete server subdomain
      */
     public function destroy(Request $request): JsonResponse
     {
@@ -183,7 +183,7 @@ class SubdomainController extends ClientApiController
     }
 
     /**
-     * Check if a subdomain is available.
+     * Check subdomain availability
      */
     public function checkAvailability(Request $request): JsonResponse
     {

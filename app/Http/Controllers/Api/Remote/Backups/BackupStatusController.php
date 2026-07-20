@@ -26,7 +26,7 @@ class BackupStatusController extends Controller
     }
 
     /**
-     * Handles updating the state of a backup.
+     * Report backup status
      *
      * @throws \Throwable
      */
@@ -86,12 +86,7 @@ class BackupStatusController extends Controller
     }
 
     /**
-     * Handles toggling the restoration status of a server. The server status field should be
-     * set back to null, even if the restoration failed. This is not an unsolvable state for
-     * the server, and the user can keep trying to restore, or just use the reinstall button.
-     *
-     * The only thing the successful field does is update the entry value for the audit logs
-     * table tracking for this restoration.
+     * Report backup restore result
      *
      * @throws \Throwable
      */

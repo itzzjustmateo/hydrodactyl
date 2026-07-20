@@ -15,7 +15,7 @@ class BackupDeleteController extends Controller
 {
 
     /**
-     * Handles the deletion of a backup from the remote daemon.
+     * Delete a backup from daemon
      *
      * @throws \Throwable
      */

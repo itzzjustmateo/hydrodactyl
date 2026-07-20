@@ -21,9 +21,7 @@ class ResourceUtilizationController extends ClientApiController
     }
 
     /**
-     * Return the current resource utilization for a server. This value is cached for up to
-     * 20 seconds at a time to ensure that repeated requests to this endpoint do not cause
-     * a flood of unnecessary API calls.
+     * Get server resource usage
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */

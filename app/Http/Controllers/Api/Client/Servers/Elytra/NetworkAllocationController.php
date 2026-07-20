@@ -30,8 +30,7 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Lists all the allocations available to a server and whether
-     * they are currently assigned as the primary for this server.
+     * List network allocations
      */
     public function index(GetNetworkRequest $request, Server $server): array
     {
@@ -41,7 +40,7 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Set the notes for an allocation.
+     * Update allocation notes
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
@@ -65,7 +64,7 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Set the primary allocation for a server.
+     * Set primary allocation
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
@@ -85,7 +84,7 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Create a new allocation for a server.
+     * Create allocation
      *s.
      *
      * @throws DisplayException
@@ -113,15 +112,13 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Delete an allocation from a server.
+     * Delete allocation
      *
      * @throws DisplayException
      */
     public function delete(DeleteAllocationRequest $request, Server $server, Allocation $allocation): JsonResponse
     {
-        // Don't allow the deletion of allocations if the server does not have an
-        // allocation limit set.
-        if ($server->allocation_limit === 0) {
+        if (!$server->allowsAllocations()) {
             throw new DisplayException('You cannot delete allocations for this server: no allocation limit is set.');
         }
 

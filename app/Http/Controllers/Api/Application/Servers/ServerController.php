@@ -29,7 +29,7 @@ class ServerController extends ApplicationApiController
     }
 
     /**
-     * Return all the servers that currently exist on the Panel.
+     * List all servers
      */
     public function index(GetServersRequest $request): array
     {
@@ -44,7 +44,7 @@ class ServerController extends ApplicationApiController
     }
 
     /**
-     * Create a new server on the system.
+     * Create a new server
      *
      * @throws \Throwable
      * @throws \Illuminate\Validation\ValidationException
@@ -64,7 +64,7 @@ class ServerController extends ApplicationApiController
     }
 
     /**
-     * Show a single server transformed for the application API.
+     * View a single server
      */
     public function view(GetServerRequest $request, Server $server): array
     {
@@ -74,7 +74,7 @@ class ServerController extends ApplicationApiController
     }
 
     /**
-     * Deletes a server.
+     * Delete a server
      *
      * @throws \Pterodactyl\Exceptions\DisplayException
      */

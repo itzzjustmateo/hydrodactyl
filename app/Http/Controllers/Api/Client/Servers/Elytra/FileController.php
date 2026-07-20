@@ -37,7 +37,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Returns a listing of files in a given directory.
+     * List files in directory
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
@@ -53,7 +53,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Return the contents of a specified file for the user.
+     * Get file contents
      *
      * @throws \Throwable
      */
@@ -70,8 +70,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Generates a one-time token with a link that the user can use to
-     * download a given file.
+     * Download file
      *
      * @throws \Throwable
      */
@@ -102,7 +101,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Writes the contents of the specified file to the server.
+     * Write file contents
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
@@ -116,7 +115,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Creates a new folder on the server.
+     * Create folder
      *
      * @throws \Throwable
      */
@@ -135,7 +134,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Renames a file on the remote machine.
+     * Rename file
      *
      * @throws \Throwable
      */
@@ -154,7 +153,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Copies a file on the server.
+     * Copy file
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
@@ -170,6 +169,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Compress files
+     *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
     public function compress(CompressFilesRequest $request, Server $server): array
@@ -190,6 +191,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Decompress files
+     *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
     public function decompress(DecompressFilesRequest $request, Server $server): JsonResponse
@@ -210,7 +213,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Deletes files or folders for the server in the given root directory.
+     * Delete files
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
@@ -230,7 +233,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Updates file permissions for file(s) in the given root directory.
+     * Update file permissions
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
@@ -245,7 +248,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Requests that a file be downloaded from a remote location by Wings.
+     * Pull file from URL
      *
      * @throws \Throwable
      */

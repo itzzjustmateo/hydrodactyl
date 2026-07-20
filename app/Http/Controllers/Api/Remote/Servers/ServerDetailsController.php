@@ -27,8 +27,7 @@ class ServerDetailsController extends Controller
     }
 
     /**
-     * Returns details about the server that allows Wings to self-recover and ensure
-     * that the state of the server matches the Panel at all times.
+     * Get server details for Wings
      *
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
      */
@@ -43,7 +42,7 @@ class ServerDetailsController extends Controller
     }
 
     /**
-     * Lists all servers with their configurations that are assigned to the requesting node.
+     * List all servers for a node
      */
     public function list(Request $request): ServerConfigurationCollection
     {
@@ -62,10 +61,7 @@ class ServerDetailsController extends Controller
     }
 
     /**
-     * Resets the state of all servers on the node to be normal. This is triggered
-     * when Wings restarts and is useful for ensuring that any servers on the node
-     * do not get incorrectly stuck in installing/restoring from backup states since
-     * a Wings reboot would completely stop those processes.
+     * Reset all server states on node
      *
      * @throws \Throwable
      */

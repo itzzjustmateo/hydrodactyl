@@ -15,9 +15,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class BackupSizeController extends Controller
 {
     /**
-     * Updates backup sizes after deduplication recalculation from Elytra.
-     * This endpoint is called when Rustic backups are deleted and remaining
-     * backup sizes need to be recalculated to account for deduplication.
+     * Update backup sizes after dedup
      */
     public function update(Request $request, string $uuid): JsonResponse
     {

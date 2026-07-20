@@ -19,7 +19,7 @@ class NestController extends ClientApiController
     }
 
     /**
-     * Return all Nests that exist on the Panel.
+     * List all nests
      */
     public function index(): array
     {
@@ -31,7 +31,7 @@ class NestController extends ClientApiController
     }
 
     /**
-     * Return information about a single Nest model.
+     * View a single nest
      */
     public function view(GetNestsRequest $request, Nest $nest): array
     {

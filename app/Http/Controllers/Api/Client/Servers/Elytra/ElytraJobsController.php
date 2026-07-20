@@ -18,6 +18,9 @@ class ElytraJobsController extends ClientApiController
         parent::__construct();
     }
 
+    /**
+     * List jobs
+     */
     public function index(Request $request, Server $server): JsonResponse
     {
         $jobType = $request->query('type');
@@ -45,6 +48,9 @@ class ElytraJobsController extends ClientApiController
         ]);
     }
 
+    /**
+     * Create a job
+     */
     public function create(Request $request, Server $server): JsonResponse
     {
         $jobType = $request->input('job_type');
@@ -74,6 +80,9 @@ class ElytraJobsController extends ClientApiController
         return new JsonResponse($result);
     }
 
+    /**
+     * View a job
+     */
     public function show(Request $request, Server $server, string $jobId): JsonResponse
     {
         $job = $this->elytraJobService->getJobStatus($server, $jobId);
@@ -97,6 +106,9 @@ class ElytraJobsController extends ClientApiController
         ]);
     }
 
+    /**
+     * Cancel a job
+     */
     public function cancel(Request $request, Server $server, string $jobId): JsonResponse
     {
         $job = $this->elytraJobService->getJobStatus($server, $jobId);

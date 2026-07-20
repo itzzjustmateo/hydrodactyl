@@ -23,13 +23,13 @@ class BackupRemoteUploadController extends Controller
   {
   }
 
-  /**
-   * Returns the required presigned urls to upload a backup to S3 cloud storage.
-   *
-   * @throws \Exception
-   * @throws \Throwable
-   * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-   */
+    /**
+     * Get presigned S3 upload URLs
+     *
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
   public function __invoke(Request $request, string $backup): JsonResponse
   {
     // Get the node associated with the request.

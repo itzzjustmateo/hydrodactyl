@@ -26,9 +26,7 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
-     * Returns two-factor token credentials that allow a user to configure
-     * it on their account. If two-factor is already enabled this endpoint
-     * will return a 400 error.
+     * Get two-factor setup credentials
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
@@ -45,7 +43,7 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
-     * Updates a user's account to have two-factor enabled.
+     * Enable two-factor authentication
      *
      * @throws \Throwable
      * @throws \Illuminate\Validation\ValidationException
@@ -75,8 +73,7 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
-     * Disables two-factor authentication on an account if the password provided
-     * is valid.
+     * Disable two-factor authentication
      *
      * @throws \Throwable
      */

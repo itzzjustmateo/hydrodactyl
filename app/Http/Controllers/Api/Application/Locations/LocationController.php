@@ -31,7 +31,7 @@ class LocationController extends ApplicationApiController
     }
 
     /**
-     * Return all the locations currently registered on the Panel.
+     * List all locations
      */
     public function index(GetLocationsRequest $request): array
     {
@@ -46,7 +46,7 @@ class LocationController extends ApplicationApiController
     }
 
     /**
-     * Return a single location.
+     * View a single location
      */
     public function view(GetLocationRequest $request, Location $location): array
     {
@@ -56,8 +56,7 @@ class LocationController extends ApplicationApiController
     }
 
     /**
-     * Store a new location on the Panel and return an HTTP/201 response code with the
-     * new location attached.
+     * Create a new location
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      */
@@ -76,7 +75,7 @@ class LocationController extends ApplicationApiController
     }
 
     /**
-     * Update a location on the Panel and return the updated record to the user.
+     * Update a location
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
@@ -91,7 +90,7 @@ class LocationController extends ApplicationApiController
     }
 
     /**
-     * Delete a location from the Panel.
+     * Delete a location
      *
      * @throws \Pterodactyl\Exceptions\Service\Location\HasActiveNodesException
      */

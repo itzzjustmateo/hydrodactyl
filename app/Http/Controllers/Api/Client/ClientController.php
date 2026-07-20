@@ -19,8 +19,7 @@ use Pterodactyl\Http\Requests\Api\Client\GetServersRequest;
 class ClientController extends ClientApiController
 {
     /**
-     * Return all the servers available to the client making the API
-     * request, including servers the user has access to as a subuser.
+     * List all accessible servers
      */
     public function index(GetServersRequest $request): array
     {
@@ -98,8 +97,7 @@ class ClientController extends ClientApiController
     }
 
     /**
-     * Returns distinct filter options (owners, nests, eggs, nodes) for servers
-     * accessible to the current user. Used to populate the category filter dropdown.
+     * Get server filter options
      */
     public function filterOptions(GetServersRequest $request): array
     {
@@ -164,7 +162,7 @@ class ClientController extends ClientApiController
     }
 
     /**
-     * Returns all the subuser permissions available on the system.
+     * List all system permissions
      */
     public function permissions(): array
     {

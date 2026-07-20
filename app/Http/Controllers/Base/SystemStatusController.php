@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Cache;
 
 class SystemStatusController extends Controller
 {
-  /**
-   * Get system metrics and status
-   */
+    /**
+     * Get system metrics and status
+     */
   public function index(): JsonResponse
   {
     try {

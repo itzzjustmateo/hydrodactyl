@@ -37,8 +37,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Returns all the backups for a given server instance in a paginated
-     * result set.
+     * List backups
      *
      * @throws AuthorizationException
      */
@@ -59,7 +58,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Starts the backup process for a server.
+     * Create a backup
      *
      * @throws \Spatie\Fractalistic\Exceptions\InvalidTransformation
      * @throws \Spatie\Fractalistic\Exceptions\NoTransformerSpecified
@@ -91,7 +90,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Toggles the lock status of a given backup for a server.
+     * Toggle backup lock
      *
      * @throws \Throwable
      * @throws AuthorizationException
@@ -114,7 +113,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Returns information about a single backup.
+     * View a backup
      *
      * @throws AuthorizationException
      */
@@ -130,8 +129,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Deletes a backup from the panel as well as the remote source where it is currently
-     * being stored.
+     * Delete a backup
      *
      * @throws \Throwable
      */
@@ -152,9 +150,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Download the backup for a given server instance. For daemon local files, the file
-     * will be streamed back through the Panel. For AWS S3 files, a signed URL will be generated
-     * which the user is redirected to.
+     * Download a backup
      *
      * @throws \Throwable
      * @throws AuthorizationException
@@ -180,13 +176,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Handles restoring a backup by making a request to the Wings instance telling it
-     * to begin the process of finding (or downloading) the backup and unpacking it
-     * over the server files.
-     *
-     * If the "truncate" flag is passed through in this request then all the
-     * files that currently exist on the server will be deleted before restoring.
-     * Otherwise, the archive will simply be unpacked over the existing files.
+     * Restore a backup
      *
      * @throws \Throwable
      */

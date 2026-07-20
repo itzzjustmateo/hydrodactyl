@@ -30,7 +30,7 @@ class DatabaseController extends ClientApiController
     }
 
     /**
-     * Return all the databases that belong to the given server.
+     * List server databases
      */
     public function index(GetDatabasesRequest $request, Server $server): array
     {
@@ -40,7 +40,7 @@ class DatabaseController extends ClientApiController
     }
 
     /**
-     * Create a new database for the given server and return it.
+     * Create server database
      *
      * @throws \Throwable
      * @throws \Pterodactyl\Exceptions\Service\Database\TooManyDatabasesException
@@ -62,8 +62,7 @@ class DatabaseController extends ClientApiController
     }
 
     /**
-     * Rotates the password for the given server model and returns a fresh instance to
-     * the caller.
+     * Rotate database password
      *
      * @throws \Throwable
      */
@@ -84,7 +83,7 @@ class DatabaseController extends ClientApiController
     }
 
     /**
-     * Removes a database from the server.
+     * Delete server database
      *
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
      */

@@ -33,7 +33,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Return the users associated with this server instance.
+     * List server subusers
      */
     public function index(GetSubuserRequest $request, Server $server): array
     {
@@ -43,7 +43,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Returns a single subuser associated with this server instance.
+     * View a single subuser
      */
     public function view(GetSubuserRequest $request): array
     {
@@ -55,7 +55,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Create a new subuser for the given server.
+     * Create a subuser
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Service\Subuser\ServerSubuserExistsException
@@ -81,7 +81,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Update a given subuser in the system for the server.
+     * Update a subuser
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
@@ -134,7 +134,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Removes a subusers from a server's assignment.
+     * Delete a subuser
      */
     public function delete(DeleteSubuserRequest $request, Server $server): JsonResponse
     {

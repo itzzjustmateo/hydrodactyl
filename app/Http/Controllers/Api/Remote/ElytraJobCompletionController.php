@@ -13,6 +13,9 @@ class ElytraJobCompletionController extends Controller
         private ElytraJobService $elytraJobService,
     ) {}
 
+    /**
+     * Report job completion status
+     */
     public function update(ElytraJobCompleteRequest $request, string $jobId): JsonResponse
     {
         try {

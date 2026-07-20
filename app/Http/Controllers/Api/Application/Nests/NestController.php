@@ -27,6 +27,9 @@ class NestController extends ApplicationApiController
         parent::__construct();
     }
 
+    /**
+     * List all nests
+     */
     public function index(GetNestsRequest $request): array
     {
         $nests = Nest::query()
@@ -38,6 +41,9 @@ class NestController extends ApplicationApiController
             ->toArray();
     }
 
+    /**
+     * View a single nest
+     */
     public function view(GetNestsRequest $request, Nest $nest): array
     {
         $nest->loadCount('eggs', 'servers');

@@ -29,7 +29,7 @@ class EggController extends ApplicationApiController
     }
 
     /**
-     * Return all eggs that exist for a given nest.
+     * List all eggs in a nest
      */
     public function index(GetEggsRequest $request, Nest $nest): array
     {
@@ -44,7 +44,7 @@ class EggController extends ApplicationApiController
     }
 
     /**
-     * Return a single egg that exists on the specified nest.
+     * View a single egg
      */
     public function view(GetEggRequest $request, Nest $nest, Egg $egg): array
     {

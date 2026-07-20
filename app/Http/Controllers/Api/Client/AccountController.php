@@ -22,6 +22,9 @@ class AccountController extends ClientApiController
         parent::__construct();
     }
 
+    /**
+     * Get the authenticated account
+     */
     public function index(Request $request): array
     {
         return $this->fractal->item($request->user())
@@ -30,7 +33,7 @@ class AccountController extends ClientApiController
     }
 
     /**
-     * Update the authenticated user's email address.
+     * Update account email
      */
     public function updateEmail(UpdateEmailRequest $request): JsonResponse
     {
@@ -47,8 +50,7 @@ class AccountController extends ClientApiController
     }
 
     /**
-     * Update the authenticated user's password. All existing sessions will be logged
-     * out immediately.
+     * Update account password
      *
      * @throws \Throwable
      */

@@ -27,9 +27,7 @@ class SftpAuthenticationController extends Controller
     }
 
     /**
-     * Authenticate a set of credentials and return the associated server details
-     * for a SFTP connection on the daemon. This supports both public key and password
-     * based credentials.
+     * Authenticate SFTP credentials
      */
     public function __invoke(SftpAuthenticationFormRequest $request): JsonResponse
     {

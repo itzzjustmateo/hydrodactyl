@@ -37,7 +37,7 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
-     * Search a single source (or list available sources when no source given).
+     * Search marketplace
      */
     public function search(SearchMarketplaceRequest $request): JsonResponse
     {
@@ -114,7 +114,7 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
-     * List downloadable versions for a project.
+     * Get project versions
      */
     public function project(GetProjectRequest $request): JsonResponse
     {
@@ -140,7 +140,7 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
-     * Resolve a version into a direct download URL + destination directory.
+     * Resolve a version download
      */
     public function resolve(ResolveInstallRequest $request): JsonResponse
     {
@@ -167,10 +167,7 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
-     * List the server's recorded installs. Install history lives in the panel
-     * database (not on the daemon), so it is private to the panel and excluded
-     * from server backups/archives. The frontend reconciles these against the
-     * real jar files when rendering the "Installed" view.
+     * List installed projects
      */
     public function installed(ListInstallsRequest $request): JsonResponse
     {
@@ -188,8 +185,7 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
-     * Record (or, on reinstall, update) an install. Called by the frontend
-     * after a successful daemon pull.
+     * Record an install
      */
     public function store(StoreInstallRequest $request): JsonResponse
     {
@@ -216,8 +212,7 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
-     * Remove an install record. The jar file itself is deleted separately by the
-     * frontend (via the existing file-delete endpoint).
+     * Remove an install record
      */
     public function destroy(DestroyInstallRequest $request): JsonResponse
     {
@@ -252,9 +247,7 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
-     * The cached Modrinth loader-tag list, so the frontend can validate the
-     * loader extracted from a server's egg features against the live set rather
-     * than a hard-coded list (auto-supports loaders Modrinth adds later).
+     * List available loaders
      */
     public function loaders(LoadersRequest $request): JsonResponse
     {
@@ -264,7 +257,7 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
-     * What is, documenting your code?
+     * List supported game versions
      */
     public function gameVersions(GameVersionsRequest $request): JsonResponse
     {

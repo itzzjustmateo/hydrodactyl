@@ -23,7 +23,7 @@ class ServerDetailsController extends ApplicationApiController
     }
 
     /**
-     * Update the details for a specific server.
+     * Update server details
      *
      * @throws \Pterodactyl\Exceptions\DisplayException
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
@@ -42,7 +42,7 @@ class ServerDetailsController extends ApplicationApiController
     }
 
     /**
-     * Update the build details for a specific server.
+     * Update server build configuration
      *
      * @throws \Pterodactyl\Exceptions\DisplayException
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException

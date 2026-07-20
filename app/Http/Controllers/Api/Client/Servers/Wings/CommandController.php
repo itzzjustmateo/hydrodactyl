@@ -24,7 +24,7 @@ class CommandController extends ClientApiController
     }
 
     /**
-     * Send a command to a running server.
+     * Send server command
      *
      * @throws DaemonConnectionException
      */

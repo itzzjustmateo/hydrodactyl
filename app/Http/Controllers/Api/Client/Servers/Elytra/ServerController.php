@@ -19,8 +19,7 @@ class ServerController extends ClientApiController
     }
 
     /**
-     * Transform an individual server into a response that can be consumed by a
-     * client using the API.
+     * Get server details
      */
     public function index(GetServerRequest $request, Server $server): array
     {

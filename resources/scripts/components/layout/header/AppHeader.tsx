@@ -5,7 +5,6 @@ import Logo from '@/components/elements/HydroLogo';
 import { Button } from '@/components/ui/button';
 import { useHeader } from '@/contexts/HeaderContext';
 import { useSidebar } from '@/contexts/SidebarContext';
-import { cn } from '@/lib/utils';
 
 import { MobileSidebarToggle } from '../sidebar/MobileSidebar';
 import '../sidebar/sidebar-modern.css';
@@ -58,17 +57,10 @@ const ToggleButton = memo(() => {
 ToggleButton.displayName = 'ToggleButton';
 
 const SidebarLogo = memo(() => {
-    const { isMinimized } = useSidebar();
-
     return (
-        <div
-            className={cn(
-                'sidebar-logo-container hidden lg:flex h-[48px] items-center mx-8 flex-none',
-                isMinimized ? 'justify-center' : 'justify-between',
-            )}
-        >
+        <div className='sidebar-logo-container hidden lg:flex h-12 items-center justify-between mx-8 flex-none'>
             <LogoSection />
-            {!isMinimized && <ToggleButton />}
+            <ToggleButton />
         </div>
     );
 });
@@ -92,7 +84,7 @@ StaticButtons.displayName = 'StaticButtons';
 
 const AppHeader = ({ serverId }: AppHeaderProps) => {
     return (
-        <div className='h-[64px] w-full py-4 pr-2 flex align-middle items-center justify-between'>
+        <div className='h-16 w-full py-4 pr-2 flex align-middle items-center justify-between'>
             <div className='flex items-center gap-2'>
                 <MobileSidebarToggle />
                 <SidebarLogo />

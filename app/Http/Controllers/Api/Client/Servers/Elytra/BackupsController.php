@@ -32,6 +32,9 @@ class BackupsController extends ClientApiController
         parent::__construct();
     }
 
+    /**
+     * List backups
+     */
     public function index(Request $request, Server $server): array
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_READ, $server)) {
@@ -92,6 +95,9 @@ class BackupsController extends ClientApiController
             ->toArray();
     }
 
+    /**
+     * Create a backup
+     */
     public function store(StoreBackupRequest $request, Server $server): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_CREATE, $server)) {
@@ -118,6 +124,9 @@ class BackupsController extends ClientApiController
         return new JsonResponse($result);
     }
 
+    /**
+     * View a backup
+     */
     public function show(Request $request, Server $server, Backup $backup): array
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_READ, $server)) {
@@ -129,6 +138,9 @@ class BackupsController extends ClientApiController
             ->toArray();
     }
 
+    /**
+     * Delete a backup
+     */
     public function destroy(Request $request, Server $server, Backup $backup): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
@@ -176,6 +188,9 @@ class BackupsController extends ClientApiController
         return new JsonResponse($result);
     }
 
+    /**
+     * Restore a backup
+     */
     public function restore(RestoreBackupRequest $request, Server $server, Backup $backup): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_RESTORE, $server)) {
@@ -224,6 +239,9 @@ class BackupsController extends ClientApiController
         return new JsonResponse($result);
     }
 
+    /**
+     * Download a backup
+     */
     public function download(Request $request, Server $server, Backup $backup): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, $server)) {
@@ -247,6 +265,9 @@ class BackupsController extends ClientApiController
         ]);
     }
 
+    /**
+     * Rename a backup
+     */
     public function rename(Request $request, Server $server, Backup $backup): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
@@ -273,6 +294,9 @@ class BackupsController extends ClientApiController
         return new JsonResponse($transformed);
     }
 
+    /**
+     * Toggle backup lock
+     */
     public function toggleLock(Request $request, Server $server, Backup $backup): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
@@ -295,6 +319,9 @@ class BackupsController extends ClientApiController
         return new JsonResponse($transformed);
     }
 
+    /**
+     * Delete all backups
+     */
     public function deleteAll(Request $request, Server $server): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
@@ -348,6 +375,9 @@ class BackupsController extends ClientApiController
         return new JsonResponse($result);
     }
 
+    /**
+     * Bulk delete backups
+     */
     public function bulkDelete(Request $request, Server $server): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {

@@ -32,7 +32,7 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
-     * Create a new task for a given schedule and store it in the database.
+     * Create a schedule task
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws ServiceLimitExceededException
@@ -93,7 +93,7 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
-     * Updates a given task for a server.
+     * Update a schedule task
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
@@ -148,8 +148,7 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
-     * Delete a given task for a schedule. If there are subsequent tasks stored in the database
-     * for this schedule their sequence IDs are decremented properly.
+     * Delete a schedule task
      *
      * @throws \Exception
      */

@@ -33,7 +33,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Returns all the schedules belonging to a given server.
+     * List schedules
      */
     public function index(ViewScheduleRequest $request, Server $server): array
     {
@@ -45,7 +45,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Store a new schedule for a server.
+     * Create a schedule
      *
      * @throws DisplayException
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
@@ -77,7 +77,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Returns a specific schedule for the server.
+     * View a schedule
      */
     public function view(ViewScheduleRequest $request, Server $server, Schedule $schedule): array
     {
@@ -93,7 +93,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Updates a given schedule with the new data provided.
+     * Update a schedule
      *
      * @throws DisplayException
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
@@ -136,8 +136,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Executes a given schedule immediately rather than waiting on it's normally scheduled time
-     * to pass. This does not care about the schedule state.
+     * Execute a schedule
      *
      * @throws \Throwable
      */
@@ -155,7 +154,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Deletes a schedule and it's associated tasks.
+     * Delete a schedule
      */
     public function delete(DeleteScheduleRequest $request, Server $server, Schedule $schedule): JsonResponse
     {

@@ -28,8 +28,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Return a listing of all databases currently available to a single
-     * server.
+     * List all databases for a server
      */
     public function index(GetServerDatabasesRequest $request, Server $server): array
     {
@@ -39,7 +38,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Return a single server database.
+     * View a single server database
      */
     public function view(GetServerDatabaseRequest $request, Server $server, Database $database): array
     {
@@ -49,7 +48,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Reset the password for a specific server database.
+     * Reset a database password
      *
      * @throws \Throwable
      */
@@ -61,7 +60,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Create a new database on the Panel for a given server.
+     * Create a server database
      *
      * @throws \Throwable
      */
@@ -83,7 +82,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Handle a request to delete a specific server database from the Panel.
+     * Delete a server database
      */
     public function delete(ServerDatabaseWriteRequest $request, Server $server, Database $database): Response
     {

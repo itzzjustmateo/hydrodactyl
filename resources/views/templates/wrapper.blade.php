@@ -14,7 +14,7 @@
             @php
                 $_favType = config('app.logo.type');
                 $_favVal = config('app.logo.value');
-                if ($_favType === 'upload' && $_favVal) {
+                if ($_favType === 'upload' && $_favVal && Storage::disk('public')->exists($_favVal)) {
                     $_favUrl = url('storage/' . $_favVal);
                 } elseif ($_favType === 'link' && $_favVal) {
                     $_favUrl = $_favVal;

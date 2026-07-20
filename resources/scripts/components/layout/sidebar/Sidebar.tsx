@@ -1,11 +1,7 @@
-import { LayoutSideContent } from '@gravity-ui/icons';
 import type { IconSvgElement } from '@hugeicons/react';
 import { memo, type RefObject, useCallback, useEffect, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
-import Logo from '@/components/elements/HydroLogo';
-import { Button } from '@/components/ui/button';
-import { useSidebar } from '@/contexts/SidebarContext';
 import { cn } from '@/lib/utils';
 
 import NavItem from './NavItem';
@@ -30,7 +26,6 @@ interface SidebarProps {
 }
 
 export default memo(function Sidebar({ navItems, className, onNavClick }: SidebarProps) {
-    const { isMinimized, toggleMinimized } = useSidebar();
     const location = useLocation();
 
     // dynamic CSS for hover and active states on mount
@@ -106,11 +101,11 @@ export default memo(function Sidebar({ navItems, className, onNavClick }: Sideba
     return (
         <div
             className={cn(
-                'sidebar-container flex-col shrink-0 rounded-lg px-5 select-none overflow-y-auto relative',
+                'sidebar-container flex-col shrink-0 rounded-lg px-8 select-none overflow-y-auto relative',
                 className,
             )}
         >
-            <div className='sidebar-indicator absolute bg-mocha-400 border border-mocha-300 left-[1.25rem] rounded-xl pointer-events-none' />
+            <div className='sidebar-indicator absolute bg-mocha-400 border border-mocha-300 left-8 rounded-xl pointer-events-none' />
             <ul className='flex flex-col text-sm'>
                 {navItems.map((item, index) => {
                     const isActive = currentActiveTab === item.tabName;
@@ -130,39 +125,6 @@ export default memo(function Sidebar({ navItems, className, onNavClick }: Sideba
                     );
                 })}
             </ul>
-            {isMinimized && (
-                <div className='mt-auto flex flex-col items-center gap-2 py-4'>
-                    <NavLink
-                        to='/'
-                        className='flex items-center justify-center shrink-0 h-8 w-fit hydrodactyl-logo opacity-60 hover:opacity-100 transition-opacity'
-                        aria-label='Home'
-                    >
-                        <Logo />
-                    </NavLink>
-                    <Button
-                        variant='secondary'
-                        size='sm'
-                        className='p-1 gap-1 rounded-full size-8'
-                        aria-label='Expand sidebar'
-                        onClick={toggleMinimized}
-                    >
-                        <LayoutSideContent width={16} height={16} />
-                    </Button>
-                </div>
-            )}
-            {!isMinimized && (
-                <div className='mt-auto flex justify-center py-4'>
-                    <Button
-                        variant='secondary'
-                        size='sm'
-                        className='p-1 gap-1 rounded-full size-8'
-                        aria-label='Collapse sidebar'
-                        onClick={toggleMinimized}
-                    >
-                        <LayoutSideContent width={16} height={16} />
-                    </Button>
-                </div>
-            )}
         </div>
     );
 });

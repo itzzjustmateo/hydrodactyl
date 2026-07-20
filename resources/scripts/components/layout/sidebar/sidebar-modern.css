@@ -6,7 +6,7 @@
     --sidebar-transition-sidebar: 0.4s cubic-bezier(0.23, 1.2, 0.32, 1);
     --sidebar-text-scale-small: 0.86; /* 12px (text-xs) / 14px (text-sm) */
     --sidebar-margin-base: 0.75rem;
-    --sidebar-padding: 1.25rem; /* 20px, px-5 */
+    --sidebar-padding: 2rem;
     --sidebar-full-width: 300px;
     --sidebar-minimized-width: 128px;
 }

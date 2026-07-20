@@ -13,7 +13,7 @@ use Pterodactyl\Http\Requests\Api\Client\Account\StoreApiKeyRequest;
 class ApiKeyController extends ClientApiController
 {
     /**
-     * Returns all the API keys that exist for the given client.
+     * List all API keys
      */
     public function index(ClientApiRequest $request): array
     {
@@ -23,7 +23,7 @@ class ApiKeyController extends ClientApiController
     }
 
     /**
-     * Store a new API key for a user's account.
+     * Create an API key
      *
      * @throws DisplayException
      */
@@ -50,7 +50,7 @@ class ApiKeyController extends ClientApiController
     }
 
     /**
-     * Deletes a given API key.
+     * Delete an API key
      */
     public function delete(ClientApiRequest $request, string $identifier): JsonResponse
     {

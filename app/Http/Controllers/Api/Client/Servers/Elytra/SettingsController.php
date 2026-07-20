@@ -39,6 +39,9 @@ class SettingsController extends ClientApiController
         parent::__construct();
     }
 
+    /**
+     * Rename server
+     */
     public function rename(RenameServerRequest $request, Server $server): JsonResponse
     {
         $name = $request->input('name');
@@ -63,6 +66,9 @@ class SettingsController extends ClientApiController
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Reinstall server
+     */
     public function reinstall(ReinstallServerRequest $request, Server $server): JsonResponse
     {
         $this->reinstallServerService->handle($server);
@@ -70,6 +76,9 @@ class SettingsController extends ClientApiController
         return new JsonResponse([], Response::HTTP_ACCEPTED);
     }
 
+    /**
+     * Change Docker image
+     */
     public function dockerImage(SetDockerImageRequest $request, Server $server): JsonResponse
     {
         if (!in_array($request->input('docker_image'), array_values($server->egg->docker_images))) {
@@ -88,6 +97,9 @@ class SettingsController extends ClientApiController
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Revert Docker image
+     */
     public function revertDockerImage(RevertDockerImageRequest $request, Server $server): JsonResponse
     {
         $server->validateCurrentState();
@@ -119,6 +131,9 @@ class SettingsController extends ClientApiController
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Change server egg
+     */
     public function changeEgg(SetEggRequest $request, Server $server): JsonResponse
     {
         $eggId = $request->input('egg_id');
@@ -140,6 +155,9 @@ class SettingsController extends ClientApiController
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
+    /**
+     * Preview egg change
+     */
     public function previewEggChange(PreviewEggRequest $request, Server $server): JsonResponse
     {
         try {
@@ -171,8 +189,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Apply egg configuration changes asynchronously.
-     * This dispatches a background job to handle the complete egg change process.
+     * Apply egg change
      *
      * @throws \Throwable
      */
@@ -220,12 +237,18 @@ class SettingsController extends ClientApiController
         }
     }
 
+    /**
+     * Get operation status
+     */
     public function getOperationStatus(Server $server, string $operationId): JsonResponse
     {
         $operation = $this->operationService->getOperation($server, $operationId);
         return new JsonResponse($this->operationService->formatOperationResponse($operation));
     }
 
+    /**
+     * List server operations
+     */
     public function getServerOperations(Server $server): JsonResponse
     {
         $operations = $this->operationService->getServerOperations($server);

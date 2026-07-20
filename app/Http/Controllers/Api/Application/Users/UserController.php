@@ -29,9 +29,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Handle request to list all users on the panel. Returns a JSON-API representation
-     * of a collection of users including any defined relations passed in
-     * the request.
+     * List all users
      */
     public function index(GetUsersRequest $request): array
     {
@@ -46,8 +44,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Handle a request to view a single user. Includes any relations that
-     * were defined in the request.
+     * View a single user
      */
     public function view(GetUsersRequest $request, User $user): array
     {
@@ -57,12 +54,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Update an existing user on the system and return the response. Returns the
-     * updated user model response on success. Supports handling of token revocation
-     * errors when switching a user from an admin to a normal user.
-     *
-     * Revocation errors are returned under the 'revocation_errors' key in the response
-     * meta. If there are no errors this is an empty array.
+     * Update a user
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
@@ -79,8 +71,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Store a new user on the system. Returns the created user and an HTTP/201
-     * header on successful creation.
+     * Create a new user
      *
      * @throws \Exception
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
@@ -100,8 +91,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Handle a request to delete a user from the Panel. Returns a HTTP/204 response
-     * on successful deletion.
+     * Delete a user
      *
      * @throws \Pterodactyl\Exceptions\DisplayException
      */

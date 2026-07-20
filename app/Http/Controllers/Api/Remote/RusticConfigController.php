@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Crypt;
 class RusticConfigController extends Controller
 {
     /**
-     * Get rustic configuration for a server.
-     * This endpoint is called by Wings to get the rustic backup configuration.
+     * Get rustic backup config
      */
     public function show(Request $request, string $uuid): JsonResponse
     {
