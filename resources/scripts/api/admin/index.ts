@@ -1,10 +1,4 @@
-import http, {
-    type FractalResponseData,
-    getPaginationSet,
-    type PaginatedResult,
-    withQueryBuilderParams,
-    type QueryBuilderParams,
-} from '@/api/http';
+import http from '@/api/http';
 
 export interface PanelStatus {
     status: string;
@@ -35,5 +29,4 @@ export interface Counts {
     buckets: number;
 }
 
-export const getAdminCounts = (): Promise<Counts> =>
-    http.get('/api/application/panel/counts').then(({ data }) => data);
+export const getAdminCounts = (): Promise<Counts> => http.get('/api/application/panel/counts').then(({ data }) => data);

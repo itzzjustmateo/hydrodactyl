@@ -2,8 +2,8 @@ import http, {
     type FractalResponseData,
     getPaginationSet,
     type PaginatedResult,
-    withQueryBuilderParams,
     type QueryBuilderParams,
+    withQueryBuilderParams,
 } from '@/api/http';
 
 export interface AdminMount {
@@ -74,5 +74,4 @@ export const updateMount = (id: number, data: Partial<CreateMountData>): Promise
             .catch(reject);
     });
 
-export const deleteMount = (id: number): Promise<void> =>
-    http.delete(`/api/application/mounts/${id}`);
+export const deleteMount = (id: number): Promise<void> => http.delete(`/api/application/mounts/${id}`);

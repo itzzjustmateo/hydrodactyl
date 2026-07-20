@@ -2,8 +2,8 @@ import http, {
     type FractalResponseData,
     getPaginationSet,
     type PaginatedResult,
-    withQueryBuilderParams,
     type QueryBuilderParams,
+    withQueryBuilderParams,
 } from '@/api/http';
 
 export interface AdminLocation {
@@ -24,8 +24,8 @@ const rawToLocation = (data: FractalResponseData): AdminLocation => {
         uuid: attrs.uuid as string,
         short: attrs.short as string,
         long: attrs.long as string,
-        nodesCount: attrs.nodes_count as number || 0,
-        serversCount: attrs.servers_count as number || 0,
+        nodesCount: (attrs.nodes_count as number) || 0,
+        serversCount: (attrs.servers_count as number) || 0,
         createdAt: attrs.created_at as string,
         updatedAt: attrs.updated_at as string,
     };
@@ -52,8 +52,7 @@ export const getLocation = (id: number): Promise<AdminLocation> =>
             .catch(reject);
     });
 
-export const deleteLocation = (id: number): Promise<void> =>
-    http.delete(`/api/application/locations/${id}`);
+export const deleteLocation = (id: number): Promise<void> => http.delete(`/api/application/locations/${id}`);
 
 export interface CreateLocationData {
     short: string;

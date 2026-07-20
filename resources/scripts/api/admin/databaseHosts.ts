@@ -2,8 +2,8 @@ import http, {
     type FractalResponseData,
     getPaginationSet,
     type PaginatedResult,
-    withQueryBuilderParams,
     type QueryBuilderParams,
+    withQueryBuilderParams,
 } from '@/api/http';
 
 export interface AdminDatabaseHost {
@@ -78,5 +78,4 @@ export const updateDatabaseHost = (id: number, data: Partial<CreateDatabaseHostD
             .catch(reject);
     });
 
-export const deleteDatabaseHost = (id: number): Promise<void> =>
-    http.delete(`/api/application/database-hosts/${id}`);
+export const deleteDatabaseHost = (id: number): Promise<void> => http.delete(`/api/application/database-hosts/${id}`);

@@ -10,7 +10,7 @@ import { httpErrorToHuman } from '@/api/http';
 import { Button } from '@/components/ui/button';
 
 const inputClass =
-    'w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-mocha-300 transition-colors';
+    'w-full bg-mocha-600 border border-mocha-400 rounded px-3 py-2 text-sm text-cream-400 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-all';
 const labelClass = 'block text-sm text-mocha-200 mb-1';
 
 const MailSettingsTab = () => {
@@ -153,14 +153,27 @@ const MailSettingsTab = () => {
             </div>
 
             {/* SMTP Settings Card */}
-            <div className='bg-mocha-500 border border-mocha-400 rounded-xl p-6'>
+            <div
+                className={`rounded-xl p-6 transition-all duration-200 ${
+                    editing
+                        ? 'bg-mocha-500 border border-brand/50 shadow-[0_0_15px_rgba(59,130,246,0.08)]'
+                        : 'bg-mocha-500 border border-mocha-400'
+                }`}
+            >
                 <div className='flex items-center justify-between mb-6'>
                     <div className='flex items-center gap-3'>
-                        <div className='w-10 h-10 bg-mocha-400 rounded-lg flex items-center justify-center'>
-                            <HugeiconsIcon icon={Mail02Icon} className='w-5 h-5 text-cream-400' />
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${editing ? 'bg-brand/20' : 'bg-mocha-400'}`}>
+                            <HugeiconsIcon icon={Mail02Icon} className={`w-5 h-5 ${editing ? 'text-brand' : 'text-cream-400'}`} />
                         </div>
                         <div>
-                            <h3 className='text-cream-400 font-semibold text-lg'>SMTP Settings</h3>
+                            <div className='flex items-center gap-2'>
+                                <h3 className='text-cream-400 font-semibold text-lg'>SMTP Settings</h3>
+                                {editing && (
+                                    <span className='inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-brand/20 text-brand border border-brand/30'>
+                                        Editing
+                                    </span>
+                                )}
+                            </div>
                             <p className='text-mocha-200 text-sm'>Server connection and authentication details</p>
                         </div>
                     </div>
@@ -238,11 +251,11 @@ const MailSettingsTab = () => {
                             </div>
                         </div>
 
-                        <div className='flex items-center gap-3 pt-2'>
+                        <div className='flex items-center gap-3 pt-3 border-t border-mocha-400'>
                             <Button variant='default' onClick={handleSave} disabled={saving}>
                                 {saving ? 'Saving...' : 'Save Changes'}
                             </Button>
-                            <Button variant='secondary' onClick={handleCancel}>Cancel</Button>
+                            <Button variant='secondary' onClick={handleCancel}>Discard</Button>
                         </div>
                     </div>
                 ) : (

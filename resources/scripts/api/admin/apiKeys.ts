@@ -2,8 +2,8 @@ import http, {
     type FractalResponseData,
     getPaginationSet,
     type PaginatedResult,
-    withQueryBuilderParams,
     type QueryBuilderParams,
+    withQueryBuilderParams,
 } from '@/api/http';
 
 export interface ApiKeyPermissions {
@@ -88,5 +88,4 @@ export const updateApiKey = (id: number, data: Partial<CreateApiKeyData>): Promi
             .catch(reject);
     });
 
-export const deleteApiKey = (id: number): Promise<void> =>
-    http.delete(`/api/application/api-keys/${id}`);
+export const deleteApiKey = (id: number): Promise<void> => http.delete(`/api/application/api-keys/${id}`);

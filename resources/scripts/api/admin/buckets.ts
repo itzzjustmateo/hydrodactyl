@@ -2,8 +2,8 @@ import http, {
     type FractalResponseData,
     getPaginationSet,
     type PaginatedResult,
-    withQueryBuilderParams,
     type QueryBuilderParams,
+    withQueryBuilderParams,
 } from '@/api/http';
 
 export interface AdminBucket {
@@ -85,5 +85,4 @@ export const updateBucket = (id: number, data: Partial<CreateBucketData>): Promi
             .catch(reject);
     });
 
-export const deleteBucket = (id: number): Promise<void> =>
-    http.delete(`/api/application/buckets/${id}`);
+export const deleteBucket = (id: number): Promise<void> => http.delete(`/api/application/buckets/${id}`);

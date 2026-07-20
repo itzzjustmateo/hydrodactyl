@@ -2,8 +2,8 @@ import http, {
     type FractalResponseData,
     getPaginationSet,
     type PaginatedResult,
-    withQueryBuilderParams,
     type QueryBuilderParams,
+    withQueryBuilderParams,
 } from '@/api/http';
 
 export interface AdminEggVariable {
@@ -77,7 +77,8 @@ const rawToNest = (data: FractalResponseData): AdminNest => {
         author: attrs.author as string,
         name: attrs.name as string,
         description: (attrs.description as string) || '',
-        eggsCount: (attrs.eggs_count as number) || (attrs.relationships?.eggs?.data as any[])?.length || 0,
+        eggsCount:
+            (attrs.eggs_count as number) || (attrs.relationships?.eggs?.data as FractalResponseData[])?.length || 0,
         serversCount: (attrs.servers_count as number) || 0,
         createdAt: attrs.created_at as string,
         updatedAt: attrs.updated_at as string,
@@ -116,7 +117,7 @@ const rawToEgg = (data: FractalResponseData): AdminEgg => {
         fileDenylist: attrs.file_denylist as string[] | null,
         createdAt: attrs.created_at as string,
         updatedAt: attrs.updated_at as string,
-        variables: (attrs.relationships?.variables?.data as any[])?.map(rawToEggVariable),
+        variables: (attrs.relationships?.variables?.data as FractalResponseData[])?.map(rawToEggVariable),
     };
 };
 
@@ -176,8 +177,7 @@ export const updateNest = (id: number, data: Partial<CreateNestData>): Promise<A
             .catch(reject);
     });
 
-export const deleteNest = (id: number): Promise<void> =>
-    http.delete(`/api/application/nests/${id}`);
+export const deleteNest = (id: number): Promise<void> => http.delete(`/api/application/nests/${id}`);
 
 export const getNestEggs = (nestId: number, params?: QueryBuilderParams): Promise<PaginatedResult<AdminEgg>> =>
     new Promise((resolve, reject) => {
@@ -257,14 +257,23 @@ export const getEggVariable = (nestId: number, eggId: number, variableId: number
             .catch(reject);
     });
 
-export const createEggVariable = (nestId: number, eggId: number, data: CreateEggVariableData): Promise<AdminEggVariable> =>
+export const createEggVariable = (
+    nestId: number,
+    eggId: number,
+    data: CreateEggVariableData,
+): Promise<AdminEggVariable> =>
     new Promise((resolve, reject) => {
         http.post(`/api/application/nests/${nestId}/eggs/${eggId}/variables`, data)
             .then(({ data: resp }) => resolve(rawToEggVariable(resp)))
             .catch(reject);
     });
 
-export const updateEggVariable = (nestId: number, eggId: number, variableId: number, data: Partial<CreateEggVariableData>): Promise<AdminEggVariable> =>
+export const updateEggVariable = (
+    nestId: number,
+    eggId: number,
+    variableId: number,
+    data: Partial<CreateEggVariableData>,
+): Promise<AdminEggVariable> =>
     new Promise((resolve, reject) => {
         http.patch(`/api/application/nests/${nestId}/eggs/${eggId}/variables/${variableId}`, data)
             .then(({ data: resp }) => resolve(rawToEggVariable(resp)))

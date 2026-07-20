@@ -56,10 +56,7 @@ export default defineConfig({
         outDir: 'public/build',
 
         rollupOptions: {
-            input: [
-                path.resolve('resources/scripts/index.tsx'),
-                path.resolve('resources/scripts/admin/admin.css'),
-            ],
+            input: [path.resolve('resources/scripts/index.tsx'), path.resolve('resources/scripts/admin/admin.css')],
             output: {
                 // @ts-expect-error It won't fail lol
                 manualChunks(id) {
