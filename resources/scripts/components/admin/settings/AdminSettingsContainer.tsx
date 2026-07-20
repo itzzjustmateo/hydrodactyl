@@ -20,10 +20,10 @@ const tabs = [
 
 const AdminSettingsContainer = () => {
     return (
-        <div>
+        <div >
             <MainPageHeader title='Settings' />
 
-            <div className='flex items-center space-x-1 border-b border-mocha-400 overflow-x-auto'>
+            <div className='flex items-center space-x-1 border-b border-mocha-400 overflow-x-auto overflow-y-hidden'>
                 {tabs.map((tab) => (
                     <NavLink
                         key={tab.to}
