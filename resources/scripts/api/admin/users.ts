@@ -6,6 +6,18 @@ import http, {
     type QueryBuilderParams,
 } from '@/api/http';
 
+export interface AdminServerSummary {
+    id: number;
+    name: string;
+    uuid: string;
+    identifier: string;
+    nodeId: number;
+    status: string[];
+    suspended: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface AdminUser {
     id: number;
     uuid: string;
@@ -20,11 +32,29 @@ export interface AdminUser {
     serversCount: number;
     createdAt: string;
     updatedAt: string;
+    servers?: AdminServerSummary[];
 }
+
+const rawToServer = (data: FractalResponseData): AdminServerSummary => {
+    const attrs = data.attributes;
+    return {
+        id: attrs.id as number,
+        name: attrs.name as string,
+        uuid: attrs.uuid as string,
+        identifier: attrs.identifier as string,
+        nodeId: attrs.node as number,
+        status: (attrs.status as string[]) || [],
+        suspended: attrs.suspended as boolean,
+        createdAt: attrs.created_at as string,
+        updatedAt: attrs.updated_at as string,
+    };
+};
 
 const rawToUser = (data: FractalResponseData): AdminUser => {
     const attrs = data.attributes;
-    return {
+    const relationships = data.relationships as Record<string, unknown> | undefined;
+
+    const user: AdminUser = {
         id: attrs.id as number,
         uuid: attrs.uuid as string,
         externalId: (attrs.external_id as string) || null,
@@ -39,6 +69,15 @@ const rawToUser = (data: FractalResponseData): AdminUser => {
         createdAt: attrs.created_at as string,
         updatedAt: attrs.updated_at as string,
     };
+
+    if (relationships?.server) {
+        const serverList = relationships.server as { data: FractalResponseData[] };
+        if (Array.isArray(serverList.data)) {
+            user.servers = serverList.data.map(rawToServer);
+        }
+    }
+
+    return user;
 };
 
 export const getUsers = (params?: QueryBuilderParams): Promise<PaginatedResult<AdminUser>> =>
@@ -55,9 +94,11 @@ export const getUsers = (params?: QueryBuilderParams): Promise<PaginatedResult<A
             .catch(reject);
     });
 
-export const getUser = (id: number): Promise<AdminUser> =>
+export const getUser = (id: number, include?: string): Promise<AdminUser> =>
     new Promise((resolve, reject) => {
-        http.get(`/api/application/users/${id}`)
+        http.get(`/api/application/users/${id}`, {
+            params: include ? { include } : undefined,
+        })
             .then(({ data }) => resolve(rawToUser(data)))
             .catch(reject);
     });
