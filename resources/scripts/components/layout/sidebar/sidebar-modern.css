@@ -44,9 +44,38 @@ body[data-sidebar-minimized] {
 }
 .sidebar-logo-link {
     left: calc(var(--sidebar-width) / 2);
+    max-width: calc(var(--sidebar-width) - calc(var(--sidebar-padding) * 2));
+    overflow: hidden;
     position: absolute;
     transform: translateX(-50%);
+    transition:
+        left var(--sidebar-transition-sidebar),
+        max-width var(--sidebar-transition-sidebar),
+        transform var(--sidebar-transition-sidebar);
 }
+
+body[data-sidebar-minimized="false"] .sidebar-logo-link {
+    left: var(--sidebar-padding);
+    max-width: calc(var(--sidebar-width) - calc(var(--sidebar-padding) * 2) - 3rem);
+    transform: none;
+}
+
+.sidebar-logo-name {
+    display: none;
+    opacity: 0;
+    transform: translateX(-0.5rem);
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    white-space: nowrap;
+}
+
+body[data-sidebar-minimized="false"] .sidebar-logo-name {
+    display: block;
+    opacity: 1;
+    transform: none;
+}
+
 .sidebar-toggle-button {
     margin-left: auto;
 }
