@@ -160,3 +160,10 @@ body[data-sidebar-minimized="false"] .nav-item .nav-text {
 .sidebar-container[data-sidebar-minimized="false"] .nav-item .nav-text {
     transform: none;
 }
+
+.sidebar-container[data-sidebar-minimized="false"] .mobile-sidebar-logo {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0;
+    justify-content: center;
+}
