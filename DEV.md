@@ -40,12 +40,9 @@ pnpm dev
 3. Seeds a default administrator account.
 4. Creates a development node and starts the [Elytra](https://github.com/pyrohost/elytra) daemon.
 
-### Default login
+### First-time setup
 
-| Field | Value |
-| --- | --- |
-| Email | `dev@hydrodactyl.dev` |
-| Password | `dev` |
+On first boot, navigate to `http://localhost:3000` and complete the setup wizard in the UI to create your admin account.
 
 ## Available scripts
 

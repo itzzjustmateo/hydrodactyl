@@ -119,15 +119,24 @@ const ServerRow = ({ server, className }: { server: Server; className?: string }
                         </p>{' '}
                         <div className={'status-bar'} />
                     </div>
-                    <p className={`text-sm text-[#ffffff66] truncate`}>
-                        {server.allocations
-                            .filter((alloc) => alloc.isDefault)
-                            .map((allocation) => (
-                                <Fragment key={allocation.ip + allocation.port.toString()}>
-                                    {allocation.alias || ip(allocation.ip)}:{allocation.port}
-                                </Fragment>
-                            ))}
-                    </p>
+                    <div className='flex items-center gap-2 min-w-0'>
+                        <p className={`text-sm text-[#ffffff66] truncate`}>
+                            {server.allocations
+                                .filter((alloc) => alloc.isDefault)
+                                .map((allocation) => (
+                                    <Fragment key={allocation.ip + allocation.port.toString()}>
+                                        {allocation.alias || ip(allocation.ip)}:{allocation.port}
+                                    </Fragment>
+                                ))}
+                        </p>
+                        {server.group && (
+                            <span
+                                className='inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent/80 border border-accent/20'
+                            >
+                                {server.group.name}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
             <div

@@ -7,6 +7,7 @@ import getFilterOptions from '@/api/getFilterOptions';
 import getServers from '@/api/getServers';
 import type { PaginatedResult } from '@/api/http';
 import type { Server } from '@/api/server/getServer';
+import GroupSection from '@/components/dashboard/GroupSection';
 import ServerRow from '@/components/dashboard/ServerRow';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import Pagination from '@/components/elements/Pagination';
@@ -17,7 +18,7 @@ import useFlash from '@/plugins/useFlash';
 import { usePersistedState } from '@/plugins/usePersistedState';
 
 import FilterDropdown from './header/FilterDropdown';
-import HeaderCentered from './header/HeaderCentered';
+import GroupDropdown from './header/GroupDropdown';
 import OwnerFilterDropdown, { type OwnerFilterValue } from './header/OwnerFilterDropdown';
 import SearchSection from './header/SearchSection';
 import SortDropdown, { type SortPreset } from './header/SortDropdown';
@@ -38,6 +39,7 @@ const SORT_PRESETS: SortPreset[] = [
 ];
 
 type FilterCategory = 'owner_id' | 'nest_id' | 'egg_id' | 'node_id';
+type DashboardMode = 'list' | 'grid' | 'groups';
 
 const DashboardContainer = () => {
     const { search } = useLocation();
@@ -49,10 +51,10 @@ const DashboardContainer = () => {
     const rootAdmin = useStoreState((state) => state.user.data?.rootAdmin);
     const [ownerFilter, setOwnerFilter] = usePersistedState<OwnerFilterValue>(`${uuid}:server_view_mode`, 'owner');
 
-    const { setHeaderActions, clearHeaderActions } = useHeader();
+    const { setHeaderActions, clearHeaderActions, setLeftActions, setCenterActions, setRightActions } = useHeader();
 
-    const [dashboardDisplayOption, setDashboardDisplayOption] = usePersistedState(
-        `${uuid}:dashboard_display_option`,
+    const [dashboardMode, setDashboardMode] = usePersistedState<DashboardMode>(
+        `${uuid}:dashboard_mode`,
         'list',
     );
 
@@ -60,13 +62,14 @@ const DashboardContainer = () => {
     const [sortValue, setSortValue] = useState('');
     const [filterField, setFilterField] = useState<FilterCategory | undefined>(undefined);
     const [filterValue, setFilterValue] = useState<number | undefined>(undefined);
+    const [groupFilterId, setGroupFilterId] = useState<number | undefined>(undefined);
 
     const { data: filterOptions } = useSWRImmutable('server:filter-options', () => getFilterOptions(), {
         revalidateOnMount: true,
     });
 
     const { data: servers, error } = useSWR<PaginatedResult<Server>>(
-        ['/api/client/servers', ownerFilter, page, searchQuery, sortValue, filterField, filterValue],
+        ['/api/client/servers', ownerFilter, page, searchQuery, sortValue, filterField, filterValue, groupFilterId],
         () =>
             getServers({
                 page,
@@ -75,6 +78,7 @@ const DashboardContainer = () => {
                 sort: sortValue || undefined,
                 filterField: filterField,
                 filterValue: filterValue,
+                groupId: groupFilterId,
             }),
         { revalidateOnFocus: false },
     );
@@ -103,18 +107,23 @@ const DashboardContainer = () => {
         setPage(1);
     }, []);
 
+    const handleGroupChange = useCallback((groupId: number | undefined) => {
+        setGroupFilterId(groupId);
+        setPage(1);
+    }, []);
+
     const searchSection = useMemo(
-        () => (
-            <HeaderCentered>
-                <SearchSection className='max-w-240 xl:w-[30vw] hidden md:flex' onSearch={handleSearch} />
-            </HeaderCentered>
-        ),
+        () => <SearchSection className='max-w-360 hidden md:flex' onSearch={handleSearch} />,
         [handleSearch],
     );
 
     const viewTabs = useMemo(
         () => (
-            <Tabs value={dashboardDisplayOption} onValueChange={setDashboardDisplayOption} className='lg:block hidden'>
+            <Tabs
+                value={dashboardMode}
+                onValueChange={(v) => setDashboardMode(v as DashboardMode)}
+                className='lg:block hidden'
+            >
                 <TabsList>
                     <TabsTrigger aria-label='View servers in a list layout.' value='list'>
                         <svg
@@ -150,10 +159,47 @@ const DashboardContainer = () => {
                             />
                         </svg>
                     </TabsTrigger>
+                    <TabsTrigger aria-label='View servers grouped.' value='groups'>
+                        <svg
+                            width='13'
+                            height='14'
+                            viewBox='0 0 16 17'
+                            fill='none'
+                            xmlns='http://www.w3.org/2000/svg'
+                            role='img'
+                            aria-label='Group view'
+                        >
+                            <title>Group view</title>
+                            <path
+                                d='M1.5 2.5C1.5 2.086 1.5 1.879 1.581 1.715C1.652 1.57 1.77 1.452 1.915 1.381C2.079 1.3 2.286 1.3 2.7 1.3H6.3C6.714 1.3 6.921 1.3 7.085 1.381C7.23 1.452 7.348 1.57 7.419 1.715C7.5 1.879 7.5 2.086 7.5 2.5V3.1C7.5 3.514 7.5 3.721 7.419 3.885C7.348 4.03 7.23 4.148 7.085 4.219C6.921 4.3 6.714 4.3 6.3 4.3H2.7C2.286 4.3 2.079 4.3 1.915 4.219C1.77 4.148 1.652 4.03 1.581 3.885C1.5 3.721 1.5 3.514 1.5 3.1V2.5Z'
+                                fill='currentColor'
+                            />
+                            <path
+                                d='M8.5 2.5C8.5 2.086 8.5 1.879 8.581 1.715C8.652 1.57 8.77 1.452 8.915 1.381C9.079 1.3 9.286 1.3 9.7 1.3H13.3C13.714 1.3 13.921 1.3 14.085 1.381C14.23 1.452 14.348 1.57 14.419 1.715C14.5 1.879 14.5 2.086 14.5 2.5V3.1C14.5 3.514 14.5 3.721 14.419 3.885C14.348 4.03 14.23 4.148 14.085 4.219C13.921 4.3 13.714 4.3 13.3 4.3H9.7C9.286 4.3 9.079 4.3 8.915 4.219C8.77 4.148 8.652 4.03 8.581 3.885C8.5 3.721 8.5 3.514 8.5 3.1V2.5Z'
+                                fill='currentColor'
+                            />
+                            <path
+                                d='M1.5 7.7C1.5 7.286 1.5 7.079 1.581 6.915C1.652 6.77 1.77 6.652 1.915 6.581C2.079 6.5 2.286 6.5 2.7 6.5H6.3C6.714 6.5 6.921 6.5 7.085 6.581C7.23 6.652 7.348 6.77 7.419 6.915C7.5 7.079 7.5 7.286 7.5 7.7V8.3C7.5 8.714 7.5 8.921 7.419 9.085C7.348 9.23 7.23 9.348 7.085 9.419C6.921 9.5 6.714 9.5 6.3 9.5H2.7C2.286 9.5 2.079 9.5 1.915 9.419C1.77 9.348 1.652 9.23 1.581 9.085C1.5 8.921 1.5 8.714 1.5 8.3V7.7Z'
+                                fill='currentColor'
+                            />
+                            <path
+                                d='M8.5 7.7C8.5 7.286 8.5 7.079 8.581 6.915C8.652 6.77 8.77 6.652 8.915 6.581C9.079 6.5 9.286 6.5 9.7 6.5H13.3C13.714 6.5 13.921 6.5 14.085 6.581C14.23 6.652 14.348 6.77 14.419 6.915C14.5 7.079 14.5 7.286 14.5 7.7V8.3C14.5 8.714 14.5 8.921 14.419 9.085C14.348 9.23 14.23 9.348 14.085 9.419C13.921 9.5 13.714 9.5 13.3 9.5H9.7C9.286 9.5 9.079 9.5 8.915 9.419C8.77 9.348 8.652 9.23 8.581 9.085C8.5 8.921 8.5 8.714 8.5 8.3V7.7Z'
+                                fill='currentColor'
+                            />
+                            <path
+                                d='M1.5 12.9C1.5 12.486 1.5 12.279 1.581 12.115C1.652 11.97 1.77 11.852 1.915 11.781C2.079 11.7 2.286 11.7 2.7 11.7H6.3C6.714 11.7 6.921 11.7 7.085 11.781C7.23 11.852 7.348 11.97 7.419 12.115C7.5 12.279 7.5 12.486 7.5 12.9V13.5C7.5 13.914 7.5 14.121 7.419 14.285C7.348 14.43 7.23 14.548 7.085 14.619C6.921 14.7 6.714 14.7 6.3 14.7H2.7C2.286 14.7 2.079 14.7 1.915 14.619C1.77 14.548 1.652 14.43 1.581 14.285C1.5 14.121 1.5 13.914 1.5 13.5V12.9Z'
+                                fill='currentColor'
+                            />
+                            <path
+                                d='M8.5 12.9C8.5 12.486 8.5 12.279 8.581 12.115C8.652 11.97 8.77 11.852 8.915 11.781C9.079 11.7 9.286 11.7 9.7 11.7H13.3C13.714 11.7 13.921 11.7 14.085 11.781C14.23 11.852 14.348 11.97 14.419 12.115C14.5 12.279 14.5 12.486 14.5 12.9V13.5C14.5 13.914 14.5 14.121 14.419 14.285C14.348 14.43 14.23 14.548 14.085 14.619C13.921 14.7 13.714 14.7 13.3 14.7H9.7C9.286 14.7 9.079 14.7 8.915 14.619C8.77 14.548 8.652 14.43 8.581 14.285C8.5 14.121 8.5 13.914 8.5 13.5V12.9Z'
+                                fill='currentColor'
+                            />
+                        </svg>
+                    </TabsTrigger>
                 </TabsList>
             </Tabs>
         ),
-        [dashboardDisplayOption, setDashboardDisplayOption],
+        [dashboardMode, setDashboardMode],
     );
 
     const ownerFilterDropdown = useMemo(
@@ -170,7 +216,7 @@ const DashboardContainer = () => {
     const entityFilterDropdown = useMemo(
         () => (
             <FilterDropdown
-                filterOptions={filterOptions || { owners: [], nests: [], eggs: [], nodes: [] }}
+                filterOptions={filterOptions || { owners: [], nests: [], eggs: [], nodes: [], groups: [] }}
                 activeField={filterField}
                 activeValue={filterValue}
                 onFilterChange={handleFilterChange}
@@ -179,21 +225,37 @@ const DashboardContainer = () => {
         [filterOptions, filterField, filterValue, handleFilterChange],
     );
 
+    const groupDropdown = useMemo(
+        () => (
+            <GroupDropdown
+                groups={filterOptions?.groups || []}
+                activeGroupId={groupFilterId}
+                onGroupChange={handleGroupChange}
+            />
+        ),
+        [filterOptions, groupFilterId, handleGroupChange],
+    );
+
     const sortDropdown = useMemo(
         () => <SortDropdown presets={SORT_PRESETS} value={sortValue} onSortChange={handleSortChange} />,
         [sortValue, handleSortChange],
     );
 
     useEffect(() => {
-        setHeaderActions([searchSection, viewTabs, ownerFilterDropdown, entityFilterDropdown, sortDropdown]);
+        setLeftActions([viewTabs, ownerFilterDropdown]);
+        setCenterActions(searchSection);
+        setRightActions([entityFilterDropdown, groupDropdown, sortDropdown]);
         return () => clearHeaderActions();
     }, [
-        setHeaderActions,
+        setLeftActions,
+        setCenterActions,
+        setRightActions,
         clearHeaderActions,
         searchSection,
         viewTabs,
         ownerFilterDropdown,
         entityFilterDropdown,
+        groupDropdown,
         sortDropdown,
     ]);
 
@@ -213,66 +275,76 @@ const DashboardContainer = () => {
         if (!error) clearFlashes('dashboard');
     }, [error, clearAndAddHttpError, clearFlashes]);
 
+    const renderGroupView = () => {
+        if (!servers) return null;
+        return <GroupSection servers={servers.items} displayOption={dashboardMode === 'grid' ? 'grid' : 'list'} />;
+    };
+
+    const renderListView = () => {
+        if (!servers) return null;
+        return (
+            <Pagination data={servers} onPageSelect={setPage}>
+                {({ items }) =>
+                    items.length > 0 ? (
+                        <div
+                            className={
+                                dashboardMode === 'grid'
+                                    ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0'
+                                    : ''
+                            }
+                        >
+                            {items.map((server, index) => (
+                                <div
+                                    key={`${server.uuid}-${dashboardMode}`}
+                                    className={`transform-gpu skeleton-anim-2 ${
+                                        dashboardMode === 'grid'
+                                            ? items.length === 1
+                                                ? 'w-[calc(50%-0.5rem)] max-lg:w-full'
+                                                : 'w-[calc(50%-0.5rem)] max-lg:w-full'
+                                            : 'mb-4'
+                                    } max-lg:mb-4`}
+                                    style={{
+                                        animationDelay: `${index * 50 + 50}ms`,
+                                        animationTimingFunction:
+                                            'linear(0,0.01,0.04 1.6%,0.161 3.3%,0.816 9.4%,1.046,1.189 14.4%,1.231,1.254 17%,1.259,1.257 18.6%,1.236,1.194 22.3%,1.057 27%,0.999 29.4%,0.955 32.1%,0.942,0.935 34.9%,0.933,0.939 38.4%,1 47.3%,1.011,1.017 52.6%,1.016 56.4%,1 65.2%,0.996 70.2%,1.001 87.2%,1)',
+                                    }}
+                                >
+                                    <ServerRow
+                                        className={
+                                            dashboardMode === 'list'
+                                                ? 'flex-row'
+                                                : 'items-start! flex-col w-full gap-4 [&>div~div]:w-full max-lg:flex-row max-lg:items-center max-lg:gap-0 max-lg:[&>div~div]:w-auto'
+                                        }
+                                        key={server.uuid}
+                                        server={server}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div
+                            className={`text-center text-sm text-zinc-400 absolute w-full left-1/2 -translate-x-1/2`}
+                        >
+                            <p className='max-w-sm mx-auto mb-5'>
+                                {ownerFilter === 'admin-all'
+                                    ? 'There are no other servers to display.'
+                                    : ownerFilter === 'all'
+                                      ? 'No Server Shared With your Account'
+                                      : 'There are no servers associated with your account.'}
+                            </p>
+                            <h3 className='text-lg font-medium text-zinc-200 mb-2'>
+                                {ownerFilter === 'admin-all' ? 'No other servers found' : 'No servers found'}
+                            </h3>
+                        </div>
+                    )
+                }
+            </Pagination>
+        );
+    };
+
     return (
         <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
-            {!servers ? null : (
-                <Pagination data={servers} onPageSelect={setPage}>
-                    {({ items }) =>
-                        items.length > 0 ? (
-                            <div
-                                className={
-                                    dashboardDisplayOption === 'grid'
-                                        ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0'
-                                        : ''
-                                }
-                            >
-                                {items.map((server, index) => (
-                                    <div
-                                        key={`${server.uuid}-${dashboardDisplayOption}`}
-                                        className={`transform-gpu skeleton-anim-2 ${
-                                            dashboardDisplayOption === 'grid'
-                                                ? items.length === 1
-                                                    ? 'w-[calc(50%-0.5rem)] max-lg:w-full'
-                                                    : 'w-[calc(50%-0.5rem)] max-lg:w-full'
-                                                : 'mb-4'
-                                        } max-lg:mb-4`}
-                                        style={{
-                                            animationDelay: `${index * 50 + 50}ms`,
-                                            animationTimingFunction:
-                                                'linear(0,0.01,0.04 1.6%,0.161 3.3%,0.816 9.4%,1.046,1.189 14.4%,1.231,1.254 17%,1.259,1.257 18.6%,1.236,1.194 22.3%,1.057 27%,0.999 29.4%,0.955 32.1%,0.942,0.935 34.9%,0.933,0.939 38.4%,1 47.3%,1.011,1.017 52.6%,1.016 56.4%,1 65.2%,0.996 70.2%,1.001 87.2%,1)',
-                                        }}
-                                    >
-                                        <ServerRow
-                                            className={
-                                                dashboardDisplayOption === 'list'
-                                                    ? 'flex-row'
-                                                    : 'items-start! flex-col w-full gap-4 [&>div~div]:w-full max-lg:flex-row max-lg:items-center max-lg:gap-0 max-lg:[&>div~div]:w-auto'
-                                            }
-                                            key={server.uuid}
-                                            server={server}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div
-                                className={`text-center text-sm text-zinc-400 absolute w-full left-1/2 -translate-x-1/2`}
-                            >
-                                <p className='max-w-sm mx-auto mb-5'>
-                                    {ownerFilter === 'admin-all'
-                                        ? 'There are no other servers to display.'
-                                        : ownerFilter === 'all'
-                                          ? 'No Server Shared With your Account'
-                                          : 'There are no servers associated with your account.'}
-                                </p>
-                                <h3 className='text-lg font-medium text-zinc-200 mb-2'>
-                                    {ownerFilter === 'admin-all' ? 'No other servers found' : 'No servers found'}
-                                </h3>
-                            </div>
-                        )
-                    }
-                </Pagination>
-            )}
+            {!servers ? null : dashboardMode === 'groups' ? renderGroupView() : renderListView()}
         </PageContentBlock>
     );
 };

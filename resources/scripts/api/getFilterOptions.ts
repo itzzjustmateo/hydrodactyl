@@ -10,6 +10,7 @@ export interface FilterOptions {
     nests: FilterOption[];
     eggs: FilterOption[];
     nodes: FilterOption[];
+    groups: FilterOption[];
 }
 
 export default async (): Promise<FilterOptions> => {
@@ -21,6 +22,7 @@ export default async (): Promise<FilterOptions> => {
                     nests: data.attributes?.nests || [],
                     eggs: data.attributes?.eggs || [],
                     nodes: data.attributes?.nodes || [],
+                    groups: data.attributes?.groups || [],
                 }),
             )
             .catch(reject);
