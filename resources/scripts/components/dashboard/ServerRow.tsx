@@ -129,13 +129,9 @@ const ServerRow = ({ server, className }: { server: Server; className?: string }
                                     </Fragment>
                                 ))}
                         </p>
-                        {server.group && (
-                            <span
-                                className='inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent/80 border border-accent/20'
-                            >
+                        {server.group && <span className='inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent/80 border border-accent/20'>
                                 {server.group.name}
-                            </span>
-                        )}
+                            </span>}
                     </div>
                 </div>
             </div>

@@ -1,15 +1,10 @@
+import { FolderOpen, FolderOpenFill, Pencil, Plus, TrashBin } from '@gravity-ui/icons';
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { FolderOpenFill, FolderOpen, Pencil, TrashBin, Plus } from '@gravity-ui/icons';
 import type { Server } from '@/api/server/getServer';
-import getServerGroups, {
-    type ServerGroup,
-    updateServerGroup,
-    deleteServerGroup,
-    addServersToGroup,
-} from '@/api/serverGroups';
-import ServerRow from '@/components/dashboard/ServerRow';
+import getServerGroups, { addServersToGroup, deleteServerGroup, updateServerGroup } from '@/api/serverGroups';
 import CreateGroupModal from '@/components/dashboard/CreateGroupModal';
+import ServerRow from '@/components/dashboard/ServerRow';
 
 interface GroupSectionProps {
     servers: Server[];

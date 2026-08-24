@@ -85,9 +85,7 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     ),
     egg: data.egg,
     daemonType: data.daemonType,
-    group: data.groups
-        ? { id: data.groups.id, name: data.groups.name }
-        : null,
+    group: data.groups ? { id: data.groups.id, name: data.groups.name } : null,
 });
 
 export default async (uuid: string): Promise<[Server, string[]]> => {

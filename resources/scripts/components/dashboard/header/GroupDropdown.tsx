@@ -1,9 +1,8 @@
-import { FolderOpen } from '@gravity-ui/icons';
+import { Folder03Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { useMemo } from 'react';
 import type { FilterOption } from '@/api/getFilterOptions';
 import { Button } from '@/components/ui/button';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Folder03Icon } from '@hugeicons/core-free-icons';
 import {
     DropdownMenu,
     DropdownMenuContent,

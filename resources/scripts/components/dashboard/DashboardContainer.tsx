@@ -51,12 +51,9 @@ const DashboardContainer = () => {
     const rootAdmin = useStoreState((state) => state.user.data?.rootAdmin);
     const [ownerFilter, setOwnerFilter] = usePersistedState<OwnerFilterValue>(`${uuid}:server_view_mode`, 'owner');
 
-    const { setHeaderActions, clearHeaderActions, setLeftActions, setCenterActions, setRightActions } = useHeader();
+    const { clearHeaderActions, setLeftActions, setCenterActions, setRightActions } = useHeader();
 
-    const [dashboardMode, setDashboardMode] = usePersistedState<DashboardMode>(
-        `${uuid}:dashboard_mode`,
-        'list',
-    );
+    const [dashboardMode, setDashboardMode] = usePersistedState<DashboardMode>(`${uuid}:dashboard_mode`, 'list');
 
     const [searchQuery, setSearchQuery] = useState('');
     const [sortValue, setSortValue] = useState('');
@@ -286,13 +283,7 @@ const DashboardContainer = () => {
             <Pagination data={servers} onPageSelect={setPage}>
                 {({ items }) =>
                     items.length > 0 ? (
-                        <div
-                            className={
-                                dashboardMode === 'grid'
-                                    ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0'
-                                    : ''
-                            }
-                        >
+                        <div className={dashboardMode === 'grid' ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0' : ''}>
                             {items.map((server, index) => (
                                 <div
                                     key={`${server.uuid}-${dashboardMode}`}
@@ -322,9 +313,7 @@ const DashboardContainer = () => {
                             ))}
                         </div>
                     ) : (
-                        <div
-                            className={`text-center text-sm text-zinc-400 absolute w-full left-1/2 -translate-x-1/2`}
-                        >
+                        <div className='text-center text-sm text-zinc-400 absolute w-full left-1/2 -translate-x-1/2'>
                             <p className='max-w-sm mx-auto mb-5'>
                                 {ownerFilter === 'admin-all'
                                     ? 'There are no other servers to display.'
