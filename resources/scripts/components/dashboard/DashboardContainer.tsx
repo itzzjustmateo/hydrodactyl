@@ -274,7 +274,13 @@ const DashboardContainer = () => {
 
     const renderGroupView = () => {
         if (!servers) return null;
-        return <GroupSection servers={servers.items} displayOption={dashboardMode === 'grid' ? 'grid' : 'list'} />;
+        return (
+            <Pagination data={servers} onPageSelect={setPage}>
+                {({ items }) => (
+                    <GroupSection servers={items} displayOption={dashboardMode === 'grid' ? 'grid' : 'list'} />
+                )}
+            </Pagination>
+        );
     };
 
     const renderListView = () => {
