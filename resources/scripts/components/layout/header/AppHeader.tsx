@@ -86,11 +86,7 @@ const SidebarLogo = memo(() => {
 SidebarLogo.displayName = 'SidebarLogo';
 
 const StaticButtons = memo<{ serverId?: string }>(({ serverId }) => {
-    return (
-        <>
-            <UserDropdown serverId={serverId} />
-        </>
-    );
+    return <UserDropdown serverId={serverId} />;
 });
 
 StaticButtons.displayName = 'StaticButtons';
@@ -113,7 +109,7 @@ const SlotActions = memo<{ actions: React.ReactNode }>(({ actions }) => {
 SlotActions.displayName = 'SlotActions';
 
 const AppHeader = ({ serverId }: AppHeaderProps) => {
-    const { headerActions, leftActions, centerActions, rightActions } = useHeader();
+    const { leftActions, centerActions, rightActions } = useHeader();
 
     const hasSlottedLayout = leftActions || centerActions || rightActions;
 

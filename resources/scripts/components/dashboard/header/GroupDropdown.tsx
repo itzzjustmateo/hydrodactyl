@@ -41,7 +41,10 @@ const GroupDropdown = ({ groups, activeGroupId, onGroupChange }: GroupDropdownPr
                     </div>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='flex flex-col gap-1 z-99999 hover:cursor-pointer max-h-[40vh] overflow-y-auto' sideOffset={8}>
+            <DropdownMenuContent
+                className='flex flex-col gap-1 z-99999 hover:cursor-pointer max-h-[40vh] overflow-y-auto'
+                sideOffset={8}
+            >
                 {groups.length === 0 ? (
                     <DropdownMenuItem disabled className='opacity-50'>
                         No groups available

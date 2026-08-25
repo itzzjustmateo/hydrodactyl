@@ -38,6 +38,7 @@ class ErrorBoundary extends Component<Props, State> {
                                 Your Servers
                             </a>
                             <button
+                                type='button'
                                 onClick={() => window.location.reload()}
                                 className='text-brand hover:underline text-left'
                             >

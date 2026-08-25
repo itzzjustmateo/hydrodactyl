@@ -97,6 +97,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                     <FolderOpen className='size-12 text-zinc-500 mb-3' />
                     <p className='text-sm text-zinc-400 mb-4'>No groups yet. Create one to organize your servers.</p>
                     <button
+                        type='button'
                         onClick={() => setShowCreateModal(true)}
                         className='flex items-center gap-2 px-4 py-2 bg-mocha-400 hover:bg-mocha-300 text-white rounded-lg text-sm font-medium transition-colors'
                     >
@@ -122,6 +123,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
             <div className='flex items-center justify-between'>
                 <h3 className='text-sm font-medium text-zinc-300'>Groups</h3>
                 <button
+                    type='button'
                     onClick={() => setShowCreateModal(true)}
                     className='flex items-center gap-1.5 px-3 py-1.5 bg-mocha-400 hover:bg-mocha-300 text-white rounded-lg text-xs font-medium transition-colors'
                 >
@@ -131,6 +133,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
             </div>
 
             {groups.map((group) => (
+                // biome-ignore lint/a11y/noStaticElementInteractions: Drag-and-drop group container
                 <div
                     key={group.id}
                     className={`rounded-lg border transition-colors ${
@@ -143,6 +146,8 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                     onDrop={(e) => handleDrop(e, group.id)}
                 >
                     <div className='flex items-center justify-between px-4 py-3 cursor-pointer select-none'>
+                        {/* biome-ignore lint/a11y/noStaticElementInteractions: Group collapse toggle */}
+                        {/* biome-ignore lint/a11y/useKeyWithClickEvents: Handled via parent container */}
                         <div
                             className='flex items-center gap-3 flex-1 min-w-0'
                             onClick={() => handleToggleCollapse(group.id, group.is_collapsed)}
@@ -165,7 +170,6 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                                             setEditingName('');
                                         }
                                     }}
-                                    autoFocus
                                     className='bg-transparent border-b border-zinc-500 text-zinc-100 text-sm font-medium focus:outline-none w-full'
                                     onClick={(e) => e.stopPropagation()}
                                 />
@@ -179,6 +183,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                         </div>
                         <div className='flex items-center gap-1 ml-2'>
                             <button
+                                type='button'
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setEditingGroupId(group.id);
@@ -190,6 +195,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                                 <Pencil className='size-3.5' />
                             </button>
                             <button
+                                type='button'
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleDelete(group.id);
@@ -205,6 +211,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                     {!group.is_collapsed && serversByGroup[group.id] && serversByGroup[group.id].length > 0 && (
                         <div className='px-4 pb-3 space-y-2'>
                             {serversByGroup[group.id].map((server, index) => (
+                                // biome-ignore lint/a11y/noStaticElementInteractions: Draggable server row
                                 <div
                                     key={server.uuid}
                                     draggable
@@ -237,6 +244,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                     </div>
                     <div className='px-4 pb-3 space-y-2'>
                         {ungroupedServers.map((server, index) => (
+                            // biome-ignore lint/a11y/noStaticElementInteractions: Draggable server row
                             <div
                                 key={server.uuid}
                                 draggable

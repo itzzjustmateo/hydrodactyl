@@ -283,7 +283,11 @@ const DashboardContainer = () => {
             <Pagination data={servers} onPageSelect={setPage}>
                 {({ items }) =>
                     items.length > 0 ? (
-                        <div className={dashboardMode === 'grid' ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0' : ''}>
+                        <div
+                            className={
+                                dashboardMode === 'grid' ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0' : ''
+                            }
+                        >
                             {items.map((server, index) => (
                                 <div
                                     key={`${server.uuid}-${dashboardMode}`}
