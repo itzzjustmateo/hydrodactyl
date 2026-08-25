@@ -1,6 +1,6 @@
 import { EllipsisVertical, FolderOpen, FolderOpenFill, Pencil, Plus, TrashBin } from '@gravity-ui/icons';
 import { useCallback, useMemo, useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import type { Server } from '@/api/server/getServer';
 import getServerGroups, { addServersToGroup, deleteServerGroup, updateServerGroup } from '@/api/serverGroups';
 import CreateGroupModal from '@/components/dashboard/CreateGroupModal';
@@ -22,11 +22,16 @@ interface GroupSectionProps {
 
 const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     const { data: groups, mutate: mutateGroups } = useSWR('server-groups', () => getServerGroups());
+    const { mutate } = useSWRConfig();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [renamingGroup, setRenamingGroup] = useState<{ id: number; name: string } | null>(null);
     const [renameValue, setRenameValue] = useState('');
     const [deletingGroup, setDeletingGroup] = useState<{ id: number; name: string } | null>(null);
     const [dragOverGroupId, setDragOverGroupId] = useState<number | null>(null);
+
+    const revalidateServers = useCallback(() => {
+        mutate((key: unknown) => Array.isArray(key) && key[0] === '/api/client/servers');
+    }, [mutate]);
 
     const ungroupedServers = useMemo(() => {
         return servers.filter((s) => !s.group);
@@ -68,8 +73,9 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
 
             await addServersToGroup(groupId, [server.internalId as number]);
             mutateGroups();
+            revalidateServers();
         },
-        [servers, mutateGroups],
+        [servers, mutateGroups, revalidateServers],
     );
 
     const handleRename = useCallback(async () => {
@@ -84,8 +90,9 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
         if (!deletingGroup) return;
         await deleteServerGroup(deletingGroup.id);
         mutateGroups();
+        revalidateServers();
         setDeletingGroup(null);
-    }, [deletingGroup, mutateGroups]);
+    }, [deletingGroup, mutateGroups, revalidateServers]);
 
     const handleToggleCollapse = useCallback(
         async (groupId: number, current: boolean) => {
