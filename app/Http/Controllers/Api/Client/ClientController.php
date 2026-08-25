@@ -175,6 +175,7 @@ class ClientController extends ClientApiController
                 'eggs' => $eggs,
                 'nodes' => $nodes,
                 'groups' => $groups,
+                'groups_enabled' => config('pterodactyl.client_features.groups.enabled', true),
             ],
         ];
     }

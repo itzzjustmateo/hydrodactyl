@@ -9,14 +9,23 @@ use Illuminate\Support\Facades\DB;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\ServerGroup;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ServerGroupController extends ClientApiController
 {
+    private function ensureGroupsEnabled(): void
+    {
+        if (!config('pterodactyl.client_features.groups.enabled', true)) {
+            throw new NotFoundHttpException('Server groups are not enabled on this panel.');
+        }
+    }
+
     /**
      * List all groups for the authenticated user.
      */
     public function index(Request $request): array
     {
+        $this->ensureGroupsEnabled();
         $user = $request->user();
 
         $groups = ServerGroup::where('user_id', $user->id)
@@ -43,6 +52,7 @@ class ServerGroupController extends ClientApiController
      */
     public function store(Request $request): JsonResponse
     {
+        $this->ensureGroupsEnabled();
         $user = $request->user();
 
         $validated = $request->validate([
@@ -91,6 +101,7 @@ class ServerGroupController extends ClientApiController
      */
     public function update(Request $request, int $serverGroup): JsonResponse
     {
+        $this->ensureGroupsEnabled();
         $user = $request->user();
         $group = $this->getGroupOrFail($user, $serverGroup);
 
@@ -135,6 +146,7 @@ class ServerGroupController extends ClientApiController
      */
     public function destroy(Request $request, int $serverGroup): Response
     {
+        $this->ensureGroupsEnabled();
         $user = $request->user();
         $group = $this->getGroupOrFail($user, $serverGroup);
 
@@ -149,6 +161,7 @@ class ServerGroupController extends ClientApiController
      */
     public function addServers(Request $request, int $serverGroup): JsonResponse
     {
+        $this->ensureGroupsEnabled();
         $user = $request->user();
         $group = $this->getGroupOrFail($user, $serverGroup);
 
@@ -178,6 +191,7 @@ class ServerGroupController extends ClientApiController
      */
     public function removeServers(Request $request, int $serverGroup): JsonResponse
     {
+        $this->ensureGroupsEnabled();
         $user = $request->user();
         $group = $this->getGroupOrFail($user, $serverGroup);
 
@@ -207,6 +221,7 @@ class ServerGroupController extends ClientApiController
      */
     public function reorder(Request $request): JsonResponse
     {
+        $this->ensureGroupsEnabled();
         $user = $request->user();
 
         $validated = $request->validate([

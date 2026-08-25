@@ -11,6 +11,7 @@ export interface FilterOptions {
     eggs: FilterOption[];
     nodes: FilterOption[];
     groups: FilterOption[];
+    groupsEnabled: boolean;
 }
 
 export default async (): Promise<FilterOptions> => {
@@ -23,6 +24,7 @@ export default async (): Promise<FilterOptions> => {
                     eggs: data.attributes?.eggs || [],
                     nodes: data.attributes?.nodes || [],
                     groups: data.attributes?.groups || [],
+                    groupsEnabled: data.attributes?.groups_enabled ?? true,
                 }),
             )
             .catch(reject);
