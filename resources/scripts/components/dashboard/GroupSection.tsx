@@ -154,8 +154,8 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                     </button>
                 </div>
                 {ungroupedServers.length > 0 && (
-                    <div className='rounded-xl border border-[#ffffff08] bg-mocha-500/30 overflow-hidden'>
-                        <div className='px-4 py-3 border-b border-[#ffffff08]'>
+                    <div className='rounded-xl border border-cream-500/20 bg-mocha-500/30 overflow-hidden'>
+                        <div className='px-4 py-3 border-b border-cream-500/20'>
                             <span className='text-xs font-medium text-zinc-500 uppercase tracking-wider'>
                                 Ungrouped
                             </span>
@@ -198,7 +198,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     }
 
     return (
-        <div className='space-y-6'>
+        <div className='space-y-8'>
             <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-2'>
                     <h3 className='text-xs font-medium text-zinc-500 uppercase tracking-wider'>Groups</h3>
@@ -225,7 +225,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                         className={`rounded-xl border transition-all duration-150 ${
                             isDragOver
                                 ? 'border-accent/40 bg-accent/[0.07] shadow-[0_0_20px_-8px] shadow-accent/20'
-                                : 'border-[#ffffff08] bg-mocha-500/30 hover:bg-mocha-500/40'
+                                : 'border-cream-500/20 bg-mocha-500/30 hover:bg-mocha-500/40'
                         }`}
                         onDragOver={(e) => handleDragOver(e, group.id)}
                         onDragLeave={handleDragLeave}
@@ -250,7 +250,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                                 <DropdownMenuTrigger asChild>
                                     <button
                                         type='button'
-                                        className='p-1.5 text-zinc-600 hover:text-zinc-300 hover:bg-[#ffffff08] transition-colors rounded-md'
+                                        className='p-1.5 text-zinc-600 hover:text-zinc-300 hover:bg-cream-500/10 transition-colors rounded-md'
                                         title='Group options'
                                     >
                                         <EllipsisVertical className='size-4' />
@@ -314,12 +314,12 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
 
             {/* biome-ignore lint/a11y/noStaticElementInteractions: Ungrouped drop zone */}
             <div
-                className={`rounded-xl border border-dashed transition-all duration-150 overflow-hidden ${
+                className={`mt-2 rounded-xl border border-dashed transition-all duration-150 overflow-hidden ${
                     dragOverUngrouped
                         ? 'border-accent/40 bg-accent/[0.07] shadow-[0_0_20px_-8px] shadow-accent/20'
                         : ungroupedServers.length > 0
-                          ? 'border-[#ffffff08] bg-mocha-500/20'
-                          : 'border-[#ffffff06] bg-transparent'
+                          ? 'border-cream-500/20 bg-mocha-500/20'
+                          : 'border-cream-500/10 bg-transparent'
                 }`}
                 onDragOver={(e) => {
                     e.preventDefault();
@@ -331,7 +331,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
             >
                 {ungroupedServers.length > 0 ? (
                     <>
-                        <div className='px-4 py-3 border-b border-[#ffffff08] flex items-center gap-2'>
+                        <div className='px-4 py-3 border-b border-cream-500/20 flex items-center gap-2'>
                             <span className='text-xs font-medium text-zinc-500 uppercase tracking-wider'>
                                 Ungrouped
                             </span>
@@ -390,7 +390,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                 >
                     <div className='space-y-4'>
                         <div>
-                            <Label className='text-sm text-[#ffffff77]'>Group Name</Label>
+                            <Label className='text-sm text-cream-400/50'>Group Name</Label>
                             <Input
                                 value={renameValue}
                                 onChange={(e) => setRenameValue(e.target.value)}
