@@ -1,5 +1,4 @@
-import { Folder03Icon } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
+import { Folder } from '@gravity-ui/icons';
 import { useMemo } from 'react';
 import type { FilterOption } from '@/api/getFilterOptions';
 import { Button } from '@/components/ui/button';
@@ -31,12 +30,10 @@ const GroupDropdown = ({ groups, activeGroupId, onGroupChange }: GroupDropdownPr
                     size='sm'
                     variant='secondary'
                     aria-label={activeLabel ? `Group: ${activeLabel}` : 'Filter by group'}
-                    className={`h-11 sm:h-8 px-2 sm:px-3 gap-1 rounded-full hover:cursor-pointer ${
-                        activeGroupId ? 'border-accent/50' : ''
-                    }`}
+                    className='h-11 sm:h-8 px-2 sm:px-3 gap-1 rounded-full hover:cursor-pointer'
                 >
                     <div className='flex flex-row items-center gap-1.5'>
-                        <HugeiconsIcon size={16} strokeWidth={2} icon={Folder03Icon} className='size-4' />
+                        <Folder width={16} height={16} />
                         <span className='hidden sm:inline max-w-[140px] truncate'>{activeLabel || 'Groups'}</span>
                     </div>
                 </Button>

@@ -285,78 +285,64 @@ const DashboardContainer = () => {
         if (!error) clearFlashes('dashboard');
     }, [error, clearAndAddHttpError, clearFlashes]);
 
-    const renderGroupView = () => {
-        if (!servers) return null;
-        return (
-            <Pagination data={servers} onPageSelect={setPage}>
-                {({ items }) => (
-                    <GroupSection servers={items} displayOption={dashboardMode === 'grid' ? 'grid' : 'list'} />
-                )}
-            </Pagination>
-        );
-    };
-
-    const renderListView = () => {
-        if (!servers) return null;
-        return (
-            <Pagination data={servers} onPageSelect={setPage}>
-                {({ items }) =>
-                    items.length > 0 ? (
-                        <div
-                            className={
-                                dashboardMode === 'grid' ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0' : ''
-                            }
-                        >
-                            {items.map((server, index) => (
-                                <div
-                                    key={`${server.uuid}-${dashboardMode}`}
-                                    className={`transform-gpu skeleton-anim-2 ${
-                                        dashboardMode === 'grid'
-                                            ? items.length === 1
-                                                ? 'w-[calc(50%-0.5rem)] max-lg:w-full'
-                                                : 'w-[calc(50%-0.5rem)] max-lg:w-full'
-                                            : 'mb-4'
-                                    } max-lg:mb-4`}
-                                    style={{
-                                        animationDelay: `${index * 50 + 50}ms`,
-                                        animationTimingFunction:
-                                            'linear(0,0.01,0.04 1.6%,0.161 3.3%,0.816 9.4%,1.046,1.189 14.4%,1.231,1.254 17%,1.259,1.257 18.6%,1.236,1.194 22.3%,1.057 27%,0.999 29.4%,0.955 32.1%,0.942,0.935 34.9%,0.933,0.939 38.4%,1 47.3%,1.011,1.017 52.6%,1.016 56.4%,1 65.2%,0.996 70.2%,1.001 87.2%,1)',
-                                    }}
-                                >
-                                    <ServerRow
-                                        className={
-                                            dashboardMode === 'list'
-                                                ? 'flex-row'
-                                                : 'items-start! flex-col w-full gap-4 [&>div~div]:w-full max-lg:flex-row max-lg:items-center max-lg:gap-0 max-lg:[&>div~div]:w-auto'
-                                        }
-                                        key={server.uuid}
-                                        server={server}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className='text-center text-sm text-zinc-400 absolute w-full left-1/2 -translate-x-1/2'>
-                            <p className='max-w-sm mx-auto mb-5'>
-                                {ownerFilter === 'admin-all'
-                                    ? 'There are no other servers to display.'
-                                    : ownerFilter === 'all'
-                                      ? 'No Server Shared With your Account'
-                                      : 'There are no servers associated with your account.'}
-                            </p>
-                            <h3 className='text-lg font-medium text-zinc-200 mb-2'>
-                                {ownerFilter === 'admin-all' ? 'No other servers found' : 'No servers found'}
-                            </h3>
-                        </div>
-                    )
-                }
-            </Pagination>
-        );
-    };
-
     return (
         <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
-            {!servers ? null : dashboardMode === 'groups' ? renderGroupView() : renderListView()}
+            {!servers ? null : (
+                <Pagination data={servers} onPageSelect={setPage}>
+                    {({ items }) =>
+                        dashboardMode === 'groups' ? (
+                            <GroupSection servers={items} displayOption={dashboardMode === 'grid' ? 'grid' : 'list'} />
+                        ) : items.length > 0 ? (
+                            <div
+                                className={
+                                    dashboardMode === 'grid' ? 'flex flex-wrap gap-4 max-lg:flex-col max-lg:gap-0' : ''
+                                }
+                            >
+                                {items.map((server, index) => (
+                                    <div
+                                        key={`${server.uuid}-${dashboardMode}`}
+                                        className={`transform-gpu skeleton-anim-2 ${
+                                            dashboardMode === 'grid'
+                                                ? items.length === 1
+                                                    ? 'w-[calc(50%-0.5rem)] max-lg:w-full'
+                                                    : 'w-[calc(50%-0.5rem)] max-lg:w-full'
+                                                : 'mb-4'
+                                        } max-lg:mb-4`}
+                                        style={{
+                                            animationDelay: `${index * 50 + 50}ms`,
+                                            animationTimingFunction:
+                                                'linear(0,0.01,0.04 1.6%,0.161 3.3%,0.816 9.4%,1.046,1.189 14.4%,1.231,1.254 17%,1.259,1.257 18.6%,1.236,1.194 22.3%,1.057 27%,0.999 29.4%,0.955 32.1%,0.942,0.935 34.9%,0.933,0.939 38.4%,1 47.3%,1.011,1.017 52.6%,1.016 56.4%,1 65.2%,0.996 70.2%,1.001 87.2%,1)',
+                                        }}
+                                    >
+                                        <ServerRow
+                                            className={
+                                                dashboardMode === 'list'
+                                                    ? 'flex-row'
+                                                    : 'items-start! flex-col w-full gap-4 [&>div~div]:w-full max-lg:flex-row max-lg:items-center max-lg:gap-0 max-lg:[&>div~div]:w-auto'
+                                            }
+                                            key={server.uuid}
+                                            server={server}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className='text-center text-sm text-zinc-400 absolute w-full left-1/2 -translate-x-1/2'>
+                                <p className='max-w-sm mx-auto mb-5'>
+                                    {ownerFilter === 'admin-all'
+                                        ? 'There are no other servers to display.'
+                                        : ownerFilter === 'all'
+                                          ? 'No Server Shared With your Account'
+                                          : 'There are no servers associated with your account.'}
+                                </p>
+                                <h3 className='text-lg font-medium text-zinc-200 mb-2'>
+                                    {ownerFilter === 'admin-all' ? 'No other servers found' : 'No servers found'}
+                                </h3>
+                            </div>
+                        )
+                    }
+                </Pagination>
+            )}
         </PageContentBlock>
     );
 };
