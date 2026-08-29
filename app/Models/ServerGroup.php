@@ -45,6 +45,7 @@ class ServerGroup extends Model
     public static array $validationRules = [
         'user_id' => 'required|integer|exists:users,id',
         'name' => 'required|string|min:1|max:191',
+        'description' => 'sometimes|nullable|string|max:1000',
         'sort_order' => 'sometimes|integer|min:0',
         'is_collapsed' => 'sometimes|boolean',
     ];

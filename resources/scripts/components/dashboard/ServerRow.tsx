@@ -130,7 +130,7 @@ const ServerRow = ({ server, className, hideGroup }: { server: Server; className
                                 ))}
                         </p>
                         {server.group && !hideGroup && (
-                            <span className='inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent-foreground/80 border border-accent/20'>
+                            <span className='inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-accent/10 text-accent border border-accent/20'>
                                 {server.group.name}
                             </span>
                         )}

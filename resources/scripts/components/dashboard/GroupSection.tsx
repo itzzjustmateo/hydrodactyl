@@ -11,7 +11,7 @@ import getServerGroups, {
 import CreateGroupModal from '@/components/dashboard/CreateGroupModal';
 import ServerRow from '@/components/dashboard/ServerRow';
 import { Dialog } from '@/components/elements/dialog';
-import Input from '@/components/elements/Input';
+import Input, { Textarea } from '@/components/elements/Input';
 import Label from '@/components/elements/Label';
 import { Button } from '@/components/ui/button';
 import {
@@ -63,6 +63,7 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [renamingGroup, setRenamingGroup] = useState<{ id: number; name: string } | null>(null);
     const [renameValue, setRenameValue] = useState('');
+    const [renameDescription, setRenameDescription] = useState('');
     const [deletingGroup, setDeletingGroup] = useState<{ id: number; name: string } | null>(null);
     const [dragOverGroupId, setDragOverGroupId] = useState<number | null>(null);
     const [dragOverUngrouped, setDragOverUngrouped] = useState(false);
@@ -157,11 +158,15 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
 
     const handleRename = useCallback(async () => {
         if (!renamingGroup || !renameValue.trim()) return;
-        await updateServerGroup(renamingGroup.id, { name: renameValue.trim() });
+        await updateServerGroup(renamingGroup.id, {
+            name: renameValue.trim(),
+            description: renameDescription.trim() || null,
+        });
         mutateGroups();
         setRenamingGroup(null);
         setRenameValue('');
-    }, [renamingGroup, renameValue, mutateGroups]);
+        setRenameDescription('');
+    }, [renamingGroup, renameValue, renameDescription, mutateGroups]);
 
     const handleDelete = useCallback(async () => {
         if (!deletingGroup) return;
@@ -319,10 +324,11 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
                                             onSelect={() => {
                                                 setRenamingGroup({ id: group.id, name: group.name });
                                                 setRenameValue(group.name);
+                                                setRenameDescription(group.description ?? '');
                                             }}
                                         >
                                             <Pencil className='size-3.5 mr-2' />
-                                            Rename
+                                            Edit
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             onSelect={() => setDeletingGroup({ id: group.id, name: group.name })}
@@ -334,6 +340,10 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
+
+                            {group.description && (
+                                <p className='px-4 pb-3 -mt-1 text-xs text-cream-200/40'>{group.description}</p>
+                            )}
 
                             <div
                                 className={cn(
@@ -437,7 +447,7 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
             )}
 
             {renamingGroup && (
-                <Dialog open onClose={() => setRenamingGroup(null)} title='Rename Group'>
+                <Dialog open onClose={() => setRenamingGroup(null)} title='Edit Group'>
                     <div className='space-y-4 py-1'>
                         <div className='space-y-1.5'>
                             <Label className='text-sm text-cream-200/50'>Group Name</Label>
@@ -458,7 +468,17 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
                                 className='w-full'
                             />
                         </div>
-                        <p className='text-xs text-cream-200/40'>Press Enter to save.</p>
+                        <div className='space-y-1.5'>
+                            <Label className='text-sm text-cream-200/50'>Description</Label>
+                            <Textarea
+                                value={renameDescription}
+                                onChange={(e) => setRenameDescription(e.target.value)}
+                                placeholder='Optional description for this group'
+                                rows={3}
+                                className='w-full'
+                            />
+                        </div>
+                        <p className='text-xs text-cream-200/40'>Press Enter to save the name.</p>
                     </div>
                     <Dialog.Footer>
                         <Button variant='secondary' onClick={() => setRenamingGroup(null)}>

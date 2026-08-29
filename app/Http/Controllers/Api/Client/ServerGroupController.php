@@ -38,6 +38,7 @@ class ServerGroupController extends ClientApiController
             'data' => $groups->map(fn (ServerGroup $group) => [
                 'id' => $group->id,
                 'name' => $group->name,
+                'description' => $group->description,
                 'sort_order' => $group->sort_order,
                 'is_collapsed' => $group->is_collapsed,
                 'server_count' => $group->servers_count,
@@ -57,6 +58,7 @@ class ServerGroupController extends ClientApiController
 
         $validated = $request->validate([
             'name' => 'required|string|min:1|max:191',
+            'description' => 'sometimes|nullable|string|max:1000',
             'server_ids' => 'sometimes|array',
             'server_ids.*' => 'integer|exists:servers,id',
         ]);
@@ -67,6 +69,7 @@ class ServerGroupController extends ClientApiController
             $group = ServerGroup::create([
                 'user_id' => $user->id,
                 'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
                 'sort_order' => $maxOrder + 1,
             ]);
 
@@ -87,6 +90,7 @@ class ServerGroupController extends ClientApiController
             'attributes' => [
                 'id' => $group->id,
                 'name' => $group->name,
+                'description' => $group->description,
                 'sort_order' => $group->sort_order,
                 'is_collapsed' => $group->is_collapsed,
                 'server_count' => $group->servers_count,
@@ -107,6 +111,7 @@ class ServerGroupController extends ClientApiController
 
         $validated = $request->validate([
             'name' => 'sometimes|string|min:1|max:191',
+            'description' => 'sometimes|nullable|string|max:1000',
             'sort_order' => 'sometimes|integer|min:0',
             'is_collapsed' => 'sometimes|boolean',
         ]);
@@ -132,6 +137,7 @@ class ServerGroupController extends ClientApiController
             'attributes' => [
                 'id' => $group->id,
                 'name' => $group->name,
+                'description' => $group->description,
                 'sort_order' => $group->sort_order,
                 'is_collapsed' => $group->is_collapsed,
                 'server_count' => $group->servers_count,
