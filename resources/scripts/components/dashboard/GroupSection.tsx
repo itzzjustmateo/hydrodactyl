@@ -25,6 +25,8 @@ import { cn } from '@/lib/utils';
 interface GroupSectionProps {
     servers: Server[];
     displayOption: 'list' | 'grid';
+    groupFilterId?: number;
+    filterActive?: boolean;
 }
 
 const serverRowClassName = (displayOption: 'list' | 'grid') =>
@@ -55,7 +57,7 @@ const DraggableServer = memo(
 );
 DraggableServer.displayName = 'DraggableServer';
 
-const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
+const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: GroupSectionProps) => {
     const { data: groups, mutate: mutateGroups } = useSWR('server-groups', () => getServerGroups());
     const { mutate } = useSWRConfig();
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -85,6 +87,13 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
         }
         return map;
     }, [servers, groups]);
+
+    const visibleGroups = useMemo(() => {
+        if (!groups) return [];
+        if (groupFilterId != null) return groups.filter((g) => g.id === groupFilterId);
+        if (filterActive) return groups.filter((g) => (serversByGroup[g.id]?.length ?? 0) > 0);
+        return groups;
+    }, [groups, groupFilterId, filterActive, serversByGroup]);
 
     const handleDragStart = useCallback((event: React.DragEvent, server: Server) => {
         event.dataTransfer.setData('text/plain', server.id);
@@ -256,7 +265,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
             </div>
 
             <div className='flex flex-col gap-6 sm:gap-8'>
-                {groups.map((group) => {
+                {visibleGroups.map((group) => {
                     const groupServers = serversByGroup[group.id] || [];
                     const isDragOver = dragOverGroupId === group.id;
 
@@ -360,58 +369,61 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                     );
                 })}
 
-                {/* biome-ignore lint/a11y/noStaticElementInteractions: Ungrouped drop zone */}
-                <div
-                    style={{ animationDelay: `${groups.length * 60}ms` }}
-                    className={cn(
-                        'rounded-xl border border-dashed transition-all duration-150 overflow-hidden animate-group-fly-in',
-                        dragOverUngrouped
-                            ? 'border-cream-500/40 bg-cream-400/[0.08] ring-1 ring-inset ring-cream-500/30'
-                            : ungroupedServers.length > 0
-                              ? 'border-cream-500/20 bg-mocha-500/20'
-                              : 'border-cream-500/10 bg-transparent',
-                    )}
-                    onDragOver={(e) => {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = 'move';
-                        setDragOverUngrouped(true);
-                    }}
-                    onDragLeave={() => setDragOverUngrouped(false)}
-                    onDrop={handleDropToUngrouped}
-                >
-                    {ungroupedServers.length > 0 ? (
-                        <>
-                            <div className='px-4 py-3 border-b border-cream-500/20 flex items-center gap-2'>
-                                <span className='text-xs font-medium text-cream-200/50 uppercase tracking-wider'>
-                                    Ungrouped
-                                </span>
-                                <span className='text-xs text-cream-200/40 tabular-nums'>
-                                    {ungroupedServers.length}
-                                </span>
+                {groupFilterId == null && (ungroupedServers.length > 0 || !filterActive) && (
+                    <div
+                        role='option'
+                        tabIndex={0}
+                        style={{ animationDelay: `${visibleGroups.length * 60}ms` }}
+                        className={cn(
+                            'rounded-xl border border-dashed transition-all duration-150 overflow-hidden animate-group-fly-in',
+                            dragOverUngrouped
+                                ? 'border-cream-500/40 bg-cream-400/[0.08] ring-1 ring-inset ring-cream-500/30'
+                                : ungroupedServers.length > 0
+                                  ? 'border-cream-500/20 bg-mocha-500/20'
+                                  : 'border-cream-500/10 bg-transparent',
+                        )}
+                        onDragOver={(e) => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = 'move';
+                            setDragOverUngrouped(true);
+                        }}
+                        onDragLeave={() => setDragOverUngrouped(false)}
+                        onDrop={handleDropToUngrouped}
+                    >
+                        {ungroupedServers.length > 0 ? (
+                            <>
+                                <div className='px-4 py-3 border-b border-cream-500/20 flex items-center gap-2'>
+                                    <span className='text-xs font-medium text-cream-200/50 uppercase tracking-wider'>
+                                        Ungrouped
+                                    </span>
+                                    <span className='text-xs text-cream-200/40 tabular-nums'>
+                                        {ungroupedServers.length}
+                                    </span>
+                                </div>
+                                <div className='p-3 flex flex-col gap-3'>
+                                    {ungroupedServers.map((server, index) => (
+                                        <DraggableServer
+                                            key={server.uuid}
+                                            server={server}
+                                            displayOption={displayOption}
+                                            index={index}
+                                            isDragging={draggingServerId === server.id}
+                                            onDragStart={handleDragStart}
+                                            onDragEnd={handleDragEnd}
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <div className='px-4 py-8 flex flex-col items-center justify-center text-center'>
+                                {dragOverUngrouped ? <ArrowDownToLine className='size-5 text-cream-400 mb-3' /> : null}
+                                <p className='text-xs text-cream-200/50'>
+                                    {dragOverUngrouped ? 'Drop to ungroup' : 'Drag servers here to ungroup them'}
+                                </p>
                             </div>
-                            <div className='p-3 flex flex-col gap-3'>
-                                {ungroupedServers.map((server, index) => (
-                                    <DraggableServer
-                                        key={server.uuid}
-                                        server={server}
-                                        displayOption={displayOption}
-                                        index={index}
-                                        isDragging={draggingServerId === server.id}
-                                        onDragStart={handleDragStart}
-                                        onDragEnd={handleDragEnd}
-                                    />
-                                ))}
-                            </div>
-                        </>
-                    ) : (
-                        <div className='px-4 py-8 flex flex-col items-center justify-center text-center'>
-                            {dragOverUngrouped ? <ArrowDownToLine className='size-5 text-cream-400 mb-3' /> : null}
-                            <p className='text-xs text-cream-200/50'>
-                                {dragOverUngrouped ? 'Drop to ungroup' : 'Drag servers here to ungroup them'}
-                            </p>
-                        </div>
-                    )}
-                </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {showCreateModal && (

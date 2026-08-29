@@ -72,6 +72,8 @@ const DashboardContainer = () => {
     const [filterValue, setFilterValue] = useState<number | undefined>(undefined);
     const [groupFilterId, setGroupFilterId] = useState<number | undefined>(undefined);
 
+    const filterActive = searchQuery.trim() !== '' || filterField !== undefined || groupFilterId !== undefined;
+
     const { data: filterOptions } = useSWRImmutable('server:filter-options', () => getFilterOptions(), {
         revalidateOnMount: true,
     });
@@ -340,7 +342,12 @@ const DashboardContainer = () => {
                 <Pagination data={servers} onPageSelect={setPage}>
                     {({ items }) =>
                         dashboardMode === 'groups' ? (
-                            <GroupSection servers={items} displayOption={dashboardMode === 'grid' ? 'grid' : 'list'} />
+                            <GroupSection
+                                servers={items}
+                                displayOption={dashboardMode === 'grid' ? 'grid' : 'list'}
+                                groupFilterId={groupFilterId}
+                                filterActive={filterActive}
+                            />
                         ) : items.length > 0 ? (
                             <div
                                 className={

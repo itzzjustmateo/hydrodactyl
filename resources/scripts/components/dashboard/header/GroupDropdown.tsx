@@ -51,7 +51,7 @@ const GroupDropdown = ({ groups, activeGroupId, onGroupChange }: GroupDropdownPr
                         <DropdownMenuItem
                             key={group.value}
                             onSelect={() => onGroupChange(group.value === activeGroupId ? undefined : group.value)}
-                            className={group.value === activeGroupId ? 'bg-accent/20' : ''}
+                            className={group.value === activeGroupId ? 'bg-cream-400/20' : ''}
                         >
                             <span className='flex items-center justify-between w-full gap-4'>
                                 {group.label}
