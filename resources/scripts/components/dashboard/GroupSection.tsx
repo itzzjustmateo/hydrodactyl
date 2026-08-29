@@ -61,7 +61,7 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
     const { data: groups, mutate: mutateGroups } = useSWR('server-groups', () => getServerGroups());
     const { mutate } = useSWRConfig();
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [renamingGroup, setRenamingGroup] = useState<{ id: number; name: string } | null>(null);
+    const [renamingGroup, setRenamingGroup] = useState<{ id: number; name: string; description?: string } | null>(null);
     const [renameValue, setRenameValue] = useState('');
     const [renameDescription, setRenameDescription] = useState('');
     const [deletingGroup, setDeletingGroup] = useState<{ id: number; name: string } | null>(null);
@@ -322,7 +322,11 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
                                     <DropdownMenuContent sideOffset={4}>
                                         <DropdownMenuItem
                                             onSelect={() => {
-                                                setRenamingGroup({ id: group.id, name: group.name });
+                                                setRenamingGroup({
+                                                    id: group.id,
+                                                    name: group.name,
+                                                    description: group.description ?? '',
+                                                });
                                                 setRenameValue(group.name);
                                                 setRenameDescription(group.description ?? '');
                                             }}
@@ -460,7 +464,8 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
                                     if (
                                         e.key === 'Enter' &&
                                         renameValue.trim() &&
-                                        renameValue.trim() !== renamingGroup.name
+                                        (renameValue.trim() !== renamingGroup.name ||
+                                            renameDescription !== (renamingGroup.description ?? ''))
                                     ) {
                                         handleRename();
                                     }
@@ -487,7 +492,11 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
                         <Button
                             variant='attention'
                             onClick={handleRename}
-                            disabled={!renameValue.trim() || renameValue.trim() === renamingGroup.name}
+                            disabled={
+                                !renameValue.trim() ||
+                                (renameValue.trim() === renamingGroup.name &&
+                                    renameDescription === (renamingGroup.description ?? ''))
+                            }
                         >
                             Save
                         </Button>
