@@ -209,7 +209,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                             </span>
                             <span className='text-xs text-cream-200/40 ml-2'>{ungroupedServers.length}</span>
                         </div>
-                        <div className='p-3 space-y-3'>
+                        <div className='p-3 flex flex-col gap-3'>
                             {ungroupedServers.map((server, index) => (
                                 <DraggableServer
                                     key={server.uuid}
@@ -239,8 +239,8 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     }
 
     return (
-        <div className='space-y-12 sm:space-y-16'>
-            <div className='flex items-center justify-between gap-3'>
+        <>
+            <div className='flex items-center justify-between gap-3 mb-6'>
                 <div className='flex items-center gap-2 min-w-0'>
                     <h3 className='text-xs font-medium text-cream-200/50 uppercase tracking-wider shrink-0'>Groups</h3>
                     <span className='text-xs text-cream-200/40'>{groups.length}</span>
@@ -255,76 +255,142 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                 </button>
             </div>
 
-            {groups.map((group) => {
-                const groupServers = serversByGroup[group.id] || [];
-                const isDragOver = dragOverGroupId === group.id;
+            <div className='flex flex-col gap-6 sm:gap-8'>
+                {groups.map((group) => {
+                    const groupServers = serversByGroup[group.id] || [];
+                    const isDragOver = dragOverGroupId === group.id;
 
-                return (
-                    // biome-ignore lint/a11y/noStaticElementInteractions: Drag-and-drop group container
-                    <div
-                        key={group.id}
-                        className={cn(
-                            'rounded-xl border transition-all duration-150',
-                            isDragOver
-                                ? 'border-cream-500/40 bg-cream-400/[0.08] ring-1 ring-inset ring-cream-500/30'
-                                : 'border-cream-500/20 bg-mocha-500/30 hover:bg-mocha-500/40',
-                        )}
-                        onDragOver={(e) => handleDragOver(e, group.id)}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => handleDrop(e, group.id)}
-                    >
-                        <div className='flex items-center justify-between gap-3 px-4 py-3 select-none'>
-                            {/* biome-ignore lint/a11y/noStaticElementInteractions: Group collapse toggle */}
-                            {/* biome-ignore lint/a11y/useKeyWithClickEvents: Handled via parent container */}
-                            <div
-                                className='flex items-center gap-3 flex-1 min-w-0 cursor-pointer'
-                                onClick={() => handleToggleCollapse(group.id, group.is_collapsed)}
-                            >
+                    return (
+                        // biome-ignore lint/a11y/noStaticElementInteractions: Drag-and-drop group container
+                        <div
+                            key={group.id}
+                            style={{ animationDelay: `${index * 60}ms` }}
+                            className={cn(
+                                'rounded-xl border transition-all duration-150 animate-group-fly-in',
+                                isDragOver
+                                    ? 'border-cream-500/40 bg-cream-400/[0.08] ring-1 ring-inset ring-cream-500/30'
+                                    : 'border-cream-500/20 bg-mocha-500/30 hover:bg-mocha-500/40',
+                            )}
+                            onDragOver={(e) => handleDragOver(e, group.id)}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, group.id)}
+                        >
+                            <div className='flex items-center justify-between gap-3 px-4 py-3 select-none'>
+                                {/* biome-ignore lint/a11y/noStaticElementInteractions: Group collapse toggle */}
+                                {/* biome-ignore lint/a11y/useKeyWithClickEvents: Handled via parent container */}
                                 <div
-                                    className={cn(
-                                        'transition-transform duration-200 shrink-0',
-                                        !group.is_collapsed && 'rotate-90',
-                                    )}
+                                    className='flex items-center gap-3 flex-1 min-w-0 cursor-pointer'
+                                    onClick={() => handleToggleCollapse(group.id, group.is_collapsed)}
                                 >
-                                    <FolderOpen className='size-4 text-cream-200/60' />
+                                    <div
+                                        className={cn(
+                                            'transition-transform duration-200 shrink-0',
+                                            !group.is_collapsed && 'rotate-90',
+                                        )}
+                                    >
+                                        <FolderOpen className='size-4 text-cream-200/60' />
+                                    </div>
+                                    <span className='text-sm font-medium text-cream-200 truncate'>{group.name}</span>
+                                    <span className='text-xs text-cream-200/40 tabular-nums'>
+                                        {groupServers.length}
+                                    </span>
                                 </div>
-                                <span className='text-sm font-medium text-cream-200 truncate'>{group.name}</span>
-                                <span className='text-xs text-cream-200/40 tabular-nums'>{groupServers.length}</span>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button
+                                            type='button'
+                                            className='p-1.5 text-cream-200/50 hover:text-cream-200 hover:bg-cream-500/10 transition-colors rounded-md shrink-0'
+                                            title='Group options'
+                                        >
+                                            <EllipsisVertical className='size-4' />
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent sideOffset={4}>
+                                        <DropdownMenuItem
+                                            onSelect={() => {
+                                                setRenamingGroup({ id: group.id, name: group.name });
+                                                setRenameValue(group.name);
+                                            }}
+                                        >
+                                            <Pencil className='size-3.5 mr-2' />
+                                            Rename
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onSelect={() => setDeletingGroup({ id: group.id, name: group.name })}
+                                            className='text-red-400'
+                                        >
+                                            <TrashBin className='size-3.5 mr-2' />
+                                            Delete
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <button
-                                        type='button'
-                                        className='p-1.5 text-cream-200/50 hover:text-cream-200 hover:bg-cream-500/10 transition-colors rounded-md shrink-0'
-                                        title='Group options'
-                                    >
-                                        <EllipsisVertical className='size-4' />
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent sideOffset={4}>
-                                    <DropdownMenuItem
-                                        onSelect={() => {
-                                            setRenamingGroup({ id: group.id, name: group.name });
-                                            setRenameValue(group.name);
-                                        }}
-                                    >
-                                        <Pencil className='size-3.5 mr-2' />
-                                        Rename
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onSelect={() => setDeletingGroup({ id: group.id, name: group.name })}
-                                        className='text-red-400'
-                                    >
-                                        <TrashBin className='size-3.5 mr-2' />
-                                        Delete
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
 
-                        {!group.is_collapsed && groupServers.length > 0 && (
-                            <div className='px-3 pb-3 space-y-3'>
-                                {groupServers.map((server, index) => (
+                            <div
+                                className={cn(
+                                    'grid transition-all duration-200 ease-out',
+                                    group.is_collapsed ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100',
+                                )}
+                            >
+                                <div className='overflow-hidden min-h-0'>
+                                    {groupServers.length > 0 ? (
+                                        <div className='px-3 pb-3 flex flex-col gap-3'>
+                                            {groupServers.map((server, index) => (
+                                                <DraggableServer
+                                                    key={server.uuid}
+                                                    server={server}
+                                                    displayOption={displayOption}
+                                                    index={index}
+                                                    isDragging={draggingServerId === server.id}
+                                                    onDragStart={handleDragStart}
+                                                    onDragEnd={handleDragEnd}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className='px-4 pb-5 pt-1'>
+                                            <p className='text-xs text-cream-200/40 text-center py-3'>
+                                                Drag servers here to add them to this group
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+
+                {/* biome-ignore lint/a11y/noStaticElementInteractions: Ungrouped drop zone */}
+                <div
+                    style={{ animationDelay: `${groups.length * 60}ms` }}
+                    className={cn(
+                        'rounded-xl border border-dashed transition-all duration-150 overflow-hidden animate-group-fly-in',
+                        dragOverUngrouped
+                            ? 'border-cream-500/40 bg-cream-400/[0.08] ring-1 ring-inset ring-cream-500/30'
+                            : ungroupedServers.length > 0
+                              ? 'border-cream-500/20 bg-mocha-500/20'
+                              : 'border-cream-500/10 bg-transparent',
+                    )}
+                    onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        setDragOverUngrouped(true);
+                    }}
+                    onDragLeave={() => setDragOverUngrouped(false)}
+                    onDrop={handleDropToUngrouped}
+                >
+                    {ungroupedServers.length > 0 ? (
+                        <>
+                            <div className='px-4 py-3 border-b border-cream-500/20 flex items-center gap-2'>
+                                <span className='text-xs font-medium text-cream-200/50 uppercase tracking-wider'>
+                                    Ungrouped
+                                </span>
+                                <span className='text-xs text-cream-200/40 tabular-nums'>
+                                    {ungroupedServers.length}
+                                </span>
+                            </div>
+                            <div className='p-3 flex flex-col gap-3'>
+                                {ungroupedServers.map((server, index) => (
                                     <DraggableServer
                                         key={server.uuid}
                                         server={server}
@@ -336,67 +402,16 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                                     />
                                 ))}
                             </div>
-                        )}
-
-                        {!group.is_collapsed && groupServers.length === 0 && (
-                            <div className='px-4 pb-5 pt-1'>
-                                <p className='text-xs text-cream-200/40 text-center py-3'>
-                                    Drag servers here to add them to this group
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                );
-            })}
-
-            {/* biome-ignore lint/a11y/noStaticElementInteractions: Ungrouped drop zone */}
-            <div
-                className={cn(
-                    'mt-4 rounded-xl border border-dashed transition-all duration-150 overflow-hidden',
-                    dragOverUngrouped
-                        ? 'border-cream-500/40 bg-cream-400/[0.08] ring-1 ring-inset ring-cream-500/30'
-                        : ungroupedServers.length > 0
-                          ? 'border-cream-500/20 bg-mocha-500/20'
-                          : 'border-cream-500/10 bg-transparent',
-                )}
-                onDragOver={(e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                    setDragOverUngrouped(true);
-                }}
-                onDragLeave={() => setDragOverUngrouped(false)}
-                onDrop={handleDropToUngrouped}
-            >
-                {ungroupedServers.length > 0 ? (
-                    <>
-                        <div className='px-4 py-3 border-b border-cream-500/20 flex items-center gap-2'>
-                            <span className='text-xs font-medium text-cream-200/50 uppercase tracking-wider'>
-                                Ungrouped
-                            </span>
-                            <span className='text-xs text-cream-200/40 tabular-nums'>{ungroupedServers.length}</span>
+                        </>
+                    ) : (
+                        <div className='px-4 py-8 flex flex-col items-center justify-center text-center'>
+                            {dragOverUngrouped ? <ArrowDownToLine className='size-5 text-cream-400 mb-3' /> : null}
+                            <p className='text-xs text-cream-200/50'>
+                                {dragOverUngrouped ? 'Drop to ungroup' : 'Drag servers here to ungroup them'}
+                            </p>
                         </div>
-                        <div className='p-3 space-y-3'>
-                            {ungroupedServers.map((server, index) => (
-                                <DraggableServer
-                                    key={server.uuid}
-                                    server={server}
-                                    displayOption={displayOption}
-                                    index={index}
-                                    isDragging={draggingServerId === server.id}
-                                    onDragStart={handleDragStart}
-                                    onDragEnd={handleDragEnd}
-                                />
-                            ))}
-                        </div>
-                    </>
-                ) : (
-                    <div className='px-4 py-8 flex flex-col items-center justify-center text-center'>
-                        {dragOverUngrouped ? <ArrowDownToLine className='size-5 text-cream-400 mb-3' /> : null}
-                        <p className='text-xs text-cream-200/50'>
-                            {dragOverUngrouped ? 'Drop to ungroup' : 'Drag servers here to ungroup them'}
-                        </p>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             {showCreateModal && (
@@ -411,7 +426,6 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
 
             {renamingGroup && (
                 <Dialog open onClose={() => setRenamingGroup(null)} title='Rename Group'>
-                    <Dialog.Icon type='info' />
                     <div className='space-y-4 py-1'>
                         <div className='space-y-1.5'>
                             <Label className='text-sm text-cream-200/50'>Group Name</Label>
@@ -451,7 +465,6 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
 
             {deletingGroup && (
                 <Dialog open onClose={() => setDeletingGroup(null)} title='Delete Group'>
-                    <Dialog.Icon type='danger' />
                     {(() => {
                         const count = serversByGroup[deletingGroup.id]?.length ?? 0;
 
@@ -474,7 +487,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                 </Dialog>
             )}
             {dragPreview}
-        </div>
+        </>
     );
 };
 
