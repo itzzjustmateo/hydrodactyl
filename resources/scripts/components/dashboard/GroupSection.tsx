@@ -51,7 +51,7 @@ const DraggableServer = memo(
             className={cn('transform-gpu transition-opacity', isDragging && 'opacity-40')}
             style={{ animationDelay: `${index * 30}ms` }}
         >
-            <ServerRow className={serverRowClassName(displayOption)} server={server} />
+            <ServerRow className={serverRowClassName(displayOption)} server={server} hideGroup />
         </div>
     ),
 );
