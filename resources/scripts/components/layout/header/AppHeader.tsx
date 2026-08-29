@@ -115,7 +115,7 @@ const AppHeader = ({ serverId }: AppHeaderProps) => {
 
     if (hasSlottedLayout) {
         return (
-            <div className='h-16 w-full overflow-x-auto py-4 px-2 sm:px-4 flex items-center'>
+            <div className='h-16 w-full py-4 px-2 sm:px-4 flex items-center'>
                 <div className='flex items-center gap-1.5 sm:gap-2 shrink-0'>
                     <MobileSidebarToggle />
                     <SidebarLogo />

@@ -3,8 +3,18 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
 import useSWRImmutable from 'swr/immutable';
-import getFilterOptions from '@/api/getFilterOptions';
+import getFilterOptions, { type FilterOptions } from '@/api/getFilterOptions';
 import getServers from '@/api/getServers';
+
+const EMPTY_FILTER_OPTIONS: FilterOptions = {
+    owners: [],
+    nests: [],
+    eggs: [],
+    nodes: [],
+    groups: [],
+    groupsEnabled: false,
+};
+
 import type { PaginatedResult } from '@/api/http';
 import type { Server } from '@/api/server/getServer';
 import GroupSection from '@/components/dashboard/GroupSection';
@@ -18,6 +28,7 @@ import useFlash from '@/plugins/useFlash';
 import { usePersistedState } from '@/plugins/usePersistedState';
 
 import FilterDropdown from './header/FilterDropdown';
+import FiltersMenu from './header/FiltersMenu';
 import GroupDropdown from './header/GroupDropdown';
 import OwnerFilterDropdown, { type OwnerFilterValue } from './header/OwnerFilterDropdown';
 import SearchSection from './header/SearchSection';
@@ -248,12 +259,52 @@ const DashboardContainer = () => {
         [sortValue, handleSortChange],
     );
 
+    const filterControlsDesktop = useMemo(
+        () => (
+            <div className='hidden lg:flex items-center gap-1.5 sm:gap-2'>
+                {groupsEnabled
+                    ? [entityFilterDropdown, groupDropdown, sortDropdown]
+                    : [entityFilterDropdown, sortDropdown]}
+            </div>
+        ),
+        [groupsEnabled, entityFilterDropdown, groupDropdown, sortDropdown],
+    );
+
+    const filterControlsMobile = useMemo(
+        () => (
+            <div className='lg:hidden'>
+                <FiltersMenu
+                    filterOptions={filterOptions || EMPTY_FILTER_OPTIONS}
+                    groups={filterOptions?.groups || []}
+                    activeField={filterField}
+                    activeValue={filterValue}
+                    activeGroupId={groupFilterId}
+                    sortValue={sortValue}
+                    sortPresets={SORT_PRESETS}
+                    showGroups={groupsEnabled}
+                    onFilterChange={handleFilterChange}
+                    onGroupChange={handleGroupChange}
+                    onSortChange={handleSortChange}
+                />
+            </div>
+        ),
+        [
+            filterOptions,
+            filterField,
+            filterValue,
+            groupFilterId,
+            sortValue,
+            groupsEnabled,
+            handleFilterChange,
+            handleGroupChange,
+            handleSortChange,
+        ],
+    );
+
     useEffect(() => {
         setLeftActions([viewTabs, ownerFilterDropdown]);
         setCenterActions(searchSection);
-        setRightActions(
-            groupsEnabled ? [entityFilterDropdown, groupDropdown, sortDropdown] : [entityFilterDropdown, sortDropdown],
-        );
+        setRightActions([filterControlsDesktop, filterControlsMobile]);
         return () => clearHeaderActions();
     }, [
         setLeftActions,
@@ -263,10 +314,8 @@ const DashboardContainer = () => {
         searchSection,
         viewTabs,
         ownerFilterDropdown,
-        entityFilterDropdown,
-        groupDropdown,
-        sortDropdown,
-        groupsEnabled,
+        filterControlsDesktop,
+        filterControlsMobile,
     ]);
 
     useEffect(() => {

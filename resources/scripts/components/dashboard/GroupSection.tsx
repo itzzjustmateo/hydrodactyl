@@ -13,6 +13,7 @@ import ServerRow from '@/components/dashboard/ServerRow';
 import { Dialog } from '@/components/elements/dialog';
 import Input from '@/components/elements/Input';
 import Label from '@/components/elements/Label';
+import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -33,20 +34,25 @@ interface DraggableServerProps {
     server: Server;
     displayOption: 'list' | 'grid';
     index: number;
+    isDragging: boolean;
     onDragStart: (event: React.DragEvent, server: Server) => void;
+    onDragEnd: (event: React.DragEvent) => void;
 }
 
-const DraggableServer = memo(({ server, displayOption, index, onDragStart }: DraggableServerProps) => (
-    // biome-ignore lint/a11y/noStaticElementInteractions: Draggable server row
-    <div
-        draggable
-        onDragStart={(event) => onDragStart(event, server)}
-        className='transform-gpu'
-        style={{ animationDelay: `${index * 30}ms` }}
-    >
-        <ServerRow className={serverRowClassName(displayOption)} server={server} />
-    </div>
-));
+const DraggableServer = memo(
+    ({ server, displayOption, index, isDragging, onDragStart, onDragEnd }: DraggableServerProps) => (
+        // biome-ignore lint/a11y/noStaticElementInteractions: Draggable server row
+        <div
+            draggable
+            onDragStart={(event) => onDragStart(event, server)}
+            onDragEnd={onDragEnd}
+            className={cn('transform-gpu transition-opacity', isDragging && 'opacity-40')}
+            style={{ animationDelay: `${index * 30}ms` }}
+        >
+            <ServerRow className={serverRowClassName(displayOption)} server={server} />
+        </div>
+    ),
+);
 DraggableServer.displayName = 'DraggableServer';
 
 const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
@@ -58,6 +64,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     const [deletingGroup, setDeletingGroup] = useState<{ id: number; name: string } | null>(null);
     const [dragOverGroupId, setDragOverGroupId] = useState<number | null>(null);
     const [dragOverUngrouped, setDragOverUngrouped] = useState(false);
+    const [draggingServerId, setDraggingServerId] = useState<string | null>(null);
 
     const previewRef = useRef<HTMLDivElement>(null);
     const previewNameRef = useRef<HTMLSpanElement>(null);
@@ -82,6 +89,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     const handleDragStart = useCallback((event: React.DragEvent, server: Server) => {
         event.dataTransfer.setData('text/plain', server.id);
         event.dataTransfer.effectAllowed = 'move';
+        setDraggingServerId(server.id);
 
         const preview = previewRef.current;
         if (preview && previewNameRef.current) {
@@ -98,6 +106,10 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
 
     const handleDragLeave = useCallback(() => {
         setDragOverGroupId(null);
+    }, []);
+
+    const handleDragEnd = useCallback(() => {
+        setDraggingServerId(null);
     }, []);
 
     const handleDrop = useCallback(
@@ -204,7 +216,9 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                                     server={server}
                                     displayOption={displayOption}
                                     index={index}
+                                    isDragging={draggingServerId === server.id}
                                     onDragStart={handleDragStart}
+                                    onDragEnd={handleDragEnd}
                                 />
                             ))}
                         </div>
@@ -225,7 +239,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     }
 
     return (
-        <div className='space-y-6 sm:space-y-8'>
+        <div className='space-y-8 sm:space-y-12'>
             <div className='flex items-center justify-between gap-3'>
                 <div className='flex items-center gap-2 min-w-0'>
                     <h3 className='text-xs font-medium text-cream-200/50 uppercase tracking-wider shrink-0'>Groups</h3>
@@ -252,7 +266,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                         className={cn(
                             'rounded-xl border transition-all duration-150',
                             isDragOver
-                                ? 'border-cream-500/30 bg-cream-400/[0.06] shadow-[0_0_24px_-12px] shadow-cream-400/20'
+                                ? 'border-cream-500/40 bg-cream-400/[0.08] ring-1 ring-inset ring-cream-500/30'
                                 : 'border-cream-500/20 bg-mocha-500/30 hover:bg-mocha-500/40',
                         )}
                         onDragOver={(e) => handleDragOver(e, group.id)}
@@ -316,7 +330,9 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                                         server={server}
                                         displayOption={displayOption}
                                         index={index}
+                                        isDragging={draggingServerId === server.id}
                                         onDragStart={handleDragStart}
+                                        onDragEnd={handleDragEnd}
                                     />
                                 ))}
                             </div>
@@ -336,9 +352,9 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
             {/* biome-ignore lint/a11y/noStaticElementInteractions: Ungrouped drop zone */}
             <div
                 className={cn(
-                    'mt-2 rounded-xl border border-dashed transition-all duration-150 overflow-hidden',
+                    'mt-4 rounded-xl border border-dashed transition-all duration-150 overflow-hidden',
                     dragOverUngrouped
-                        ? 'border-cream-500/30 bg-cream-400/[0.06] shadow-[0_0_24px_-12px] shadow-cream-400/20'
+                        ? 'border-cream-500/40 bg-cream-400/[0.08] ring-1 ring-inset ring-cream-500/30'
                         : ungroupedServers.length > 0
                           ? 'border-cream-500/20 bg-mocha-500/20'
                           : 'border-cream-500/10 bg-transparent',
@@ -366,7 +382,9 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                                     server={server}
                                     displayOption={displayOption}
                                     index={index}
+                                    isDragging={draggingServerId === server.id}
                                     onDragStart={handleDragStart}
+                                    onDragEnd={handleDragEnd}
                                 />
                             ))}
                         </div>
@@ -392,42 +410,68 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
             )}
 
             {renamingGroup && (
-                <Dialog.Confirm
-                    open
-                    onClose={() => setRenamingGroup(null)}
-                    title='Rename Group'
-                    confirm='Save'
-                    onConfirmed={handleRename}
-                    confirmDisabled={!renameValue.trim()}
-                >
-                    <div className='space-y-4'>
-                        <div>
+                <Dialog open onClose={() => setRenamingGroup(null)} title='Rename Group'>
+                    <Dialog.Icon type='info' />
+                    <div className='space-y-4 py-1'>
+                        <div className='space-y-1.5'>
                             <Label className='text-sm text-cream-200/50'>Group Name</Label>
                             <Input
                                 value={renameValue}
                                 onChange={(e) => setRenameValue(e.target.value)}
                                 placeholder='e.g. Minecraft Servers'
                                 autoFocus
+                                onKeyDown={(e) => {
+                                    if (
+                                        e.key === 'Enter' &&
+                                        renameValue.trim() &&
+                                        renameValue.trim() !== renamingGroup.name
+                                    ) {
+                                        handleRename();
+                                    }
+                                }}
                                 className='w-full'
                             />
                         </div>
+                        <p className='text-xs text-cream-200/40'>Press Enter to save.</p>
                     </div>
-                </Dialog.Confirm>
+                    <Dialog.Footer>
+                        <Button variant='secondary' onClick={() => setRenamingGroup(null)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            variant='attention'
+                            onClick={handleRename}
+                            disabled={!renameValue.trim() || renameValue.trim() === renamingGroup.name}
+                        >
+                            Save
+                        </Button>
+                    </Dialog.Footer>
+                </Dialog>
             )}
 
             {deletingGroup && (
-                <Dialog.Confirm
-                    open
-                    onClose={() => setDeletingGroup(null)}
-                    title='Delete Group'
-                    confirm='Delete'
-                    onConfirmed={handleDelete}
-                >
-                    <p className='text-sm text-cream-200/70'>
-                        Are you sure you want to delete <strong className='text-cream-200'>{deletingGroup.name}</strong>
-                        ? Servers in this group will become ungrouped.
-                    </p>
-                </Dialog.Confirm>
+                <Dialog open onClose={() => setDeletingGroup(null)} title='Delete Group'>
+                    <Dialog.Icon type='danger' />
+                    {(() => {
+                        const count = serversByGroup[deletingGroup.id]?.length ?? 0;
+
+                        return (
+                            <p className='text-sm text-cream-200/70 py-1'>
+                                Are you sure you want to delete{' '}
+                                <strong className='text-cream-200'>{deletingGroup.name}</strong>? {count} server
+                                {count === 1 ? '' : 's'} in this group will become ungrouped.
+                            </p>
+                        );
+                    })()}
+                    <Dialog.Footer>
+                        <Button variant='secondary' onClick={() => setDeletingGroup(null)}>
+                            Cancel
+                        </Button>
+                        <Button variant='destructive' onClick={handleDelete}>
+                            Delete
+                        </Button>
+                    </Dialog.Footer>
+                </Dialog>
             )}
             {dragPreview}
         </div>
