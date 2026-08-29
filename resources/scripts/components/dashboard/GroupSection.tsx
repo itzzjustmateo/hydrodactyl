@@ -1,13 +1,5 @@
-import {
-    ArrowDownToLine,
-    EllipsisVertical,
-    FolderOpen,
-    FolderOpenFill,
-    Pencil,
-    Plus,
-    TrashBin,
-} from '@gravity-ui/icons';
-import { useCallback, useMemo, useState } from 'react';
+import { ArrowDownToLine, EllipsisVertical, FolderOpen, Pencil, Plus, TrashBin } from '@gravity-ui/icons';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import type { Server } from '@/api/server/getServer';
 import getServerGroups, {
@@ -27,11 +19,35 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
 
 interface GroupSectionProps {
     servers: Server[];
     displayOption: 'list' | 'grid';
 }
+
+const serverRowClassName = (displayOption: 'list' | 'grid') =>
+    displayOption === 'list' ? 'flex-row' : 'items-start! flex-col w-full gap-4 [&>div~div]:w-full';
+
+interface DraggableServerProps {
+    server: Server;
+    displayOption: 'list' | 'grid';
+    index: number;
+    onDragStart: (event: React.DragEvent, server: Server) => void;
+}
+
+const DraggableServer = memo(({ server, displayOption, index, onDragStart }: DraggableServerProps) => (
+    // biome-ignore lint/a11y/noStaticElementInteractions: Draggable server row
+    <div
+        draggable
+        onDragStart={(event) => onDragStart(event, server)}
+        className='transform-gpu'
+        style={{ animationDelay: `${index * 30}ms` }}
+    >
+        <ServerRow className={serverRowClassName(displayOption)} server={server} />
+    </div>
+));
+DraggableServer.displayName = 'DraggableServer';
 
 const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     const { data: groups, mutate: mutateGroups } = useSWR('server-groups', () => getServerGroups());
@@ -42,6 +58,9 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     const [deletingGroup, setDeletingGroup] = useState<{ id: number; name: string } | null>(null);
     const [dragOverGroupId, setDragOverGroupId] = useState<number | null>(null);
     const [dragOverUngrouped, setDragOverUngrouped] = useState(false);
+
+    const previewRef = useRef<HTMLDivElement>(null);
+    const previewNameRef = useRef<HTMLSpanElement>(null);
 
     const revalidateServers = useCallback(() => {
         mutate((key: unknown) => Array.isArray(key) && key[0] === '/api/client/servers');
@@ -60,14 +79,20 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
         return map;
     }, [servers, groups]);
 
-    const handleDragStart = useCallback((e: React.DragEvent, serverId: string) => {
-        e.dataTransfer.setData('text/plain', serverId);
-        e.dataTransfer.effectAllowed = 'move';
+    const handleDragStart = useCallback((event: React.DragEvent, server: Server) => {
+        event.dataTransfer.setData('text/plain', server.id);
+        event.dataTransfer.effectAllowed = 'move';
+
+        const preview = previewRef.current;
+        if (preview && previewNameRef.current) {
+            previewNameRef.current.textContent = server.name;
+            event.dataTransfer.setDragImage(preview, 24, 24);
+        }
     }, []);
 
-    const handleDragOver = useCallback((e: React.DragEvent, groupId: number) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
+    const handleDragOver = useCallback((event: React.DragEvent, groupId: number) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
         setDragOverGroupId(groupId);
     }, []);
 
@@ -76,10 +101,10 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     }, []);
 
     const handleDrop = useCallback(
-        async (e: React.DragEvent, groupId: number) => {
-            e.preventDefault();
+        async (event: React.DragEvent, groupId: number) => {
+            event.preventDefault();
             setDragOverGroupId(null);
-            const serverId = e.dataTransfer.getData('text/plain');
+            const serverId = event.dataTransfer.getData('text/plain');
             if (!serverId) return;
 
             const server = servers.find((s) => s.id === serverId);
@@ -93,14 +118,14 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     );
 
     const handleDropToUngrouped = useCallback(
-        async (e: React.DragEvent) => {
-            e.preventDefault();
+        async (event: React.DragEvent) => {
+            event.preventDefault();
             setDragOverUngrouped(false);
-            const serverId = e.dataTransfer.getData('text/plain');
+            const serverId = event.dataTransfer.getData('text/plain');
             if (!serverId) return;
 
             const server = servers.find((s) => s.id === serverId);
-            if (!server || !server.group) return;
+            if (!server?.group) return;
 
             await removeServersFromGroup(server.group.id, [server.internalId as number]);
             mutateGroups();
@@ -133,21 +158,32 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
         [mutateGroups],
     );
 
+    const dragPreview = (
+        <div
+            ref={previewRef}
+            aria-hidden
+            className='pointer-events-none fixed -left-[9999px] top-0 z-50 flex w-72 items-center gap-3 rounded-xl border border-cream-500/30 bg-mocha-500 px-4 py-3 shadow-lg shadow-black/50'
+        >
+            <span className='size-2.5 shrink-0 rounded-full bg-cream-400' />
+            <span ref={previewNameRef} className='truncate text-sm font-semibold text-cream-200' />
+        </div>
+    );
+
     if (!groups || groups.length === 0) {
         return (
             <>
                 <div className='flex flex-col items-center justify-center py-16 text-center'>
                     <div className='size-16 rounded-2xl bg-mocha-500/50 flex items-center justify-center mb-4'>
-                        <FolderOpen className='size-8 text-zinc-500' />
+                        <FolderOpen className='size-8 text-cream-200/60' />
                     </div>
-                    <p className='text-sm font-medium text-zinc-300 mb-1'>No groups yet</p>
-                    <p className='text-xs text-zinc-500 mb-5 max-w-xs'>
+                    <p className='text-sm font-medium text-cream-200 mb-1'>No groups yet</p>
+                    <p className='text-xs text-cream-200/40 mb-5 max-w-xs'>
                         Create groups to organize your servers by purpose, game type, or anything else.
                     </p>
                     <button
                         type='button'
                         onClick={() => setShowCreateModal(true)}
-                        className='flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-colors'
+                        className='flex items-center gap-2 px-4 py-2 bg-cream-400 text-mocha-500 hover:bg-cream-500/80 rounded-lg text-sm font-medium transition-colors'
                     >
                         <Plus className='size-4' />
                         Create Group
@@ -156,30 +192,20 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                 {ungroupedServers.length > 0 && (
                     <div className='rounded-xl border border-cream-500/20 bg-mocha-500/30 overflow-hidden'>
                         <div className='px-4 py-3 border-b border-cream-500/20'>
-                            <span className='text-xs font-medium text-zinc-500 uppercase tracking-wider'>
+                            <span className='text-xs font-medium text-cream-200/50 uppercase tracking-wider'>
                                 Ungrouped
                             </span>
-                            <span className='text-xs text-zinc-600 ml-2'>{ungroupedServers.length}</span>
+                            <span className='text-xs text-cream-200/40 ml-2'>{ungroupedServers.length}</span>
                         </div>
                         <div className='p-3 space-y-1.5'>
                             {ungroupedServers.map((server, index) => (
-                                // biome-ignore lint/a11y/noStaticElementInteractions: Draggable server row
-                                <div
+                                <DraggableServer
                                     key={server.uuid}
-                                    draggable
-                                    onDragStart={(e) => handleDragStart(e, server.id)}
-                                    className='transform-gpu'
-                                    style={{ animationDelay: `${index * 30}ms` }}
-                                >
-                                    <ServerRow
-                                        className={
-                                            displayOption === 'list'
-                                                ? 'flex-row'
-                                                : 'items-start! flex-col w-full gap-4 [&>div~div]:w-full'
-                                        }
-                                        server={server}
-                                    />
-                                </div>
+                                    server={server}
+                                    displayOption={displayOption}
+                                    index={index}
+                                    onDragStart={handleDragStart}
+                                />
                             ))}
                         </div>
                     </div>
@@ -193,21 +219,22 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                         }}
                     />
                 )}
+                {dragPreview}
             </>
         );
     }
 
     return (
-        <div className='space-y-8'>
-            <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                    <h3 className='text-xs font-medium text-zinc-500 uppercase tracking-wider'>Groups</h3>
-                    <span className='text-xs text-zinc-600'>{groups.length}</span>
+        <div className='space-y-6 sm:space-y-8'>
+            <div className='flex items-center justify-between gap-3'>
+                <div className='flex items-center gap-2 min-w-0'>
+                    <h3 className='text-xs font-medium text-cream-200/50 uppercase tracking-wider shrink-0'>Groups</h3>
+                    <span className='text-xs text-cream-200/40'>{groups.length}</span>
                 </div>
                 <button
                     type='button'
                     onClick={() => setShowCreateModal(true)}
-                    className='flex items-center gap-1.5 px-3 py-1.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-xs font-medium transition-colors'
+                    className='flex items-center gap-1.5 px-3 py-1.5 bg-cream-400 text-mocha-500 hover:bg-cream-500/80 rounded-lg text-xs font-medium transition-colors shrink-0'
                 >
                     <Plus className='size-3.5' />
                     New Group
@@ -222,16 +249,17 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                     // biome-ignore lint/a11y/noStaticElementInteractions: Drag-and-drop group container
                     <div
                         key={group.id}
-                        className={`rounded-xl border transition-all duration-150 ${
+                        className={cn(
+                            'rounded-xl border transition-all duration-150',
                             isDragOver
-                                ? 'border-accent/40 bg-accent/[0.07] shadow-[0_0_20px_-8px] shadow-accent/20'
-                                : 'border-cream-500/20 bg-mocha-500/30 hover:bg-mocha-500/40'
-                        }`}
+                                ? 'border-cream-500/30 bg-cream-400/[0.06] shadow-[0_0_24px_-12px] shadow-cream-400/20'
+                                : 'border-cream-500/20 bg-mocha-500/30 hover:bg-mocha-500/40',
+                        )}
                         onDragOver={(e) => handleDragOver(e, group.id)}
                         onDragLeave={handleDragLeave}
                         onDrop={(e) => handleDrop(e, group.id)}
                     >
-                        <div className='flex items-center justify-between px-4 py-3 select-none'>
+                        <div className='flex items-center justify-between gap-3 px-4 py-3 select-none'>
                             {/* biome-ignore lint/a11y/noStaticElementInteractions: Group collapse toggle */}
                             {/* biome-ignore lint/a11y/useKeyWithClickEvents: Handled via parent container */}
                             <div
@@ -239,18 +267,21 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                                 onClick={() => handleToggleCollapse(group.id, group.is_collapsed)}
                             >
                                 <div
-                                    className={`transition-transform duration-200 ${group.is_collapsed ? '' : 'rotate-90'}`}
+                                    className={cn(
+                                        'transition-transform duration-200 shrink-0',
+                                        !group.is_collapsed && 'rotate-90',
+                                    )}
                                 >
-                                    <FolderOpen className='size-4 text-zinc-500 shrink-0' />
+                                    <FolderOpen className='size-4 text-cream-200/60' />
                                 </div>
-                                <span className='text-sm font-medium text-zinc-200 truncate'>{group.name}</span>
-                                <span className='text-xs text-zinc-600 tabular-nums'>{groupServers.length}</span>
+                                <span className='text-sm font-medium text-cream-200 truncate'>{group.name}</span>
+                                <span className='text-xs text-cream-200/40 tabular-nums'>{groupServers.length}</span>
                             </div>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <button
                                         type='button'
-                                        className='p-1.5 text-zinc-600 hover:text-zinc-300 hover:bg-cream-500/10 transition-colors rounded-md'
+                                        className='p-1.5 text-cream-200/50 hover:text-cream-200 hover:bg-cream-500/10 transition-colors rounded-md shrink-0'
                                         title='Group options'
                                     >
                                         <EllipsisVertical className='size-4' />
@@ -278,32 +309,22 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                         </div>
 
                         {!group.is_collapsed && groupServers.length > 0 && (
-                            <div className='px-3 pb-3 space-y-1'>
+                            <div className='px-3 pb-3 space-y-1.5'>
                                 {groupServers.map((server, index) => (
-                                    // biome-ignore lint/a11y/noStaticElementInteractions: Draggable server row
-                                    <div
+                                    <DraggableServer
                                         key={server.uuid}
-                                        draggable
-                                        onDragStart={(e) => handleDragStart(e, server.id)}
-                                        className='transform-gpu'
-                                        style={{ animationDelay: `${index * 30}ms` }}
-                                    >
-                                        <ServerRow
-                                            className={
-                                                displayOption === 'list'
-                                                    ? 'flex-row'
-                                                    : 'items-start! flex-col w-full gap-4 [&>div~div]:w-full'
-                                            }
-                                            server={server}
-                                        />
-                                    </div>
+                                        server={server}
+                                        displayOption={displayOption}
+                                        index={index}
+                                        onDragStart={handleDragStart}
+                                    />
                                 ))}
                             </div>
                         )}
 
                         {!group.is_collapsed && groupServers.length === 0 && (
-                            <div className='px-4 pb-4'>
-                                <p className='text-xs text-zinc-600 text-center py-2'>
+                            <div className='px-4 pb-5 pt-1'>
+                                <p className='text-xs text-cream-200/40 text-center py-3'>
                                     Drag servers here to add them to this group
                                 </p>
                             </div>
@@ -314,13 +335,14 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
 
             {/* biome-ignore lint/a11y/noStaticElementInteractions: Ungrouped drop zone */}
             <div
-                className={`mt-2 rounded-xl border border-dashed transition-all duration-150 overflow-hidden ${
+                className={cn(
+                    'mt-2 rounded-xl border border-dashed transition-all duration-150 overflow-hidden',
                     dragOverUngrouped
-                        ? 'border-accent/40 bg-accent/[0.07] shadow-[0_0_20px_-8px] shadow-accent/20'
+                        ? 'border-cream-500/30 bg-cream-400/[0.06] shadow-[0_0_24px_-12px] shadow-cream-400/20'
                         : ungroupedServers.length > 0
                           ? 'border-cream-500/20 bg-mocha-500/20'
-                          : 'border-cream-500/10 bg-transparent'
-                }`}
+                          : 'border-cream-500/10 bg-transparent',
+                )}
                 onDragOver={(e) => {
                     e.preventDefault();
                     e.dataTransfer.dropEffect = 'move';
@@ -332,37 +354,27 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                 {ungroupedServers.length > 0 ? (
                     <>
                         <div className='px-4 py-3 border-b border-cream-500/20 flex items-center gap-2'>
-                            <span className='text-xs font-medium text-zinc-500 uppercase tracking-wider'>
+                            <span className='text-xs font-medium text-cream-200/50 uppercase tracking-wider'>
                                 Ungrouped
                             </span>
-                            <span className='text-xs text-zinc-600 tabular-nums'>{ungroupedServers.length}</span>
+                            <span className='text-xs text-cream-200/40 tabular-nums'>{ungroupedServers.length}</span>
                         </div>
-                        <div className='p-3 space-y-1'>
+                        <div className='p-3 space-y-1.5'>
                             {ungroupedServers.map((server, index) => (
-                                // biome-ignore lint/a11y/noStaticElementInteractions: Draggable server row
-                                <div
+                                <DraggableServer
                                     key={server.uuid}
-                                    draggable
-                                    onDragStart={(e) => handleDragStart(e, server.id)}
-                                    className='transform-gpu'
-                                    style={{ animationDelay: `${index * 30}ms` }}
-                                >
-                                    <ServerRow
-                                        className={
-                                            displayOption === 'list'
-                                                ? 'flex-row'
-                                                : 'items-start! flex-col w-full gap-4 [&>div~div]:w-full'
-                                        }
-                                        server={server}
-                                    />
-                                </div>
+                                    server={server}
+                                    displayOption={displayOption}
+                                    index={index}
+                                    onDragStart={handleDragStart}
+                                />
                             ))}
                         </div>
                     </>
                 ) : (
-                    <div className='px-4 py-6 flex flex-col items-center justify-center text-center'>
-                        {dragOverUngrouped ? <ArrowDownToLine className='size-5 text-accent mb-2' /> : null}
-                        <p className='text-xs text-zinc-600'>
+                    <div className='px-4 py-8 flex flex-col items-center justify-center text-center'>
+                        {dragOverUngrouped ? <ArrowDownToLine className='size-5 text-cream-400 mb-3' /> : null}
+                        <p className='text-xs text-cream-200/50'>
                             {dragOverUngrouped ? 'Drop to ungroup' : 'Drag servers here to ungroup them'}
                         </p>
                     </div>
@@ -390,7 +402,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                 >
                     <div className='space-y-4'>
                         <div>
-                            <Label className='text-sm text-cream-400/50'>Group Name</Label>
+                            <Label className='text-sm text-cream-200/50'>Group Name</Label>
                             <Input
                                 value={renameValue}
                                 onChange={(e) => setRenameValue(e.target.value)}
@@ -411,12 +423,13 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                     confirm='Delete'
                     onConfirmed={handleDelete}
                 >
-                    <p className='text-sm text-zinc-400'>
-                        Are you sure you want to delete <strong className='text-zinc-200'>{deletingGroup.name}</strong>?
-                        Servers in this group will become ungrouped.
+                    <p className='text-sm text-cream-200/70'>
+                        Are you sure you want to delete <strong className='text-cream-200'>{deletingGroup.name}</strong>
+                        ? Servers in this group will become ungrouped.
                     </p>
                 </Dialog.Confirm>
             )}
+            {dragPreview}
         </div>
     );
 };

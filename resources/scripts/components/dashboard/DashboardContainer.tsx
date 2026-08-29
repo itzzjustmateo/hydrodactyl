@@ -127,7 +127,7 @@ const DashboardContainer = () => {
             <Tabs
                 value={dashboardMode}
                 onValueChange={(v) => setDashboardMode(v as DashboardMode)}
-                className='lg:block hidden'
+                className='md:block hidden'
             >
                 <TabsList>
                     <TabsTrigger aria-label='View servers in a list layout.' value='list'>
