@@ -133,8 +133,6 @@ function AdminDashboard() {
 
     const { metrics, system } = data;
     const cpuCores = metrics.cpu_cores || 1;
-    const cpuNormalized = metrics.cpu / cpuCores;
-    const cpuDisplay = Math.min(100, cpuNormalized);
 
     return (
         <div>
@@ -151,13 +149,10 @@ function AdminDashboard() {
                             overflow: 'hidden',
                         }}
                     >
-                        <UsageBar
-                            used={cpuDisplay}
-                            total={100}
-                            label='CPU'
-                            unit='%'
-                            title={`${cpuNormalized.toFixed(1)}% across ${cpuCores} core(s)`}
-                        />
+                        <div style={{ textAlign: 'center', paddingTop: 40 }}>
+                            <div style={{ fontSize: 28, fontWeight: 700, color: '#eee' }}>{cpuCores}</div>
+                            <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>CPU Cores</div>
+                        </div>
                     </div>
                 </div>
                 <div className='col-md-3 col-sm-6 col-xs-12'>
