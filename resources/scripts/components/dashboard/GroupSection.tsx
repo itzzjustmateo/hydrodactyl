@@ -265,7 +265,7 @@ const GroupSection = ({ servers, displayOption, groupFilterId, filterActive }: G
             </div>
 
             <div className='flex flex-col gap-6 sm:gap-8'>
-                {visibleGroups.map((group) => {
+                {visibleGroups.map((group, index) => {
                     const groupServers = serversByGroup[group.id] || [];
                     const isDragOver = dragOverGroupId === group.id;
 
