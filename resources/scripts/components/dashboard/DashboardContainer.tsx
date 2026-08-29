@@ -378,6 +378,7 @@ const DashboardContainer = () => {
                                             }
                                             key={server.uuid}
                                             server={server}
+                                            hideGroup={!groupsEnabled}
                                         />
                                     </div>
                                 ))}

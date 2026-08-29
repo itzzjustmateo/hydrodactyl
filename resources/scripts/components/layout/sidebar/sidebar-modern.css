@@ -18,6 +18,13 @@ body[data-sidebar-minimized="true"] {
     --indicator-height: 60px;
 }
 
+/* When minimized, the logo block should match the rail width so the icon
+   centers inside the rail instead of being pushed right by the toggle's
+   overhang. */
+body[data-sidebar-minimized="true"] .sidebar-logo-container {
+    width: var(--sidebar-width);
+}
+
 body[data-sidebar-minimized="false"] {
     --sidebar-width: var(--sidebar-full-width);
     --nav-item-height: 32px;
