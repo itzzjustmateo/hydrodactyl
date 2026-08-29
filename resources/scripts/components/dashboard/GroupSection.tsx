@@ -209,7 +209,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                             </span>
                             <span className='text-xs text-cream-200/40 ml-2'>{ungroupedServers.length}</span>
                         </div>
-                        <div className='p-3 space-y-1.5'>
+                        <div className='p-3 space-y-3'>
                             {ungroupedServers.map((server, index) => (
                                 <DraggableServer
                                     key={server.uuid}
@@ -239,7 +239,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
     }
 
     return (
-        <div className='space-y-8 sm:space-y-12'>
+        <div className='space-y-12 sm:space-y-16'>
             <div className='flex items-center justify-between gap-3'>
                 <div className='flex items-center gap-2 min-w-0'>
                     <h3 className='text-xs font-medium text-cream-200/50 uppercase tracking-wider shrink-0'>Groups</h3>
@@ -323,7 +323,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                         </div>
 
                         {!group.is_collapsed && groupServers.length > 0 && (
-                            <div className='px-3 pb-3 space-y-1.5'>
+                            <div className='px-3 pb-3 space-y-3'>
                                 {groupServers.map((server, index) => (
                                     <DraggableServer
                                         key={server.uuid}
@@ -375,7 +375,7 @@ const GroupSection = ({ servers, displayOption }: GroupSectionProps) => {
                             </span>
                             <span className='text-xs text-cream-200/40 tabular-nums'>{ungroupedServers.length}</span>
                         </div>
-                        <div className='p-3 space-y-1.5'>
+                        <div className='p-3 space-y-3'>
                             {ungroupedServers.map((server, index) => (
                                 <DraggableServer
                                     key={server.uuid}
