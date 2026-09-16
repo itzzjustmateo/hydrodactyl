@@ -366,7 +366,7 @@ const DashboardContainer = () => {
                                 {items.map((server, index) => (
                                     <div
                                         key={`${server.uuid}-${dashboardMode}`}
-className={`transform-gpu skeleton-anim-2 ${
+                                        className={`transform-gpu skeleton-anim-2 ${
                                             dashboardMode === 'grid' ? 'w-[calc(50%-0.5rem)] max-lg:w-full' : 'mb-4'
                                         } max-lg:mb-4`}
                                         style={{
@@ -400,8 +400,8 @@ className={`transform-gpu skeleton-anim-2 ${
                                     {ownerFilter === 'admin-all'
                                         ? 'There are no other servers to display.'
                                         : ownerFilter === 'all'
-                                            ? 'No Server Shared With your Account'
-                                            : 'There are no servers associated with your account.'}
+                                          ? 'No Server Shared With your Account'
+                                          : 'There are no servers associated with your account.'}
                                 </p>
                                 {filterActive && (
                                     <button

@@ -211,34 +211,6 @@ class LogoControllerTest extends IntegrationTestCase
         ]);
     }
 
-    public function testBrandingPageHasCustomNavigationSection(): void
-    {
-        $user = User::factory()->admin()->create();
-
-        $response = $this->actingAs($user)->get('/admin/settings/logo');
-
-        $response->assertOk();
-        $response->assertSee('Custom Navigation Items');
-        $response->assertSee('custom_nav_items');
-    }
-
-    public function testCustomNavItemsCanBeSavedViaBrandingPage(): void
-    {
-        $user = User::factory()->admin()->create();
-
-        $response = $this->actingAs($user)->patch('/admin/settings/logo', [
-            'app:custom_nav_items' => [
-                ['label' => 'Docs', 'url' => 'https://docs.example.com', 'icon' => 'book'],
-            ],
-        ]);
-
-        $response->assertRedirect('/admin/settings/logo');
-
-        $this->assertDatabaseHas('settings', [
-            'key' => 'settings::app:custom_nav_items',
-        ]);
-    }
-
     private function makeJpg(): string
     {
         $image = imagecreatetruecolor(100, 50);

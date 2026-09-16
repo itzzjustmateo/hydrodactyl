@@ -32,7 +32,6 @@ class LogoController extends Controller
             'history' => $this->logoService->getHistory(),
             'canProcessImages' => $this->logoService->canProcessImages(),
             'brandColor' => config('app.brand_color', '#52A9FF'),
-            'customNavItems' => json_decode((string) config('app.custom_nav_items', '[]'), true) ?: [],
         ]);
     }
 
@@ -52,10 +51,6 @@ class LogoController extends Controller
 
             if (array_key_exists('app:brand_color', $data) && $data['app:brand_color'] !== null) {
                 $this->settings->set('settings::app:brand_color', $data['app:brand_color']);
-            }
-
-            if (array_key_exists('app:custom_nav_items', $data)) {
-                $this->settings->set('settings::app:custom_nav_items', $request->normalize()['app:custom_nav_items']);
             }
 
             $this->logoService->handle($data);

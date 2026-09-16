@@ -52,7 +52,7 @@
   </div>
 
   <div class="row">
-    <div class="col-md-8 col-md-offset-2">
+    <div class="col-xs-12">
       <div class="box">
         <div class="box-header with-border">
           <h3 class="box-title">Logo Settings</h3>
@@ -118,6 +118,10 @@
           <h3 class="box-title">Brand Color</h3>
         </div>
         <div class="box-body">
+          <div class="alert alert-warning" style="margin-bottom:20px;">
+            <i class="fa fa-exclamation-triangle"></i> <strong>Note:</strong>
+            The brand color is currently only used on this page (logo preview, history highlight, and confirmation buttons). It does not yet affect the rest of the panel UI.
+          </div>
           <div class="row">
             <div class="form-group col-md-6">
               <label class="control-label">Primary Brand Color</label>
@@ -131,62 +135,9 @@
                   value="{{ $brandColor }}" maxlength="7"
                   style="border-radius:0 4px 4px 0;">
               </div>
-              <p class="text-muted small" style="margin-top:4px;">Accent color used across the panel UI.</p>
+              <p class="text-muted small" style="margin-top:4px;">Used for the logo preview and highlights on this page.</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-8 col-md-offset-2">
-      <div class="box">
-        <div class="box-header with-border">
-          <h3 class="box-title">Custom Navigation Items</h3>
-        </div>
-        <div class="box-body">
-          <p class="text-muted small">Add up to 3 custom links to display at the bottom of the sidebar.</p>
-          @php
-            $customNavIcons = [
-              'link' => 'Link',
-              'book' => 'Book',
-              'globe' => 'Globe',
-              'help' => 'Help',
-              'home' => 'Home',
-              'store' => 'Store',
-              'discord' => 'Discord',
-              'document' => 'Document',
-              'terminal' => 'Terminal',
-              'rocket' => 'Rocket',
-            ];
-          @endphp
-          @for($index = 0; $index < 3; $index++)
-            @php
-              $item = $customNavItems[$index] ?? [];
-              $label = $item['label'] ?? '';
-              $url = $item['url'] ?? '';
-              $icon = $item['icon'] ?? 'link';
-            @endphp
-            <div class="row" style="margin-top:8px;">
-              <div class="form-group col-md-4">
-                <label class="control-label">Item {{ $index + 1 }} Label</label>
-                <input type="text" class="form-control" name="app:custom_nav_items[{{ $index }}][label]" maxlength="32" value="{{ $label }}" placeholder="Documentation" />
-              </div>
-              <div class="form-group col-md-5">
-                <label class="control-label">Item {{ $index + 1 }} Link</label>
-                <input type="text" class="form-control" name="app:custom_nav_items[{{ $index }}][url]" maxlength="2048" value="{{ $url }}" placeholder="https://example.com or /account" />
-              </div>
-              <div class="form-group col-md-3">
-                <label class="control-label">Item {{ $index + 1 }} Icon</label>
-                <select name="app:custom_nav_items[{{ $index }}][icon]" class="form-control">
-                  @foreach($customNavIcons as $value => $name)
-                    <option value="{{ $value }}" @if($icon === $value) selected @endif>{{ $name }}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-          @endfor
         </div>
       </div>
     </div>

@@ -44,7 +44,11 @@ const LogoSection = memo(() => {
     const siteName = getSiteName();
 
     return (
-<NavLink to={'/'} className='sidebar-logo-link flex items-center shrink-0 h-8 min-w-0 gap-3 hydrodactyl' aria-label={`${siteName} home page`}>
+        <NavLink
+            to={'/'}
+            className='sidebar-logo-link flex items-center shrink-0 h-8 min-w-0 gap-3 hydrodactyl'
+            aria-label={`${siteName} home page`}
+        >
             <Logo className='flex h-8 w-8 shrink-0 object-contain' />
             <span className='sidebar-logo-name hydrodactyl-logo content-center truncate text-sm font-semibold leading-none tracking-wide text-cream-50'>
                 {siteName}
