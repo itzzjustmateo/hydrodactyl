@@ -13,7 +13,6 @@ class LogoService
     private const HISTORY_MAX = 10;
     private const WEBP_QUALITY = 85;
     private const LOGO_DIR = 'logo';
-    private const ALLOWED_MIMES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'];
 
     public function __construct(
         private SettingsRepositoryInterface $settings,
@@ -58,8 +57,9 @@ class LogoService
         $mime = $file->getMimeType();
 
         if ($mime === 'image/svg+xml') {
+            $sanitized = $this->sanitizeSvg($file);
             $filename = Str::uuid() . '.svg';
-            $file->storeAs(self::LOGO_DIR, $filename, 'public');
+            Storage::disk('public')->put(self::LOGO_DIR . '/' . $filename, $sanitized);
             $value = self::LOGO_DIR . '/' . $filename;
         } else {
             $value = $this->storeRaster($file, $mime);
@@ -80,6 +80,40 @@ class LogoService
 
         // Conversion unavailable or failed — store the original file unchanged.
         return $file->store(self::LOGO_DIR, 'public');
+    }
+
+    private function sanitizeSvg(UploadedFile $file): string
+    {
+        $content = $file->get();
+
+        // Use a regex-based approach to strip dangerous elements and attributes
+        // without requiring DOMDocument's XML strictness or external dependencies.
+
+        // Remove <script>, <iframe>, <object>, <embed>, <applet>, <foreignObject>, <use> tags and their contents.
+        $content = preg_replace(
+            '/<\s*(script|iframe|object|embed|applet|foreignObject|use)\b[^>]*>.*?<\s*\/\s*\1\s*>/is',
+            '',
+            $content,
+        );
+        $content = preg_replace('/<\s*(script|iframe|object|embed|applet|foreignObject|use)\b[^>]*\/?\s*>/is', '', $content);
+
+        // Remove event handler attributes (on*="...").
+        $content = preg_replace('/\s+on[a-z]+\s*=\s*["\'][^"\']*["\']/is', '', $content);
+        $content = preg_replace('/\s+on[a-z]+\s*=\s*[^\s>]*/is', '', $content);
+
+        // Remove javascript: and data: URIs inside href/xlink:href attributes.
+        $content = preg_replace(
+            '/((?:xlink:)?href)\s*=\s*["\']?\s*javascript\s*:/is',
+            '$1="about:blank"',
+            $content,
+        );
+        $content = preg_replace(
+            '/((?:xlink:)?href)\s*=\s*["\']?\s*data\s*:/is',
+            '$1="about:blank"',
+            $content,
+        );
+
+        return $content;
     }
 
     private function convertToWebp(UploadedFile $file, string $mime): ?string
@@ -133,6 +167,12 @@ class LogoService
     {
         $url = filter_var($url, FILTER_VALIDATE_URL);
         if ($url === false) {
+            return;
+        }
+
+        // Only allow http(s) URLs — blocks javascript:, data:, vbscript:, etc.
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+        if (!in_array($scheme, ['http', 'https'], true)) {
             return;
         }
 

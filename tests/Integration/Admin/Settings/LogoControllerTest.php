@@ -183,6 +183,62 @@ class LogoControllerTest extends IntegrationTestCase
         $this->assertSame($valA, $current, 'Rewind should work even when current logo is not in history');
     }
 
+    public function testBrandingPageHasBrandColorPicker(): void
+    {
+        $user = User::factory()->admin()->create();
+
+        $response = $this->actingAs($user)->get('/admin/settings/logo');
+
+        $response->assertOk();
+        $response->assertSee('Brand Color');
+        $response->assertSee('brandColorPicker');
+        $response->assertSee('brandColorText');
+    }
+
+    public function testBrandColorCanBeSavedViaBrandingPage(): void
+    {
+        $user = User::factory()->admin()->create();
+
+        $response = $this->actingAs($user)->patch('/admin/settings/logo', [
+            'app:brand_color' => '#FF6600',
+        ]);
+
+        $response->assertRedirect('/admin/settings/logo');
+
+        $this->assertDatabaseHas('settings', [
+            'key' => 'settings::app:brand_color',
+            'value' => '#FF6600',
+        ]);
+    }
+
+    public function testBrandingPageHasCustomNavigationSection(): void
+    {
+        $user = User::factory()->admin()->create();
+
+        $response = $this->actingAs($user)->get('/admin/settings/logo');
+
+        $response->assertOk();
+        $response->assertSee('Custom Navigation Items');
+        $response->assertSee('custom_nav_items');
+    }
+
+    public function testCustomNavItemsCanBeSavedViaBrandingPage(): void
+    {
+        $user = User::factory()->admin()->create();
+
+        $response = $this->actingAs($user)->patch('/admin/settings/logo', [
+            'app:custom_nav_items' => [
+                ['label' => 'Docs', 'url' => 'https://docs.example.com', 'icon' => 'book'],
+            ],
+        ]);
+
+        $response->assertRedirect('/admin/settings/logo');
+
+        $this->assertDatabaseHas('settings', [
+            'key' => 'settings::app:custom_nav_items',
+        ]);
+    }
+
     private function makeJpg(): string
     {
         $image = imagecreatetruecolor(100, 50);

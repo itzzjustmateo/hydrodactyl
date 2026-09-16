@@ -64,11 +64,7 @@ const validationSchema = yup.object().shape({
     domain_id: yup.string().required('A domain must be selected.'),
 });
 
-interface Props {
-    onClose?: () => void;
-}
-
-const SubdomainManagement = ({ onClose: _onClose }: Props) => {
+const SubdomainManagement = () => {
     const [loading, setLoading] = useState(false);
     const [subdomainInfo, setSubdomainInfo] = useState<SubdomainInfo | null>(null);
     const [checkingAvailability, setCheckingAvailability] = useState(false);
@@ -246,6 +242,7 @@ const SubdomainManagement = ({ onClose: _onClose }: Props) => {
                 buttonText='Delete Subdomain'
                 visible={showDeleteConfirmation}
                 loading={loading}
+                disabled={loading}
                 onConfirmed={() => handleDeleteSubdomain()}
                 onModalDismissed={() => setShowDeleteConfirmation(false)}
             >

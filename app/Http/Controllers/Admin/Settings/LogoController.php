@@ -31,6 +31,8 @@ class LogoController extends Controller
             'logoValue' => $this->logoService->getCurrentValue(),
             'history' => $this->logoService->getHistory(),
             'canProcessImages' => $this->logoService->canProcessImages(),
+            'brandColor' => config('app.brand_color', '#52A9FF'),
+            'customNavItems' => json_decode((string) config('app.custom_nav_items', '[]'), true) ?: [],
         ]);
     }
 
@@ -39,13 +41,30 @@ class LogoController extends Controller
         try {
             $data = $request->validated();
 
+            $nameChanged = false;
             if (array_key_exists('app:name', $data) && $data['app:name'] !== null) {
-                $this->settings->set('settings::app:name', $data['app:name']);
+                $currentName = $this->settings->get('settings::app:name');
+                if ($data['app:name'] !== $currentName) {
+                    $this->settings->set('settings::app:name', $data['app:name']);
+                    $nameChanged = true;
+                }
+            }
+
+            if (array_key_exists('app:brand_color', $data) && $data['app:brand_color'] !== null) {
+                $this->settings->set('settings::app:brand_color', $data['app:brand_color']);
+            }
+
+            if (array_key_exists('app:custom_nav_items', $data)) {
+                $this->settings->set('settings::app:custom_nav_items', $request->normalize()['app:custom_nav_items']);
             }
 
             $this->logoService->handle($data);
 
-            $this->kernel->call('queue:restart');
+            // Only restart queue workers when the site name changed — logo-only
+            // updates don't affect queued jobs.
+            if ($nameChanged) {
+                $this->kernel->call('queue:restart');
+            }
             $this->alert->success('Logo settings have been updated successfully.')->flash();
         } catch (\Throwable $exception) {
             Log::error('Failed to update logo settings.', ['error' => $exception->getMessage()]);

@@ -24,6 +24,7 @@
     </div>
   @endif
 
+  <form action="{{ route('admin.settings.logo') }}" method="POST" enctype="multipart/form-data" id="logoForm">
   <div class="row">
     <div class="col-xs-12">
       <div class="box">
@@ -36,7 +37,7 @@
               <div id="currentLogoPreview" style="min-height:120px;display:flex;align-items:center;justify-content:center;border-radius:6px;">
                 <img id="currentLogoImg" src="{{ $logoUrl ?? '' }}" alt="Current Logo" style="max-width:100%;max-height:200px;border-radius:4px;{{ $logoUrl ? '' : 'display:none;' }}">
                 <svg id="currentLogoSvg" width="80" height="80" viewBox="0 0 100 92" fill="none" xmlns="http://www.w3.org/2000/svg" style="{{ $logoUrl ? 'display:none;' : '' }}">
-                  <path d="M35.1293 92L39.2242 59.3897L44.8276 60.4695L14.2241 81.2019L0 57.0141L32.7586 45.3521V47.7277L0 33.4742L14.2241 8.85446L45.6896 33.2582L39.2242 34.1221L34.4828 0H65.5172L61.4225 33.9061L56.681 32.8263L85.7759 8.85446L100 33.4742L66.1638 47.7277V45.5681L99.569 57.0141L85.3448 81.2019L57.5431 59.3897H61.638L66.1638 92H35.1293Z" fill="#52A9FF"/>
+                  <path d="M35.1293 92L39.2242 59.3897L44.8276 60.4695L14.2241 81.2019L0 57.0141L32.7586 45.3521V47.7277L0 33.4742L14.2241 8.85446L45.6896 33.2582L39.2242 34.1221L34.4828 0H65.5172L61.4225 33.9061L56.681 32.8263L85.7759 8.85446L100 33.4742L66.1638 47.7277V45.5681L99.569 57.0141L85.3448 81.2019L57.5431 59.3897H61.638L66.1638 92H35.1293Z" fill="{{ $brandColor }}"/>
                 </svg>
               </div>
               <div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;">
@@ -51,78 +52,163 @@
   </div>
 
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-md-8 col-md-offset-2">
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Upload New Logo</h3>
+          <h3 class="box-title">Logo Settings</h3>
         </div>
-        <form action="{{ route('admin.settings.logo') }}" method="POST" enctype="multipart/form-data" id="logoForm">
-          <div class="box-body">
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label class="control-label">Company Name</label>
-                <input type="text" class="form-control" name="app:name" id="companyNameInput"
-                  value="{{ old('app:name', config('app.name')) }}" />
-                <p class="text-muted small" style="margin-top:4px;">Displayed throughout the panel and in outgoing emails.</p>
-              </div>
+        <div class="box-body">
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Company Name</label>
+              <input type="text" class="form-control" name="app:name" id="companyNameInput"
+                value="{{ old('app:name', config('app.name')) }}" />
+              <p class="text-muted small" style="margin-top:4px;">Displayed throughout the panel and in outgoing emails.</p>
             </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="control-label">Upload Logo</label>
-                  <div id="dropZone" class="well well-sm text-center" style="padding:40px 20px;border:2px dashed #555;border-radius:8px;cursor:pointer;transition:all 0.2s;background:transparent;">
-                    <i class="fa fa-cloud-upload" style="font-size:48px;color:#999;display:block;margin-bottom:10px;"></i>
-                    <p style="margin:0;color:#666;font-size:14px;">
-                      <strong>Click to choose</strong> or drag and drop
-                    </p>
-                    <p style="margin:5px 0 0;color:#999;font-size:12px;">
-                      PNG, JPG, GIF, WEBP or SVG (max 2MB)
-                    </p>
-                    <input type="file" name="logo_file" id="logoFileInput" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" style="display:none;">
-                  </div>
-                  <div id="fileError" class="text-danger" style="display:none;margin-top:8px;font-size:12px;"></div>
-                  <div id="uploadPreview" style="display:none;margin-top:10px;text-align:center;">
-                    <img id="uploadPreviewImg" src="#" alt="Preview" style="max-width:100%;max-height:150px;border-radius:4px;border:1px solid #555;padding:5px;">
-                    <p class="text-muted" style="margin-top:5px;font-size:12px;">Preview</p>
-                  </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">Upload Logo</label>
+                <div id="dropZone" class="well well-sm text-center" style="padding:40px 20px;border:2px dashed #555;border-radius:8px;cursor:pointer;transition:all 0.2s;background:transparent;">
+                  <i class="fa fa-cloud-upload" style="font-size:48px;color:#999;display:block;margin-bottom:10px;"></i>
+                  <p style="margin:0;color:#666;font-size:14px;">
+                    <strong>Click to choose</strong> or drag and drop
+                  </p>
+                  <p style="margin:5px 0 0;color:#999;font-size:12px;">
+                    PNG, JPG, GIF, WEBP or SVG (max 2MB)
+                  </p>
+                  <input type="file" name="logo_file" id="logoFileInput" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" style="display:none;">
+                </div>
+                <div id="fileError" class="text-danger" style="display:none;margin-top:8px;font-size:12px;"></div>
+                <div id="uploadPreview" style="display:none;margin-top:10px;text-align:center;">
+                  <img id="uploadPreviewImg" src="#" alt="Preview" style="max-width:100%;max-height:150px;border-radius:4px;border:1px solid #555;padding:5px;">
+                  <p class="text-muted" style="margin-top:5px;font-size:12px;">Preview</p>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="control-label">Or use a URL</label>
-                  <div class="input-group">
-                    <input type="url" name="logo_url" id="logoUrlInput" class="form-control" placeholder="https://example.com/logo.png">
-                    <span class="input-group-btn">
-                      <button type="button" class="btn btn-outline-primary" id="previewUrlBtn">
-                        <i class="fa fa-eye"></i>
-                      </button>
-                    </span>
-                  </div>
-                  <p class="text-muted"><small>Enter a direct link to an image hosted elsewhere.</small></p>
-                  <div id="urlError" class="text-danger" style="display:none;margin-top:8px;font-size:12px;"></div>
-                  <div id="urlPreview" style="display:none;margin-top:10px;text-align:center;">
-                    <img id="urlPreviewImg" src="#" alt="URL Preview" style="max-width:100%;max-height:150px;border-radius:4px;border:1px solid #555;padding:5px;">
-                  </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">Or use a URL</label>
+                <div class="input-group">
+                  <input type="url" name="logo_url" id="logoUrlInput" class="form-control" placeholder="https://example.com/logo.png">
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-outline-primary" id="previewUrlBtn">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </span>
+                </div>
+                <p class="text-muted"><small>Enter a direct link to an image hosted elsewhere.</small></p>
+                <div id="urlError" class="text-danger" style="display:none;margin-top:8px;font-size:12px;"></div>
+                <div id="urlPreview" style="display:none;margin-top:10px;text-align:center;">
+                  <img id="urlPreviewImg" src="#" alt="URL Preview" style="max-width:100%;max-height:150px;border-radius:4px;border:1px solid #555;padding:5px;">
                 </div>
               </div>
             </div>
           </div>
-          <div class="box-footer">
-            {!! csrf_field() !!}
-            <input type="hidden" name="_method" value="PATCH">
-            <button type="submit" id="saveBtn" class="btn btn-primary btn-sm btn-outline-primary pull-right" disabled>
-              <i class="fa fa-save"></i> Save Logo
-            </button>
-            @if($logoUrl)
-              <button type="button" id="removeLogoBtn" class="btn btn-danger btn-sm btn-outline-danger pull-right" style="margin-right:5px;">
-                <i class="fa fa-trash"></i> Remove Logo
-              </button>
-            @endif
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">Brand Color</h3>
+        </div>
+        <div class="box-body">
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label class="control-label">Primary Brand Color</label>
+              <div class="input-group">
+                <span class="input-group-addon" style="padding:0;border:none;">
+                  <input type="color" name="app:brand_color" id="brandColorPicker"
+                    value="{{ $brandColor }}"
+                    style="width:40px;height:34px;border:none;cursor:pointer;background:transparent;padding:0;">
+                </span>
+                <input type="text" class="form-control" id="brandColorText"
+                  value="{{ $brandColor }}" maxlength="7"
+                  style="border-radius:0 4px 4px 0;">
+              </div>
+              <p class="text-muted small" style="margin-top:4px;">Accent color used across the panel UI.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">Custom Navigation Items</h3>
+        </div>
+        <div class="box-body">
+          <p class="text-muted small">Add up to 3 custom links to display at the bottom of the sidebar.</p>
+          @php
+            $customNavIcons = [
+              'link' => 'Link',
+              'book' => 'Book',
+              'globe' => 'Globe',
+              'help' => 'Help',
+              'home' => 'Home',
+              'store' => 'Store',
+              'discord' => 'Discord',
+              'document' => 'Document',
+              'terminal' => 'Terminal',
+              'rocket' => 'Rocket',
+            ];
+          @endphp
+          @for($index = 0; $index < 3; $index++)
+            @php
+              $item = $customNavItems[$index] ?? [];
+              $label = $item['label'] ?? '';
+              $url = $item['url'] ?? '';
+              $icon = $item['icon'] ?? 'link';
+            @endphp
+            <div class="row" style="margin-top:8px;">
+              <div class="form-group col-md-4">
+                <label class="control-label">Item {{ $index + 1 }} Label</label>
+                <input type="text" class="form-control" name="app:custom_nav_items[{{ $index }}][label]" maxlength="32" value="{{ $label }}" placeholder="Documentation" />
+              </div>
+              <div class="form-group col-md-5">
+                <label class="control-label">Item {{ $index + 1 }} Link</label>
+                <input type="text" class="form-control" name="app:custom_nav_items[{{ $index }}][url]" maxlength="2048" value="{{ $url }}" placeholder="https://example.com or /account" />
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Item {{ $index + 1 }} Icon</label>
+                <select name="app:custom_nav_items[{{ $index }}][icon]" class="form-control">
+                  @foreach($customNavIcons as $value => $name)
+                    <option value="{{ $value }}" @if($icon === $value) selected @endif>{{ $name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+          @endfor
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="box-footer">
+        {!! csrf_field() !!}
+        <input type="hidden" name="_method" value="PATCH">
+        <button type="submit" id="saveBtn" class="btn btn-primary btn-sm btn-outline-primary pull-right" disabled>
+          <i class="fa fa-save"></i> Save Changes
+        </button>
+        @if($logoUrl)
+          <button type="button" id="removeLogoBtn" class="btn btn-danger btn-sm btn-outline-danger pull-right" style="margin-right:5px;">
+            <i class="fa fa-trash"></i> Remove Logo
+          </button>
+        @endif
+      </div>
+    </div>
+  </div>
+  </form>
 
   @if(count($history) > 0)
   <div class="row">
@@ -136,7 +222,7 @@
               @php $isCurrent = fn($entry) => $logoType && $logoValue && $entry['type'] === $logoType && $entry['value'] === $logoValue; @endphp
               @foreach($history as $index => $entry)
               <div class="col-md-2 col-sm-3 col-xs-4 text-center" style="margin-bottom:15px;">
-                <div class="logo-history-item" style="border:2px solid {{ $isCurrent($entry) ? '#52A9FF' : '#444' }};border-radius:8px;padding:10px;cursor:pointer;transition:all 0.2s;{{ $isCurrent($entry) ? 'box-shadow:0 0 8px rgba(82,169,255,0.3);' : '' }}" onclick="rewindLogo({{ $index }})" title="Click to use this logo">
+                <div class="logo-history-item" style="border:2px solid {{ $isCurrent($entry) ? $brandColor : '#444' }};border-radius:8px;padding:10px;cursor:pointer;transition:all 0.2s;{{ $isCurrent($entry) ? 'box-shadow:0 0 8px ' . $brandColor . '4d;' : '' }}" onclick="rewindLogo({{ $index }})" title="Click to use this logo">
                   @if($entry['type'] === 'upload')
                     <img src="{{ url('storage/' . $entry['value']) }}" alt="Logo {{ $index + 1 }}" style="max-width:100%;max-height:80px;border-radius:4px;" onerror="this.closest('.logo-history-item').style.display='none'">
                   @else
@@ -180,6 +266,21 @@
     var logoForm = document.getElementById('logoForm');
     var nameInput = document.getElementById('companyNameInput');
     var originalName = nameInput.value;
+    var brandColorPicker = document.getElementById('brandColorPicker');
+    var brandColorText = document.getElementById('brandColorText');
+    var originalBrandColor = brandColorText.value;
+
+    // Sync brand color picker and text input
+    brandColorPicker.addEventListener('input', function() {
+      brandColorText.value = this.value;
+      updateSaveState();
+    });
+    brandColorText.addEventListener('input', function() {
+      if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(this.value)) {
+        brandColorPicker.value = this.value;
+      }
+      updateSaveState();
+    });
 
     var allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'];
     var maxSize = 2 * 1024 * 1024; // 2MB
@@ -188,7 +289,8 @@
       var hasFile = fileInput.files && fileInput.files.length > 0;
       var hasUrl = urlInput.value.trim().length > 0;
       var nameChanged = nameInput.value.trim() !== originalName;
-      saveBtn.disabled = !(hasFile || hasUrl || nameChanged);
+      var colorChanged = brandColorText.value.trim() !== originalBrandColor;
+      saveBtn.disabled = !(hasFile || hasUrl || nameChanged || colorChanged);
     }
 
     dropZone.addEventListener('click', function() {
@@ -198,8 +300,8 @@
     dropZone.addEventListener('dragover', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      this.style.borderColor = '#52A9FF';
-      this.style.background = 'rgba(82,169,255,0.1)';
+      this.style.borderColor = brandColorText.value;
+      this.style.background = brandColorText.value + '1a';
     });
 
     dropZone.addEventListener('dragleave', function(e) {
@@ -307,7 +409,7 @@
         text: 'Switch to this logo version?',
         showCancelButton: true,
         confirmButtonText: 'Switch',
-        confirmButtonColor: '#52A9FF',
+        confirmButtonColor: '{{ $brandColor }}',
         closeOnConfirm: false
       }, function() {
         document.getElementById('rewindInput').value = index;
