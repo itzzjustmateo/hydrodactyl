@@ -44,9 +44,9 @@ const LogoSection = memo(() => {
     const siteName = getSiteName();
 
     return (
-        <NavLink to={'/'} className='flex shrink-0 h-8 min-w-0 gap-3 hydrodactyl' aria-label={`${siteName} home page`}>
+<NavLink to={'/'} className='sidebar-logo-link flex items-center shrink-0 h-8 min-w-0 gap-3 hydrodactyl' aria-label={`${siteName} home page`}>
             <Logo className='flex h-8 w-8 shrink-0 object-contain' />
-            <span className='sidebar-logo-name truncate text-sm font-semibold leading-none tracking-wide text-cream-50'>
+            <span className='sidebar-logo-name hydrodactyl-logo content-center truncate text-sm font-semibold leading-none tracking-wide text-cream-50'>
                 {siteName}
             </span>
         </NavLink>
@@ -105,22 +105,21 @@ const SlotActions = memo<{ actions: React.ReactNode }>(({ actions }) => {
 SlotActions.displayName = 'SlotActions';
 
 const AppHeader = ({ serverId }: AppHeaderProps) => {
-    const { leftActions, centerActions, rightActions } = useHeader();
+    const { headerActions, leftActions, centerActions, rightActions } = useHeader();
 
-    const hasSlottedLayout = leftActions || centerActions || rightActions;
+    const hasSlottedLayout = !headerActions && (leftActions || centerActions || rightActions);
 
+    // Dashboard Page
     if (hasSlottedLayout) {
         return (
-            <div className='h-16 w-full py-4 px-2 sm:px-4 flex items-center'>
-                <div className='flex items-center gap-1.5 sm:gap-2 shrink-0'>
-                    <MobileSidebarToggle />
+            <div className='h-16 w-full py-4 pr-2 flex align-middle items-center justify-between'>
+                <div className='flex items-center gap-2'>
                     <SidebarLogo />
+                    <MobileSidebarToggle />
                     <SlotActions actions={leftActions} />
                 </div>
-                <div className='flex-1 flex items-center justify-center min-w-0 px-2 sm:px-4'>
-                    <SlotActions actions={centerActions} />
-                </div>
-                <div className='flex items-center gap-1.5 sm:gap-2 shrink-0'>
+                <SlotActions actions={centerActions} />
+                <div className='flex items-center gap-1.5 sm:gap-2 justify-end min-w-0 overflow-hidden'>
                     <SlotActions actions={rightActions} />
                     <StaticButtons serverId={serverId} />
                 </div>
@@ -128,14 +127,16 @@ const AppHeader = ({ serverId }: AppHeaderProps) => {
         );
     }
 
+    // Servers page
     return (
-        <div className='h-16 w-full py-4 pr-2 flex align-middle items-center justify-between'>
-            <div className='flex items-center gap-2'>
+        <div className='h-16 w-full py-4 pr-2 flex align-middle items-center'>
+            <div className='flex items-center gap-2 flex-1'>
                 <MobileSidebarToggle />
                 <SidebarLogo />
             </div>
-            <div className='flex items-center gap-1.5 sm:gap-2 h-full justify-end min-w-0 overflow-hidden'>
-                <HeaderActions />
+            <HeaderActions />
+            <div className='flex items-center gap-1.5 sm:gap-2 justify-end min-w-0 overflow-hidden flex-1'>
+                <SlotActions actions={rightActions} />
                 <StaticButtons serverId={serverId} />
             </div>
         </div>
