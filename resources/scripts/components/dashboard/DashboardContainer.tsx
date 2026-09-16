@@ -136,6 +136,7 @@ const DashboardContainer = () => {
         setFilterField(undefined);
         setFilterValue(undefined);
         setGroupFilterId(undefined);
+        setSortValue('');
         setPage(1);
     }, []);
 

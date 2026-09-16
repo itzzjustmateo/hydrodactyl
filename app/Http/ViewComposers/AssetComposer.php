@@ -38,7 +38,6 @@ class AssetComposer
       'locale' => config('app.locale') ?? 'en',
       'timezone' => config('app.timezone') ?? '',
       'logo' => $logoUrl,
-      'brandColor' => config('app.brand_color') ?? '#52A9FF',
       'customNavItems' => $this->getCustomNavItems(),
       'captcha' => [
         'enabled' => $this->captcha->getDefaultDriver() !== 'none',

@@ -5,7 +5,6 @@ export interface SiteSettings {
     locale: string;
     timezone: string;
     logo?: string | null;
-    brandColor?: string;
     customNavItems?: {
         label: string;
         url: string;

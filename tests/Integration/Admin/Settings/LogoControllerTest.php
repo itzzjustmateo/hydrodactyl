@@ -217,7 +217,6 @@ class LogoControllerTest extends IntegrationTestCase
         ob_start();
         imagejpeg($image);
         $data = ob_get_clean();
-        imagedestroy($image);
 
         return $data;
     }

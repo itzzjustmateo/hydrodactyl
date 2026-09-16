@@ -14,6 +14,13 @@ class LogoService
     private const WEBP_QUALITY = 85;
     private const LOGO_DIR = 'logo';
 
+    /**
+     * Cache of file-existence checks for the current request lifetime.
+     *
+     * @var array<string, bool>
+     */
+    private array $existsCache = [];
+
     public function __construct(
         private SettingsRepositoryInterface $settings,
     ) {}
@@ -204,7 +211,7 @@ class LogoService
 
         $entry = $history[$index];
 
-        if ($entry['type'] === 'upload' && !Storage::disk('public')->exists($entry['value'])) {
+        if ($entry['type'] === 'upload' && !$this->fileExists(Storage::disk('public'), $entry['value'])) {
             return;
         }
 
@@ -257,12 +264,26 @@ class LogoService
             return [];
         }
 
-        return array_values(array_filter($decoded, function ($entry) {
+        $disk = Storage::disk('public');
+
+        return array_values(array_filter($decoded, function ($entry) use ($disk) {
             if ($entry['type'] === 'upload') {
-                return Storage::disk('public')->exists($entry['value']);
+                return $this->fileExists($disk, $entry['value']);
             }
             return true;
         }));
+    }
+
+    /**
+     * Check whether a file exists, caching the result for the request lifetime.
+     */
+    private function fileExists($disk, string $path): bool
+    {
+        if (!array_key_exists($path, $this->existsCache)) {
+            $this->existsCache[$path] = $disk->exists($path);
+        }
+
+        return $this->existsCache[$path];
     }
 
     public function getCurrentType(): ?string
